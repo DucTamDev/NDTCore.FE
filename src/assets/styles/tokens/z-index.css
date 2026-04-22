@@ -1,0 +1,15 @@
+/* Auto-generated — do not edit. Source: design-system/tokens/ | 2026-04-21T17:27:46.306Z */
+
+:root {
+  /* ── Z-index ── */
+  --z-hide: -1;
+  --z-base: 0;
+  --z-raised: 1;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-popover: 1400;
+  --z-toast: 1500;
+  --z-tooltip: 1600;
+}

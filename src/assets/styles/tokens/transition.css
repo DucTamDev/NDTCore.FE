@@ -1,0 +1,19 @@
+/* Auto-generated — do not edit. Source: design-system/tokens/ | 2026-04-21T17:27:46.312Z */
+
+:root {
+  /* ── Durations ── */
+  --transition-duration-instant: 50ms;
+  --transition-duration-fast: 100ms;
+  --transition-duration-base: 200ms;
+  --transition-duration-slow: 300ms;
+  --transition-duration-slower: 500ms;
+  --transition-duration-slowest: 700ms;
+
+  /* ── Easing ── */
+  --transition-easing-linear: linear;
+  --transition-easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --transition-easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --transition-easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
