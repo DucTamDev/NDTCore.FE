@@ -1,0 +1,18 @@
+export const IMG: Record<string, string> = {
+  olong_hanh_nhan: '',
+  phuc_long: '',
+  tam_gao: '',
+  olong_kem_pho_mai: '',
+  olong_rang_kem_pho_mai: '',
+  olong_sua: '',
+  olong_sua_dua: '',
+  olong_nhai_sua: '',
+  phindi_hanh_nhan: '',
+  sen_long_nhan: '',
+  sua_dua_suong_sao: '',
+  sua_tuoi_tran_chau: '',
+  thanh_tra_phuc_bon_tu: '',
+  tra_xoai_machiato: '',
+  vai_lai_sen_olong: '',
+  olong_hat_phi: '',
+}
