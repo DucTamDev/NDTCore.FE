@@ -1,22 +1,24 @@
-// src/main.ts
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 
 import App from './App.vue'
-import router from './app/routes'
-import { vuetify } from './app/plugins/vuetify'
-import { toastOptions } from './app/plugins/toast'
+import { pinia } from './plugins/pinia'
+import { router } from './router'
+import { vuetify } from './plugins/vuetify'
+import { toastOptions } from './plugins/toast'
+import { authService } from './services/auth.service'
 
-import '@/assets/styles/main.scss'
+import 'vuetify/styles'
 import 'vue-toastification/dist/index.css'
-// import '@/assets/styles/tailwind.css';
+import '@/styles/main.scss'
 
 const app = createApp(App)
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(vuetify)
 app.use(Toast, toastOptions)
+
+authService.initialize()
 
 app.mount('#app')
