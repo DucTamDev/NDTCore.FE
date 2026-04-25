@@ -2,14 +2,14 @@
 name: vue-project-code
 description: >
   Viết, review, và refactor code Vue 3 + Vuetify 3 + Pinia + TypeScript theo chuẩn SOLID,
-  không hard-code, layer-based architecture với Axios API layer và Vue Router.
+  không hard-code, layer-based architecture với ApiClient infrastructure layer và Vue Router.
   LUÔN dùng skill này khi user đề cập bất kỳ thứ nào sau: Vue, Vuetify, Pinia,
-  Composition API, store, composable, TypeScript interface/type, Axios service,
+  Composition API, store, composable, TypeScript interface/type, ApiClient, service,
   Vue Router guard, defineStore, ref/reactive/computed, useRoute/useRouter,
   v-form, v-data-table, v-dialog, toast notification, vue-toastification, theme,
   vite-plugin-vuetify, hoặc bất kỳ yêu cầu nào liên quan đến frontend Vue 3 + Vuetify.
   Cũng trigger khi user paste code Vue/Pinia/TS và muốn review, refactor, tạo mới
-  component, view, store, service, hoặc composable.
+  component, view, store, service, composable, hoặc hỏi về cấu trúc thư mục.
 ---
 
 # Vue 3 + Vuetify 3 + Pinia + TypeScript — Production Skill
@@ -37,7 +37,7 @@ description: >
 1. **Không hard-code** — URL, route, label, timeout, role, màu hex → `constants/`, `config/`, env, Vuetify theme
 2. **SOLID** — Single Responsibility mỗi file; Dependency Inversion qua composables
 3. **Type-safe hoàn toàn** — Không `any`. API response, props, emits đều có interface/type
-4. **Layer flow** — `types → constants → services → stores → composables → components/views`
+4. **Layer flow** — `types → constants → infrastructure → services → stores → composables → components/views`
 5. **Không logic trong template** — Template chỉ bind + emit; logic ở `<script setup>`
 6. **Vuetify-first** — Vuetify components + theme colors; không inline style; không Tailwind
 7. **Toast qua `useToast()`** — Không Vuetify snackbar, không gọi store trực tiếp từ view
@@ -48,65 +48,218 @@ description: >
 
 ```
 src/
-├── constants/
-│   ├── api.constants.ts          # API endpoints
-│   ├── app.constants.ts          # Route names, roles, pagination, toast, theme
-│   └── validation.constants.ts   # Form validation rules
 ├── types/
-│   ├── common.types.ts           # LoadingState, PaginatedResponse, ConfirmDialogOptions
-│   └── [domain].types.ts         # Mỗi domain một file
+│   ├── api.types.ts              # ApiResponse<T>, PagedApiResponse<T>, RequestConfig
+│   ├── auth.types.ts             # User, Permission, LoginRequest, AuthTokens, AuthSession
+│   └── common.types.ts           # LoadingState, PaginatedResponse, ConfirmDialogOptions
+├── constants/
+│   ├── api.constants.ts          # API_ENDPOINTS
+│   ├── app.constants.ts          # APP_NAME, ROUTE_NAMES, ROUTE_PATHS, USER_ROLES, DEFAULT_PAGINATION, TOAST_CONFIG
+│   └── validation.constants.ts   # Form validation rules
+├── models/                       # Re-export adapters từ types/ (không logic)
+│   ├── api.models.ts             # re-export từ @/types/api.types
+│   ├── auth.models.ts
+│   └── [domain].models.ts
 ├── config/
 │   └── http.config.ts            # BASE_URL, TIMEOUT từ env
-├── plugins/
-│   ├── vuetify.ts
-│   ├── toast.ts
-│   └── index.ts                  # registerPlugins(app)
+├── infrastructure/               # HTTP plumbing — không import trực tiếp từ component/view
+│   ├── http/
+│   │   ├── api-client.ts         # ApiClient class singleton — KHÔNG phải Axios wrapper đơn giản
+│   │   ├── http-headers.ts
+│   │   └── loading.service.ts
+│   ├── auth/
+│   │   └── token.service.ts
+│   ├── errors/
+│   │   └── api-error-handler.ts
+│   ├── config/
+│   │   └── api.config.ts
+│   ├── storage/
+│   │   └── local-storage.ts
+│   └── logger.ts
 ├── services/
-│   ├── http.service.ts           # Axios instance + interceptors
-│   └── [domain].service.ts
+│   ├── auth.service.ts           # Class AuthService, export singleton authService
+│   ├── http.service.ts
+│   └── [domain].service.ts       # Class [Domain]Service, export singleton
 ├── stores/
-│   ├── ui.store.ts               # Confirm dialog + global loading
 │   ├── auth.store.ts
+│   ├── ui.store.ts               # Confirm dialog + global loading
 │   └── [domain].store.ts
 ├── composables/
+│   ├── useAuth.ts                # Wraps authService + authStore
 │   ├── useToast.ts
 │   ├── useConfirmDialog.ts
 │   └── use[Domain].ts
+├── data/                         # Business domain data (không phải app config)
+│   ├── home.constants.ts         # Menu items, FAQs, benefits, steps
+│   └── home.images.ts            # Image keys/paths
+├── plugins/
+│   ├── vuetify/                  # Full design token system
+│   ├── toast/
+│   └── index.ts                  # registerPlugins(app)
 ├── router/
 │   ├── index.ts
 │   ├── routes.ts
-│   └── guards/auth.guard.ts
-├── layouts/DefaultLayout.vue
-├── views/[Domain]View.vue
+│   ├── guards.ts / guards/auth.guard.ts
+│   ├── routes/
+│   │   ├── public.routes.ts
+│   │   ├── auth.routes.ts
+│   │   └── admin.routes.ts
+│   └── types.ts
+├── layouts/
+│   ├── AdminLayout.vue
+│   ├── AuthLayout.vue
+│   ├── BlankLayout.vue
+│   └── DefaultLayout.vue
+├── views/[Domain]View.vue         # Thin wrappers — logic ở composables/components
 └── components/
     ├── common/
     │   ├── AppConfirmDialog.vue
     │   └── AppLoadingOverlay.vue
+    ├── auth/                      # LoginForm.vue, RegisterForm.vue
+    ├── home/                      # HomeNav, HomeHero, HomeAbout, ...
     └── [domain]/
+```
+
+> **`data/` vs `constants/`**: `constants/` = cấu hình app (routes, roles, pagination). `data/` = dữ liệu business domain (menu items, FAQs, images).  
+> **`models/` vs `types/`**: `types/` = source of truth. `models/` = re-export adapter, không chứa logic.
+
+---
+
+## API Types — PascalCase fields
+
+```typescript
+// src/types/api.types.ts
+export interface ApiResponse<T> {
+  IsSuccess: boolean
+  IsFailure: boolean
+  Data: T
+  Message: string | null
+  Error: ApiError | null
+  Metadata: ApiResponseMetadata | null
+}
+
+export interface PagedApiResponse<T> extends ApiResponse<T[]> {
+  PageNumber: number
+  PageSize: number
+  TotalCount: number
+  TotalPages: number
+  HasPreviousPage: boolean
+  HasNextPage: boolean
+}
+
+export interface RequestConfig extends AxiosRequestConfig {
+  skipAuth?: boolean
+  skipErrorNotification?: boolean
+  showLoading?: boolean
+  cache?: boolean
+  cacheTime?: number
+}
+```
+
+> ⚠️ **PascalCase** cho tất cả API response fields — `IsSuccess`, `Data`, `Error`, không phải `isSuccess`, `data`.
+
+---
+
+## Infrastructure Layer — ApiClient
+
+```typescript
+// src/infrastructure/http/api-client.ts
+class ApiClient {
+  get<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>
+  getPaged<T>(url: string, config?: RequestConfig): Promise<PagedApiResponse<T>>
+  post<T>(url: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>>
+  put<T>(url: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>>
+  patch<T>(url: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>>
+  delete<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>
+}
+export const apiClient = new ApiClient()
+```
+
+`ApiClient` xử lý: 401 token refresh, exponential retry, in-memory cache, loading service. Không bao giờ dùng Axios trực tiếp trong service — luôn qua `apiClient`.
+
+---
+
+## Service Pattern — Class-based singleton
+
+```typescript
+// src/services/auth.service.ts
+class AuthService {
+  initialize(): void
+  async login(payload: LoginRequest): Promise<AuthSession>
+  async register(payload: RegisterRequest): Promise<User>
+  async logout(): Promise<void>
+  isAuthenticated(): boolean
+  getUserRole(): UserRole | null
+  hasPermission(permission: Permission): boolean
+  hasAnyPermission(permissions: Permission[]): boolean
+  hasAllPermissions(permissions: Permission[]): boolean
+}
+export const authService = new AuthService()
+```
+
+```typescript
+// src/services/[domain].service.ts
+class UserService {
+  async getUsers(params?: PaginationParams): Promise<PagedApiResponse<User>>
+  async createUser(payload: CreateUserPayload): Promise<ApiResponse<User>>
+  // ...
+}
+export const userService = new UserService()
+```
+
+> Service gọi `apiClient.post(API_ENDPOINTS.AUTH.LOGIN, payload)` — không gọi Axios trực tiếp.
+
+---
+
+## Stores — Pinia Setup Store
+
+```typescript
+// src/stores/auth.store.ts
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null)
+  const tokens = ref<AuthTokens | null>(null)
+
+  const isAuthenticated = computed(() => !!user.value && !!tokens.value)
+  const accessToken = computed(() => tokens.value?.accessToken ?? null)
+  const refreshToken = computed(() => tokens.value?.refreshToken ?? null)
+  const userRole = computed(() => user.value?.role ?? null)
+
+  function setSession(session: AuthSession) { /* ... */ }
+  function setUser(newUser: User) { /* ... */ }
+  function clearSession() { /* ... */ }
+
+  return { user, tokens, isAuthenticated, accessToken, refreshToken, userRole, setSession, setUser, clearSession }
+})
 ```
 
 ---
 
-## Types cốt lõi
+## Composables
 
 ```typescript
-// src/types/common.types.ts
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
+// src/composables/useAuth.ts
+export function useAuth() {
+  const authStore = useAuthStore()
+  const { isAuthenticated, currentUser } = storeToRefs(authStore)
 
-export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  page: number
-  limit: number
+  return {
+    isAuthenticated,
+    currentUser,
+    can: (permission: Permission) => authService.hasPermission(permission),
+    canAny: (permissions: Permission[]) => authService.hasAnyPermission(permissions),
+    canAll: (permissions: Permission[]) => authService.hasAllPermissions(permissions),
+    login: (payload: LoginRequest) => authService.login(payload),
+    register: (payload: RegisterRequest) => authService.register(payload),
+    logout: () => authService.logout(),
+  }
 }
+```
 
-export interface ConfirmDialogOptions {
-  title: string
-  message: string
-  confirmText?: string
-  cancelText?: string
-  confirmColor?: string
-}
+**Permission check trong component/route:**
+```typescript
+const { can } = useAuth()
+// Route meta:  permissions: [{ resource: 'users', action: 'read' }]
+can({ resource: 'users', action: 'read' })
 ```
 
 ---
@@ -115,18 +268,17 @@ export interface ConfirmDialogOptions {
 
 ```typescript
 // src/constants/app.constants.ts
-export const ROUTE_NAMES = {
-  HOME: 'home',
-  LOGIN: 'login',
-} as const
-
 export const USER_ROLES = {
   ADMIN: 'admin',
-  EDITOR: 'editor',
-  VIEWER: 'viewer',
+  ORG_ADMIN: 'org_admin',
+  SUPER_ADMIN: 'super_admin',
+  CASHIER: 'cashier',
+  USER: 'user',
 } as const
 
-export const APP_THEME = { DEFAULT: 'light', DARK: 'dark', LIGHT: 'light' } as const
+export const ROUTE_NAMES = { HOME: 'home', LOGIN: 'login', DASHBOARD_HOME: 'dashboard-home' } as const
+export const ROUTE_PATHS = { HOME: '/', LOGIN: '/auth/login', ADMIN: '/admin' } as const
+
 export const DEFAULT_PAGINATION = { PAGE: 1, LIMIT: 10, LIMIT_OPTIONS: [10, 25, 50, 100] } as const
 export const TOAST_CONFIG = { TIMEOUT: 3000 } as const
 export const CONFIRM_DIALOG_DEFAULTS = {
@@ -136,27 +288,12 @@ export const CONFIRM_DIALOG_DEFAULTS = {
 } as const
 ```
 
-```typescript
-// src/constants/validation.constants.ts
-export const VALIDATION_RULES = {
-  required:
-    (label = 'Trường này') =>
-    (v: unknown) =>
-      !!v || `${label} là bắt buộc`,
-  maxLength: (max: number) => (v: string) => !v || v.length <= max || `Tối đa ${max} ký tự`,
-  minLength: (min: number) => (v: string) => !v || v.length >= min || `Tối thiểu ${min} ký tự`,
-  email: (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Email không hợp lệ',
-} as const
-```
-
 ---
 
 ## Composables quan trọng
 
 ```typescript
 // src/composables/useToast.ts
-import { useToast as useToastification } from 'vue-toastification'
-
 export function useToast() {
   const toast = useToastification()
   return {
@@ -170,9 +307,6 @@ export function useToast() {
 
 ```typescript
 // src/composables/useConfirmDialog.ts
-import { useUiStore } from '@/stores/ui.store'
-import type { ConfirmDialogOptions } from '@/types/common.types'
-
 export function useConfirmDialog() {
   const uiStore = useUiStore()
   return {
@@ -185,13 +319,6 @@ export function useConfirmDialog() {
 
 ```typescript
 // src/composables/useUser.ts
-import { ref, computed } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user.store'
-import { useToast } from './useToast'
-import { useConfirmDialog } from './useConfirmDialog'
-import type { CreateUserPayload } from '@/types/user.types'
-
 export function useUser() {
   const store = useUserStore()
   const { users, total, loadingState } = storeToRefs(store)
@@ -201,10 +328,7 @@ export function useUser() {
   const isLoading = computed(() => loadingState.value === 'loading')
 
   async function removeUser(id: number) {
-    const ok = await confirm({
-      title: 'Xóa người dùng?',
-      message: 'Hành động này không thể hoàn tác.',
-    })
+    const ok = await confirm({ title: 'Xóa người dùng?', message: 'Hành động này không thể hoàn tác.' })
     if (!ok) return
     try {
       await store.deleteUser(id)
@@ -217,6 +341,30 @@ export function useUser() {
   return { users, total, isLoading, fetchUsers: store.fetchUsers, removeUser }
 }
 ```
+
+---
+
+## View Pattern — Thin wrapper
+
+```vue
+<!-- src/views/UsersView.vue -->
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useUser } from '@/composables/useUser'
+import UsersDataTable from '@/components/users/UsersDataTable.vue'
+
+const { users, total, isLoading, fetchUsers } = useUser()
+onMounted(fetchUsers)
+</script>
+
+<template>
+  <v-container>
+    <UsersDataTable :users="users" :total="total" :loading="isLoading" />
+  </v-container>
+</template>
+```
+
+> View không chứa business logic, không import service trực tiếp, không gọi `apiClient`.
 
 ---
 
@@ -237,24 +385,26 @@ import AppLoadingOverlay from '@/components/common/AppLoadingOverlay.vue'
 </template>
 ```
 
-> Không có `AppSnackbar` — toast được inject qua `vue-toastification` plugin.
-
 ---
 
 ## Quick-ref: Patterns
 
-| Situation                 | ✅ Đúng                   | ❌ Sai                         |
-| ------------------------- | ------------------------- | ------------------------------ |
-| Destructure store         | `storeToRefs(store)`      | `const { x } = useStore()`     |
-| Notification              | `useToast().success(...)` | `uiStore.showSnackbar(...)`    |
-| Confirm                   | `await confirm({...})`    | inline `v-dialog` trong view   |
-| HTTP call trong component | qua composable            | import service trực tiếp       |
-| Role check                | `USER_ROLES.ADMIN`        | `'admin'` string literal       |
-| Màu sắc                   | `color="primary"`         | `style="color: #1976D2"`       |
-| Loading state             | `LoadingState` type       | `isLoading` boolean            |
-| Derived state             | `computed(...)`           | method không cache             |
-| Pagination                | `v-data-table-server`     | load all rồi phân trang client |
-| Store style               | Setup Store               | Options Store                  |
+| Situation                          | ✅ Đúng                                  | ❌ Sai                              |
+| ---------------------------------- | ---------------------------------------- | ----------------------------------- |
+| Destructure store                  | `storeToRefs(store)`                     | `const { x } = useStore()`          |
+| Notification                       | `useToast().success(...)`                | `uiStore.showSnackbar(...)`         |
+| Confirm                            | `await confirm({...})`                   | inline `v-dialog` trong view        |
+| HTTP call                          | `apiClient.get/post/...`                 | `axios.get(...)` trực tiếp          |
+| HTTP call trong component          | qua composable                           | import service trực tiếp            |
+| API response field                 | `response.IsSuccess`, `response.Data`    | `response.isSuccess`, `response.data` |
+| Role check                         | `USER_ROLES.ADMIN`                       | `'admin'` string literal            |
+| Permission check                   | `can({ resource: 'x', action: 'read' })` | hard-code role string               |
+| Màu sắc                            | `color="primary"`                        | `style="color: #1976D2"`            |
+| Loading state                      | `LoadingState` type                      | `isLoading` boolean                 |
+| Derived state                      | `computed(...)`                          | method không cache                  |
+| Pagination                         | `v-data-table-server`                    | load all rồi phân trang client      |
+| Store style                        | Setup Store                              | Options Store                       |
+| Service                            | class + export singleton                 | functional export                   |
 
 ---
 
@@ -265,10 +415,14 @@ import AppLoadingOverlay from '@/components/common/AppLoadingOverlay.vue'
 - [ ] Không Tailwind — Vuetify utilities + SCSS
 - [ ] Toast dùng `useToast()`, không Vuetify snackbar
 - [ ] `storeToRefs` khi destructure state/getters từ store
+- [ ] API response fields dùng PascalCase: `IsSuccess`, `Data`, `Error`
+- [ ] HTTP calls qua `apiClient`, không Axios trực tiếp
+- [ ] Service là class-based singleton, export `const xyzService = new XyzService()`
+- [ ] View là thin wrapper — logic ở composables, component
 - [ ] Validation rules từ `validation.constants.ts`
 - [ ] Vuetify plugin qua `vite-plugin-vuetify` (không `import * as components`)
 - [ ] Error state được xử lý (không chỉ happy path)
-- [ ] Store không import component; Component không import service trực tiếp
+- [ ] Store không import component; Component không import service/apiClient trực tiếp
 
 ---
 
