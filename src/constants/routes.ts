@@ -1,14 +1,16 @@
+import { ROUTE_NAMES, ROUTE_PATHS } from './app.constants'
+
 export const APP_ROUTES = {
-  HOME: { NAME: 'home', PATH: '/' },
+  HOME: { NAME: ROUTE_NAMES.HOME, PATH: ROUTE_PATHS.HOME },
   AUTH: {
-    LOGIN: { NAME: 'auth:login', PATH: '/auth/login' },
-    REGISTER: { NAME: 'auth:register', PATH: '/auth/register' },
+    LOGIN: { NAME: ROUTE_NAMES.LOGIN, PATH: ROUTE_PATHS.LOGIN },
+    REGISTER: { NAME: ROUTE_NAMES.REGISTER, PATH: ROUTE_PATHS.REGISTER },
   },
   DASHBOARD: {
-    HOME: { NAME: 'dashboard:home', PATH: '/admin' },
+    HOME: { NAME: ROUTE_NAMES.DASHBOARD, PATH: ROUTE_PATHS.DASHBOARD },
   },
   USERS: {
-    LIST: { NAME: 'users:list', PATH: '/admin/users' },
+    LIST: { NAME: ROUTE_NAMES.USERS, PATH: ROUTE_PATHS.USERS },
   },
-  NOT_FOUND: { NAME: 'not-found', PATH: '/:pathMatch(.*)*' },
+  NOT_FOUND: { NAME: ROUTE_NAMES.NOT_FOUND, PATH: ROUTE_PATHS.NOT_FOUND },
 } as const

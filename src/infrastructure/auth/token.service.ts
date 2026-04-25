@@ -1,6 +1,6 @@
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storages'
-import type { AuthTokens, User } from '@/models/auth.models'
 import { storage } from '@/infrastructure/storage/local-storage'
+import type { AuthTokens, User } from '@/types/auth.types'
 
 class TokenService {
   getAccessToken(): string | null {

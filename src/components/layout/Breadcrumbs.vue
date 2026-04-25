@@ -22,9 +22,12 @@ const route = useRoute()
 
 const items = computed<BreadcrumbItem[]>(() => {
   const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', to: APP_ROUTES.DASHBOARD.HOME.PATH }]
+  const routeBreadcrumbs = (route.meta.breadcrumb ?? route.meta.breadcrumbs) as
+    | BreadcrumbItem[]
+    | undefined
 
-  if (route.meta.breadcrumbs) {
-    breadcrumbs.push(...(route.meta.breadcrumbs as BreadcrumbItem[]))
+  if (routeBreadcrumbs) {
+    breadcrumbs.push(...routeBreadcrumbs)
     return breadcrumbs
   }
 

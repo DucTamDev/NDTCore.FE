@@ -1,11 +1,5 @@
 import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
-import type {
-  ApiResponse,
-  PagedApiResponse,
-  QueryParams,
-  RequestConfig,
-  TokenPair,
-} from '@/models/api.models'
+import type { ApiResponse, PagedApiResponse, QueryParams, RequestConfig, TokenPair } from '@/models/api.models'
 import { CLIENT_ID } from '@/constants/client-id'
 import { CLIENT_TYPE } from '@/constants/client-type'
 import { tokenService } from '@/infrastructure/auth/token.service'
@@ -32,6 +26,13 @@ function log(label: string, data?: unknown): void {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+interface RefreshTokenApiResponse {
+  AccessToken: string
+  RefreshToken: string
+  AccessTokenExpiration: string
+  RefreshTokenExpiration: string
 }
 
 class ApiClient {
@@ -127,12 +128,13 @@ class ApiClient {
   }
 
   private async doRefresh(): Promise<TokenPair> {
+    const accessToken = tokenService.getAccessToken()
     const refreshToken = tokenService.getRefreshToken()
-    if (!refreshToken) throw new Error('No refresh token')
+    if (!accessToken || !refreshToken) throw new Error('Missing auth tokens')
 
-    const response = await this.http.post<ApiResponse<TokenPair>>(
-      '/auth/refresh-token',
-      { refreshToken },
+    const response = await this.http.post<ApiResponse<RefreshTokenApiResponse>>(
+      '/api/admin/auth/refresh',
+      { AccessToken: accessToken, RefreshToken: refreshToken },
       { skipAuth: true, skipErrorNotification: true, showLoading: false } as RequestConfig,
     )
 
@@ -140,8 +142,13 @@ class ApiClient {
       throw new Error(response.data.Message ?? 'Refresh failed')
     }
 
-    tokenService.setTokens(response.data.Data)
-    return response.data.Data
+    const tokens = {
+      accessToken: response.data.Data.AccessToken,
+      refreshToken: response.data.Data.RefreshToken,
+    }
+
+    tokenService.setTokens(tokens)
+    return tokens
   }
 
   private shouldRetry(error: AxiosError): boolean {

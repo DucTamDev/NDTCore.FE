@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { AuthTokens, User } from '@/models/auth.models'
+import type { AuthTokens, User } from '@/types/auth.types'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const tokens = ref<AuthTokens | null>(null)
 
   const isAuthenticated = computed(() => !!tokens.value?.accessToken)
+  const accessToken = computed(() => tokens.value?.accessToken ?? null)
+  const refreshToken = computed(() => tokens.value?.refreshToken ?? null)
+  const userRole = computed(() => user.value?.role ?? null)
 
   function setSession(nextUser: User, nextTokens: AuthTokens): void {
     user.value = nextUser
@@ -26,6 +29,9 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     tokens,
     isAuthenticated,
+    accessToken,
+    refreshToken,
+    userRole,
     setSession,
     setUser,
     clearSession,

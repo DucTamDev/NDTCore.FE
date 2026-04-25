@@ -1,13 +1,14 @@
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth.store'
 import { authService } from '@/services/auth.service'
-import type { LoginRequest, Permission, RegisterRequest } from '@/models/auth.models'
+import type { LoginRequest, Permission, RegisterRequest } from '@/types/auth.types'
 
 export function useAuth() {
   const authStore = useAuthStore()
+  const { isAuthenticated, user } = storeToRefs(authStore)
 
-  const isAuthenticated = computed(() => authStore.isAuthenticated)
-  const currentUser = computed(() => authStore.user)
+  const currentUser = computed(() => user.value)
 
   function can(permission: Permission): boolean {
     return authService.hasPermission(permission)

@@ -1,6 +1,4 @@
-export interface ValidationRule {
-  (value: unknown): boolean | string
-}
+import { VALIDATION_RULES, type ValidationRule } from '@/constants/validation.constants'
 
 export interface ValidationRules {
   required: ValidationRule
@@ -10,30 +8,12 @@ export interface ValidationRules {
   pattern: (pattern: RegExp, message: string) => ValidationRule
 }
 
-function hasValue(value: unknown): boolean {
-  if (Array.isArray(value)) return value.length > 0
-  return Boolean(value)
-}
-
 export function useFormValidation() {
   const rules: ValidationRules = {
-    required: (value: unknown) => hasValue(value) || 'Trường này là bắt buộc',
-
-    email: (value: unknown) => {
-      if (typeof value !== 'string' || !value) return true
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || 'Email không hợp lệ'
-    },
-
-    minLength: (min: number) => (value: unknown) => {
-      if (typeof value !== 'string' || !value) return true
-      return value.length >= min || `Tối thiểu ${min} ký tự`
-    },
-
-    maxLength: (max: number) => (value: unknown) => {
-      if (typeof value !== 'string' || !value) return true
-      return value.length <= max || `Tối đa ${max} ký tự`
-    },
-
+    required: VALIDATION_RULES.required(),
+    email: VALIDATION_RULES.email,
+    minLength: VALIDATION_RULES.minLength,
+    maxLength: VALIDATION_RULES.maxLength,
     pattern: (pattern: RegExp, message: string) => (value: unknown) => {
       if (typeof value !== 'string' || !value) return true
       return pattern.test(value) || message

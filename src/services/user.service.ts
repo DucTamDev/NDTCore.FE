@@ -1,11 +1,12 @@
-import type { User } from '@/models/auth.models'
+import { USER_ROLES } from '@/constants/app.constants'
+import type { User } from '@/types/auth.types'
 
 const mockUsers: User[] = [
   {
     id: 'u-1',
     name: 'Admin User',
     email: 'admin@ndtcore.local',
-    role: 'admin',
+    role: USER_ROLES.ADMIN,
     permissions: [
       { resource: 'dashboard', action: 'read' },
       { resource: 'users', action: 'manage' },
@@ -15,7 +16,7 @@ const mockUsers: User[] = [
     id: 'u-2',
     name: 'Operations Lead',
     email: 'ops@ndtcore.local',
-    role: 'manager',
+    role: USER_ROLES.USER,
     permissions: [{ resource: 'users', action: 'read' }],
   },
 ]

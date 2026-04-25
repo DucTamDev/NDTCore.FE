@@ -1,10 +1,5 @@
-import { toastService } from '@/plugins/toast/toast.service'
+import { useToast } from './useToast'
 
 export function useNotification() {
-  return {
-    success: toastService.success,
-    error: toastService.error,
-    warning: toastService.warning,
-    info: toastService.info,
-  }
+  return useToast()
 }
