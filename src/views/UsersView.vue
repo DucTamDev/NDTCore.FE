@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import DataTable from '@/components/common/DataTable.vue'
-import type { DataTableHeader } from '@/components/common/types'
+import DataTable from '@/components/ui/DataTable.vue'
+import type { DataTableHeader } from '@/components/ui/data-table.types'
 import { useUser } from '@/composables/useUser'
 
 const headers: DataTableHeader[] = [
