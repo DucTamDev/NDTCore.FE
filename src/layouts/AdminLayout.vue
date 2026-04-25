@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import AppFooter from '@/components/common/AppFooter.vue'
-import AppBar from '@/components/layout/AppBar.vue'
+import AppBar from '@/components/common/AppBar.vue'
 import NavigationDrawer from '@/components/layout/NavigationDrawer.vue'
 import { useUiStore } from '@/stores/ui.store'
 
