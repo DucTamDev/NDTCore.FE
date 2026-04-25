@@ -10,7 +10,7 @@ export const authRoutes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: APP_ROUTES.AUTH.LOGIN.NAME,
-        component: () => import('@/pages/auth/LoginPage.vue'),
+        component: () => import('@/views/LoginView.vue'),
         meta: {
           title: 'Đăng nhập',
           requiresAuth: false,
@@ -19,7 +19,7 @@ export const authRoutes: RouteRecordRaw[] = [
       {
         path: 'register',
         name: APP_ROUTES.AUTH.REGISTER.NAME,
-        component: () => import('@/pages/auth/RegisterPage.vue'),
+        component: () => import('@/views/RegisterView.vue'),
         meta: {
           title: 'Đăng ký',
           requiresAuth: false,

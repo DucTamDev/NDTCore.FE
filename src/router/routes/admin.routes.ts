@@ -12,7 +12,7 @@ export const adminRoutes: RouteRecordRaw[] = [
       {
         path: '',
         name: APP_ROUTES.DASHBOARD.HOME.NAME,
-        component: () => import('@/pages/dashboard/DashboardPage.vue'),
+        component: () => import('@/views/DashboardView.vue'),
         meta: {
           title: 'Dashboard',
           breadcrumbs: [{ title: 'Dashboard', disabled: true }],
@@ -21,7 +21,7 @@ export const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'users',
         name: APP_ROUTES.USERS.LIST.NAME,
-        component: () => import('@/pages/users/UsersPage.vue'),
+        component: () => import('@/views/UsersView.vue'),
         meta: {
           title: 'Users',
           permissions: [{ resource: 'users', action: 'read' }],

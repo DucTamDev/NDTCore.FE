@@ -11,7 +11,7 @@ export const publicRoutes: RouteRecordRaw[] = [
       {
         path: '',
         name: APP_ROUTES.HOME.NAME,
-        component: () => import('@/pages/home/HomePage.vue'),
+        component: () => import('@/views/HomeView.vue'),
         meta: {
           title: 'Home',
           requiresAuth: false,
@@ -26,7 +26,7 @@ export const publicRoutes: RouteRecordRaw[] = [
       {
         path: '',
         name: APP_ROUTES.NOT_FOUND.NAME,
-        component: () => import('@/pages/NotFoundPage.vue'),
+        component: () => import('@/views/NotFoundView.vue'),
         meta: {
           title: '404 Not Found',
           requiresAuth: false,
