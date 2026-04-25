@@ -130,7 +130,7 @@
 
 <script setup lang="ts">
 import { useTheme } from '@/plugins/vuetify/theme'
-import ThemeSelector from '@/components/common/ThemeSelector.vue'
+import ThemeSelector from '@/components/theme/ThemeSelector.vue'
 
 const ctx = useTheme()
 
