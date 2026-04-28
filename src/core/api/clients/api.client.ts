@@ -17,7 +17,6 @@ import { CLIENT_ID, CLIENT_TYPE } from '@/core/constants/client-type.constants'
 import { createLogger } from '@/core/logger/logger'
 import { API_EVENT, apiEvents } from '@/core/events/api.events'
 import type { AuthTokenModel } from '@/models/auth.model'
-import { STORAGE_TYPE } from '@/core/storage/storage.keys'
 import type { RefreshTokenRequest, RefreshTokenResponse } from '@/core/api/dtos/auth.dtos'
 import { API_ENDPOINTS } from '@/core/constants/api.constants'
 
@@ -178,7 +177,7 @@ export class ApiClient {
                     config &&
                     !config.skipAuthRefresh &&
                     status === 401 &&
-                    errorCode === ERROR_CODES.TOKEN_EXPIRED
+                    errorCode === ERROR_CODES.ACCESS_TOKEN_EXPIRED
 
                 if (shouldRefresh) return this.handleRefresh(error)
                 if (shouldRetry(error)) return retryRequest(error, this.httpClient)
