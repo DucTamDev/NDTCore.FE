@@ -1,16 +1,17 @@
+<!-- HomeView.vue -->
 <template>
-  <v-layout>
+  <div>
     <HomeNav />
-    <v-main>
-      <HomeHero />
-      <HomeAbout />
-      <HomeMenu />
-      <HomeFranchise />
-      <HomeFaq />
-      <HomeContact />
+    <div>
+      <section id="hero"><HomeHero /></section>
+      <section id="ve-chung-toi"><HomeAbout /></section>
+      <section id="menu"><HomeMenu /></section>
+      <section id="nhuong-quyen"><HomeFranchise /></section>
+      <section id="faq"><HomeFaq /></section>
+      <section id="lien-he"><HomeContact /></section>
       <HomeFooter />
-    </v-main>
-  </v-layout>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -13,7 +13,7 @@
 
     <v-text-field
       v-model="form.password"
-      label="Mat khau"
+      label="Mật khẩu"
       :type="showPassword ? 'text' : 'password'"
       autocomplete="current-password"
       :rules="rules.password"
@@ -28,7 +28,7 @@
         to="/forgot-password"
         class="text-caption text-primary text-decoration-none font-weight-bold"
       >
-        Quen mat khau?
+        Quên mật khẩu?
       </router-link>
     </div>
 
@@ -41,16 +41,16 @@
       :loading="loading"
       class="text-none"
     >
-      Dang nhap
+      Đăng nhập
     </v-btn>
 
     <div class="text-center mt-6">
-      <span class="text-body-2 text-medium-emphasis">Chua co tai khoan? </span>
+      <span class="text-body-2 text-medium-emphasis">Chưa có tài khoản? </span>
       <router-link
-        :to="APP_ROUTES.AUTH.REGISTER.PATH"
+        :to="{ name: APP_ROUTES.AUTH.CHILDREN.REGISTER.NAME }"
         class="text-body-2 text-primary text-decoration-none font-weight-bold"
       >
-        Dang ky ngay
+        Đăng nhập ngay
       </router-link>
     </div>
   </v-form>
@@ -60,13 +60,13 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { useToast } from '@/composables/useToast'
-import { APP_ROUTES } from '@/constants/routes'
-import { VALIDATION_RULES } from '@/constants/validation.constants'
+import { useToastNotification } from '@/composables/useToastNotification'
+import { APP_ROUTES } from '@/core/constants/app-routes.constants'
+import { VALIDATION_RULES } from '@/core/constants/validation-rule.constants'
 
 const router = useRouter()
 const { login } = useAuth()
-const { error: notifyError } = useToast()
+const { error: notifyError } = useToastNotification()
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
 
 const form = reactive({
@@ -79,7 +79,7 @@ const loading = ref(false)
 
 const rules = {
   email: [VALIDATION_RULES.required('Email'), VALIDATION_RULES.email],
-  password: [VALIDATION_RULES.required('Mat khau'), VALIDATION_RULES.minLength(6)],
+  password: [VALIDATION_RULES.required('Mật khẩu'), VALIDATION_RULES.minLength(6)],
 }
 
 async function handleLogin() {
@@ -90,12 +90,12 @@ async function handleLogin() {
 
   try {
     await login({
-      email: form.email,
-      password: form.password,
+      Email: form.email,
+      Password: form.password,
     })
-    await router.push(APP_ROUTES.DASHBOARD.HOME.PATH)
+    await router.push(APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.PATH)
   } catch (error) {
-    notifyError(error instanceof Error ? error.message : 'Dang nhap that bai.')
+    notifyError(error instanceof Error ? error.message : 'Đăng nhập thất bại.')
   } finally {
     loading.value = false
   }

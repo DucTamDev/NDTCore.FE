@@ -16,12 +16,14 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { BreadcrumbItem } from '@/models/breadcrumb.models'
-import { APP_ROUTES } from '@/constants/routes'
+import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 
 const route = useRoute()
 
 const items = computed<BreadcrumbItem[]>(() => {
-  const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', to: APP_ROUTES.DASHBOARD.HOME.PATH }]
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', to: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.PATH },
+  ]
   const routeBreadcrumbs = (route.meta.breadcrumb ?? route.meta.breadcrumbs) as
     | BreadcrumbItem[]
     | undefined

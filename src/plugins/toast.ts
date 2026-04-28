@@ -1,9 +1,8 @@
 import Toast, { POSITION, type PluginOptions } from 'vue-toastification'
-import { TOAST_CONFIG } from '@/constants/app.constants'
 
 export const toastOptions: PluginOptions = {
   position: POSITION.TOP_RIGHT,
-  timeout: TOAST_CONFIG.TIMEOUT,
+  timeout: 3000,
   closeOnClick: true,
   pauseOnFocusLoss: true,
   pauseOnHover: true,

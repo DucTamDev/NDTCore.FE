@@ -1,12 +1,12 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user.store'
-import { useToast } from './useToast'
+import { useToastNotification } from './useToastNotification'
 
 export function useUser() {
   const userStore = useUserStore()
   const { items, total, loadingState } = storeToRefs(userStore)
-  const toast = useToast()
+  const toast = useToastNotification()
 
   const isLoading = computed(() => loadingState.value === 'loading')
 

@@ -34,20 +34,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-import { menuConfig } from '@/constants/menu.config'
+import { menuConfig } from '@/core/constants/menu-config.constants'
 import type { MenuItem } from '@/models/menu.models'
 
 defineProps<{
   rail?: boolean
 }>()
 
-const { canAny } = useAuth()
 
 const visibleItems = computed(() => menuConfig.filter(hasAccess))
 
 function hasAccess(item: MenuItem): boolean {
   if (!item.permissions?.length) return true
-  return canAny(item.permissions)
+
+  // check role , permission
+  return true
 }
 </script>

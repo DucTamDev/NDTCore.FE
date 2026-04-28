@@ -7,19 +7,14 @@
       </p>
     </div>
 
-    <DataTable
-      :headers="headers"
-      :items="items"
-      :loading="loading"
-      :show-pagination="false"
-    />
+    <DataTable :headers="headers" :items="items" :loading="loading" :show-pagination="false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import DataTable from '@/components/ui/DataTable.vue'
-import type { DataTableHeader } from '@/components/ui/data-table.types'
+import type { DataTableHeader } from '@/core/types/data-table.types'
 import { useUser } from '@/composables/useUser'
 
 const headers: DataTableHeader[] = [

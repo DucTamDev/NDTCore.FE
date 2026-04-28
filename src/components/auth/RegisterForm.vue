@@ -55,16 +55,16 @@
       :loading="loading"
       class="text-none mt-4"
     >
-      Dang ky
+      Đăng ký
     </v-btn>
 
     <div class="text-center mt-6">
-      <span class="text-body-2 text-medium-emphasis">Da co tai khoan? </span>
+      <span class="text-body-2 text-medium-emphasis">Đã có tài khoản? </span>
       <router-link
-        :to="APP_ROUTES.AUTH.LOGIN.PATH"
+        :to="{ name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME }"
         class="text-body-2 text-primary text-decoration-none font-weight-bold"
       >
-        Dang nhap
+        Đăng nhập
       </router-link>
     </div>
   </v-form>
@@ -74,13 +74,14 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { useToast } from '@/composables/useToast'
-import { APP_ROUTES } from '@/constants/routes'
-import { VALIDATION_RULES } from '@/constants/validation.constants'
+import { useToastNotification } from '@/composables/useToastNotification'
+import { APP_ROUTES } from '@/core/constants/app-routes.constants'
+import { VALIDATION_RULES } from '@/core/constants/validation-rule.constants'
+import type { RegisterRequest } from '@/core/api/dtos/auth.dtos'
 
 const router = useRouter()
 const { register } = useAuth()
-const { error: notifyError, success } = useToast()
+const { error: notifyError, success } = useToastNotification()
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
 
 const form = reactive({
@@ -110,14 +111,15 @@ async function handleRegister() {
 
   loading.value = true
 
+  const registerRequest: RegisterRequest = {
+    FullName: form.fullName,
+    Email: form.email,
+    Password: form.password,
+  }
   try {
-    await register({
-      fullName: form.fullName,
-      email: form.email,
-      password: form.password,
-    })
+    await register(registerRequest)
     success('Dang ky thanh cong. Ban co the dang nhap ngay.')
-    await router.push(APP_ROUTES.AUTH.LOGIN.PATH)
+    await router.push(APP_ROUTES.AUTH.CHILDREN.LOGIN.PATH)
   } catch (error) {
     notifyError(error instanceof Error ? error.message : 'Dang ky that bai.')
   } finally {

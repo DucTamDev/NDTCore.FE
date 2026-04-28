@@ -1,16 +1,48 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { APP_NAME } from '@/constants/app.constants'
+import { APP_NAME } from '@/core/constants/app.constants'
 import { routes } from './routes'
-import { authGuard } from './guards/auth.guard'
+import { useAuthStore } from '@/stores/auth.store'
+import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
-  scrollBehavior: (_to, _from, savedPosition) => savedPosition ?? { top: 0 },
+    history: createWebHistory(),
+    routes,
+    scrollBehavior(to, _from, savedPosition) {
+        if (savedPosition) return savedPosition
+
+        if (to.hash) {
+            return {
+                el: to.hash,
+                behavior: 'smooth',
+                top: 64,
+            }
+        }
+
+        return { top: 0 }
+    },
 })
 
-router.beforeEach((to) => {
-  document.title = `${to.meta.title || APP_NAME} | ${APP_NAME}`
-})
+router.beforeEach(async (to) => {
+    const authStore = useAuthStore()
 
-router.beforeEach(authGuard)
+    await authStore.initialize()
+
+    console.log('guard', {
+        to: to.name,
+        isLoggedIn: authStore.isLoggedIn,
+        requiresAuth: to.meta.requiresAuth,
+    })
+
+    // Đã login → không cho vào trang không cần auth
+    if (authStore.isLoggedIn && !to.meta.requiresAuth) {
+        return { name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME }
+    }
+
+    // Chưa login → không cho vào trang cần auth
+    if (!authStore.isLoggedIn && to.meta.requiresAuth) {
+        return { name: APP_ROUTES.HOME.NAME }
+    }
+
+    const pageTitle = to.meta.title as string | undefined
+    document.title = pageTitle && pageTitle !== APP_NAME ? `${pageTitle} | ${APP_NAME}` : APP_NAME
+})

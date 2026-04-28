@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Pagination from './Pagination.vue'
-import type { DataTableHeader } from './types'
+import type { DataTableHeader } from '@/core/types'
 
 interface Props {
   headers: DataTableHeader[]

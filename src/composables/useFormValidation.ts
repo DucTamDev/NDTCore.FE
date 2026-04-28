@@ -1,4 +1,4 @@
-import { VALIDATION_RULES, type ValidationRule } from '@/constants/validation.constants'
+import { VALIDATION_RULES, type ValidationRule } from '@/core/constants/validation-rule.constants'
 
 export interface ValidationRules {
   required: ValidationRule

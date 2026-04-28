@@ -1,39 +1,125 @@
+// src/stores/auth.store.ts
+import { identityClient } from '@/core/api/clients/identity.client'
+import type { LoginRequest, LoginResponse } from '@/core/api/dtos/auth.dtos'
+import type { UserProfileResponse } from '@/core/api/dtos/user.dtos'
+import { createLogger } from '@/core/logger/logger'
+import { STORAGE_TYPE } from '@/core/storage/storage.keys'
+import { tokenStorageService } from '@/core/storage/token-storage.service'
+import type { AuthTokenModel } from '@/models/auth.model'
+import { AxiosError } from 'axios'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { AuthTokens, User } from '@/types/auth.types'
+
+const log = createLogger('auth-store')
+
+// Module-level → reset mỗi lần F5, không bị persist
+let initPromise: Promise<void> | null = null
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<User | null>(null)
-  const tokens = ref<AuthTokens | null>(null)
+    const user = ref<UserProfileResponse | null>(null)
+    const isInitialized = ref(false)
 
-  const isAuthenticated = computed(() => !!tokens.value?.accessToken)
-  const accessToken = computed(() => tokens.value?.accessToken ?? null)
-  const refreshToken = computed(() => tokens.value?.refreshToken ?? null)
-  const userRole = computed(() => user.value?.role ?? null)
+    const isLoggedIn = computed(() => !!user.value)
 
-  function setSession(nextUser: User, nextTokens: AuthTokens): void {
-    user.value = nextUser
-    tokens.value = nextTokens
-  }
+    // ─────────────────────────────────────────────
+    // INITIALIZE
+    // ─────────────────────────────────────────────
 
-  function setUser(nextUser: User | null): void {
-    user.value = nextUser
-  }
+    function initialize(): Promise<void> {
+        if (initPromise) return initPromise
 
-  function clearSession(): void {
-    user.value = null
-    tokens.value = null
-  }
+        initPromise = (async () => {
+            try {
+                const token = tokenStorageService.get()
 
-  return {
-    user,
-    tokens,
-    isAuthenticated,
-    accessToken,
-    refreshToken,
-    userRole,
-    setSession,
-    setUser,
-    clearSession,
-  }
+                if (!token) {
+                    log.info('No token found')
+                    return
+                }
+
+                log.info('Token found, fetching user profile')
+
+                const response = await identityClient.getMeAsync()
+                user.value = response.Data ?? null
+
+                log.info('User profile loaded', user.value)
+            } catch (err) {
+                const status = (err as AxiosError)?.response?.status
+                log.warn('Initialize failed', { status })
+
+                if (status === 401) {
+                    tokenStorageService.clear()
+                    user.value = null
+                }
+                // network/500 → không clear token
+            } finally {
+                isInitialized.value = true
+            }
+        })()
+
+        return initPromise
+    }
+
+    // ─────────────────────────────────────────────
+    // LOGIN
+    // ─────────────────────────────────────────────
+
+    async function login(payload: LoginRequest): Promise<void> {
+        log.info('Login called')
+
+        const response = await identityClient.loginAsync(payload)
+        const data = response.Data
+
+        log.info('Login response', response)
+
+        if (
+            !data?.AccessToken ||
+            !data?.RefreshToken ||
+            !data?.AccessTokenExpiration ||
+            !data?.RefreshTokenExpiration
+        ) {
+            throw new Error('Invalid login response')
+        }
+
+        const authToken: AuthTokenModel = {
+            accessToken: data.AccessToken,
+            refreshToken: data.RefreshToken,
+            accessTokenExpiration: data.AccessTokenExpiration,
+            refreshTokenExpiration: data.RefreshTokenExpiration,
+        }
+
+        tokenStorageService.save(authToken, STORAGE_TYPE.LOCAL)
+
+        log.info('Token saved, fetching user profile')
+
+        const meResponse = await identityClient.getMeAsync()
+        user.value = meResponse.Data ?? null
+
+        // Reset initPromise để initialize chạy lại nếu cần
+        initPromise = Promise.resolve()
+        isInitialized.value = true
+
+        log.info('Login success', user.value)
+    }
+
+    // ─────────────────────────────────────────────
+    // LOGOUT / RESET
+    // ─────────────────────────────────────────────
+
+    function reset(): void {
+        user.value = null
+        isInitialized.value = false
+        initPromise = null
+        tokenStorageService.clear()
+        log.info('Auth reset')
+    }
+
+    return {
+        user,
+        isLoggedIn,
+        isInitialized,
+        initialize,
+        login,
+        reset,
+    }
 })

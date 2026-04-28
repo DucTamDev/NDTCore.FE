@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { menuConfig } from '@/constants/menu.config'
+import { menuConfig } from '@/core/constants/menu-config.constants'
 
 const route = useRoute()
 const model = defineModel<boolean>({ required: true })
@@ -22,7 +22,7 @@ const emit = defineEmits<{
         :key="item.to"
         :prepend-icon="item.icon"
         :title="item.title"
-        :to="item.to"
+        :to="{ name: item.to }"
         :active="route.path === item.to"
       />
     </v-list>
