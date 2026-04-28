@@ -3,7 +3,6 @@ import { identityClient } from '@/core/api/clients/identity.client'
 import type { LoginRequest, LoginResponse } from '@/core/api/dtos/auth.dtos'
 import type { UserProfileResponse } from '@/core/api/dtos/user.dtos'
 import { createLogger } from '@/core/logger/logger'
-import { STORAGE_TYPE } from '@/core/storage/storage.keys'
 import { tokenStorageService } from '@/core/storage/token-storage.service'
 import type { AuthTokenModel } from '@/models/auth.model'
 import { AxiosError } from 'axios'
@@ -51,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
                     tokenStorageService.clear()
                     user.value = null
                 }
-                // network/500 → không clear token
+               
             } finally {
                 isInitialized.value = true
             }
@@ -88,7 +87,7 @@ export const useAuthStore = defineStore('auth', () => {
             refreshTokenExpiration: data.RefreshTokenExpiration,
         }
 
-        tokenStorageService.save(authToken, STORAGE_TYPE.LOCAL)
+        tokenStorageService.save(authToken)
 
         log.info('Token saved, fetching user profile')
 

@@ -1,12 +1,7 @@
 import { VALIDATION_RULES, type ValidationRule } from '@/core/constants/validation-rule.constants'
+import type { ValidationRules } from '@/core/types'
 
-export interface ValidationRules {
-  required: ValidationRule
-  email: ValidationRule
-  minLength: (min: number) => ValidationRule
-  maxLength: (max: number) => ValidationRule
-  pattern: (pattern: RegExp, message: string) => ValidationRule
-}
+export type { ValidationRules }
 
 export function useFormValidation() {
   const rules: ValidationRules = {

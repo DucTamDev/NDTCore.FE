@@ -2,7 +2,7 @@
   <v-form ref="formRef" @submit.prevent="handleRegister">
     <v-text-field
       v-model="form.fullName"
-      label="Ho va ten"
+      label="Họ và tên"
       autocomplete="name"
       :rules="rules.fullName"
       color="primary"
@@ -23,7 +23,7 @@
 
     <v-text-field
       v-model="form.password"
-      label="Mat khau"
+      label="Mật khẩu"
       :type="showPassword ? 'text' : 'password'"
       autocomplete="new-password"
       :rules="rules.password"
@@ -36,7 +36,7 @@
 
     <v-text-field
       v-model="form.confirmPassword"
-      label="Xac nhan mat khau"
+      label="Xác nhận mật khẩu"
       :type="showConfirm ? 'text' : 'password'"
       autocomplete="new-password"
       :rules="rules.confirmPassword"
@@ -96,12 +96,12 @@ const showConfirm = ref(false)
 const loading = ref(false)
 
 const rules = {
-  fullName: [VALIDATION_RULES.required('Ho va ten')],
+  fullName: [VALIDATION_RULES.required('Họ và tên')],
   email: [VALIDATION_RULES.required('Email'), VALIDATION_RULES.email],
-  password: [VALIDATION_RULES.required('Mat khau'), VALIDATION_RULES.minLength(6)],
+  password: [VALIDATION_RULES.required('Mật khẩu'), VALIDATION_RULES.minLength(6)],
   confirmPassword: [
-    VALIDATION_RULES.required('Xac nhan mat khau'),
-    (value: string) => value === form.password || 'Mat khau khong khop',
+    VALIDATION_RULES.required('Xác nhận mật khẩu'),
+    (value: string) => value === form.password || 'Mật khẩu không khớp',
   ],
 }
 
@@ -118,10 +118,10 @@ async function handleRegister() {
   }
   try {
     await register(registerRequest)
-    success('Dang ky thanh cong. Ban co the dang nhap ngay.')
+    success('Đăng ký thành công. Bạn có thể đăng nhập ngay.')
     await router.push(APP_ROUTES.AUTH.CHILDREN.LOGIN.PATH)
   } catch (error) {
-    notifyError(error instanceof Error ? error.message : 'Dang ky that bai.')
+    notifyError(error instanceof Error ? error.message : 'Đăng ký thất bại.')
   } finally {
     loading.value = false
   }

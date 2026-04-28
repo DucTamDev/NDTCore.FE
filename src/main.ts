@@ -18,5 +18,4 @@ apiEvents.on(API_EVENT.SESSION_EXPIRED, () => {
     router.push({ name: APP_ROUTES.HOME.NAME })
 })
 
-
 app.mount('#app')

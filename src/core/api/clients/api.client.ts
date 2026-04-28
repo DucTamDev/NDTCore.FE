@@ -115,8 +115,9 @@ export class ApiClient {
                 refreshTokenExpiration: data.RefreshTokenExpiration,
             }
 
-            tokenStorageService.save(authToken, STORAGE_TYPE.LOCAL)
+            tokenStorageService.save(authToken)
             log.info('Token refreshed')
+
             this.onTokenRefreshed?.(authToken)
             this.flushQueue(null, data.AccessToken)
             this.setAuthHeader(failedConfig, data.AccessToken)

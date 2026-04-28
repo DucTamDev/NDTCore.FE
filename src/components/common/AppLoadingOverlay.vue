@@ -8,7 +8,6 @@ const ui = useUiStore()
   <v-overlay
     :model-value="ui.isGlobalLoading"
     class="align-center justify-center"
-    contained
     persistent
   >
     <v-progress-circular color="primary" indeterminate size="56" width="4" />

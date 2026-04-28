@@ -1,12 +1,12 @@
 import { IMG } from './home.images'
 import type {
   Benefit,
+  DrinkItem,
   FaqItem,
   InvestRow,
-  MenuItem,
   MenuTab,
   ProcessStep,
-} from '@/models/home.models'
+} from '@/data/home.types'
 
 export const VALUES: string[] = [
   'Chất lượng',
@@ -24,7 +24,7 @@ export const MENU_TABS: MenuTab[] = [
   { id: 'fresh', name: 'Fresh & Cà Phê' },
 ]
 
-export const ALL_MENU: MenuItem[] = [
+export const ALL_MENU: DrinkItem[] = [
   { cat: 'milk-tea', imgUrl: IMG.olong_hanh_nhan, name: 'Olong Hạnh Nhân', desc: 'Trà olong, hạnh nhân, sữa', price: '23K' },
   { cat: 'milk-tea', imgUrl: IMG.olong_hat_phi, name: 'Olong Hạt Phỉ', desc: 'Trà olong, hạt phỉ, sữa', price: '23K' },
   { cat: 'milk-tea', imgUrl: IMG.tam_gao, name: 'Tấm Gạo', desc: 'Trà olong tấm gạo, sữa', price: '20K' },

@@ -1,9 +1,7 @@
 import { ref, type Ref } from 'vue'
+import type { AsyncStateOptions } from '@/core/types'
 
-export interface AsyncStateOptions<T> {
-    initialData?: T
-    onError?: (error: Error) => void
-}
+export type { AsyncStateOptions }
 
 export function useAsyncState<T, TArgs extends unknown[]>(
     asyncFunction: (...args: TArgs) => Promise<T>,

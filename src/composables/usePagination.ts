@@ -1,10 +1,7 @@
 import { ref, computed } from 'vue'
+import type { PaginationOptions } from '@/core/types'
 
-export interface PaginationOptions {
-    initialPage?: number
-    initialPageSize?: number
-    total?: number
-}
+export type { PaginationOptions }
 
 export function usePagination(options: PaginationOptions = {}) {
     const currentPage = ref(options.initialPage || 1)

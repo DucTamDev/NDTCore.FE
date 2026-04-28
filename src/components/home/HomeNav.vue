@@ -19,7 +19,7 @@
       <v-btn
         :to="{ name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME }"
         color="primary"
-        variant="outlined"
+        variant="text"
         class="d-none d-sm-flex"
       >
         Login
@@ -42,7 +42,7 @@
         <v-btn
           :to="{ name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME }"
           color="primary"
-          variant="outlined"
+          variant="text"
           block
         >
           Login

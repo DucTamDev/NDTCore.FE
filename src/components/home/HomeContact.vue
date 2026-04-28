@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { ContactForm } from '@/models/home.models'
+import type { ContactForm } from '@/data/home.types'
 
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }>; reset: () => void } | null>(null)
 const isSubmitting = ref(false)

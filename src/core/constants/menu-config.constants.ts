@@ -1,4 +1,4 @@
-import type { MenuItem } from '@/models/menu.models'
+import type { MenuItem } from '@/core/types'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { USER_ROLES } from './app.constants'
 

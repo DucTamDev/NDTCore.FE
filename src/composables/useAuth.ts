@@ -11,16 +11,14 @@ export function useAuth() {
     const router = useRouter()
 
     async function login(payload: LoginRequest) {
-        try {
-            await authStore.login(payload)
-
-            toast.success('Đăng nhập thành công')
-
-            router.push({ name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME })
-        } catch {
-            toast.error('Tên đăng nhập hoặc mật khẩu không đúng')
-        }
+        await authStore.login(payload)
+        await router.push({ name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME })
     }
 
-    return { login }
+    async function logout() {
+        authStore.reset()
+        await router.push({ name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME })
+    }
+
+    return { login, logout }
 }

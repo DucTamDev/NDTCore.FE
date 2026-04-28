@@ -1,4 +1,5 @@
 import Toast, { POSITION, type PluginOptions } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 export const toastOptions: PluginOptions = {
   position: POSITION.TOP_RIGHT,

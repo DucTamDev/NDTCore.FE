@@ -1,21 +1,22 @@
-// useThemeStorage.ts
-import { THEME_STORAGE_KEY, THEME_MODES, type ThemeMode } from './theme.types'
+import { THEME_CONFIG, THEME_PROVIDER_TYPE, THEME_MODES, type ThemeMode } from './theme.types'
 
-export function useThemeStorage() {
+export function useThemeStorage(
+    storageKey: string = THEME_CONFIG[THEME_PROVIDER_TYPE.App].storageKey,
+) {
     const getPersistedTheme = (): ThemeMode | null => {
         if (typeof window === 'undefined') return null
-        const value = localStorage.getItem(THEME_STORAGE_KEY)
+        const value = localStorage.getItem(storageKey)
         return THEME_MODES.includes(value as ThemeMode) ? (value as ThemeMode) : null
     }
 
     const persistTheme = (mode: ThemeMode) => {
         if (typeof window === 'undefined') return
-        localStorage.setItem(THEME_STORAGE_KEY, mode)
+        localStorage.setItem(storageKey, mode)
     }
 
     const clearPersistedTheme = () => {
         if (typeof window === 'undefined') return
-        localStorage.removeItem(THEME_STORAGE_KEY)
+        localStorage.removeItem(storageKey)
     }
 
     return { getPersistedTheme, persistTheme, clearPersistedTheme }

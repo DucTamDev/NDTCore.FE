@@ -1,4 +1,4 @@
-import type { BreadcrumbItem } from '@/models/breadcrumb.models'
+import type { BreadcrumbItem } from '@/core/types'
 
 export type LayoutType = 'default' | 'auth' | 'blank' | 'admin'
 

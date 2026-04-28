@@ -50,7 +50,7 @@
         :to="{ name: APP_ROUTES.AUTH.CHILDREN.REGISTER.NAME }"
         class="text-body-2 text-primary text-decoration-none font-weight-bold"
       >
-        Đăng nhập ngay
+        Đăng ký ngay
       </router-link>
     </div>
   </v-form>
@@ -58,13 +58,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useToastNotification } from '@/composables/useToastNotification'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { VALIDATION_RULES } from '@/core/constants/validation-rule.constants'
 
-const router = useRouter()
 const { login } = useAuth()
 const { error: notifyError } = useToastNotification()
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
@@ -93,7 +91,6 @@ async function handleLogin() {
       Email: form.email,
       Password: form.password,
     })
-    await router.push(APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.PATH)
   } catch (error) {
     notifyError(error instanceof Error ? error.message : 'Đăng nhập thất bại.')
   } finally {

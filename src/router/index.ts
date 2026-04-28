@@ -22,16 +22,15 @@ export const router = createRouter({
     },
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach((to) => {
     const authStore = useAuthStore()
 
-    await authStore.initialize()
-
-    console.log('guard', {
-        to: to.name,
-        isLoggedIn: authStore.isLoggedIn,
-        requiresAuth: to.meta.requiresAuth,
-    })
+    // Chưa initialized → để App.vue xử lý overlay + redirect sau khi check xong
+    if (!authStore.isInitialized) {
+        const pageTitle = to.meta.title as string | undefined
+        document.title = pageTitle && pageTitle !== APP_NAME ? `${pageTitle} | ${APP_NAME}` : APP_NAME
+        return
+    }
 
     // Đã login → không cho vào trang không cần auth
     if (authStore.isLoggedIn && !to.meta.requiresAuth) {
@@ -40,7 +39,7 @@ router.beforeEach(async (to) => {
 
     // Chưa login → không cho vào trang cần auth
     if (!authStore.isLoggedIn && to.meta.requiresAuth) {
-        return { name: APP_ROUTES.HOME.NAME }
+        return { name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME }
     }
 
     const pageTitle = to.meta.title as string | undefined

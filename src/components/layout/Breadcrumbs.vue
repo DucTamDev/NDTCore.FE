@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import type { BreadcrumbItem } from '@/models/breadcrumb.models'
+import type { BreadcrumbItem } from '@/core/types'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 
 const route = useRoute()

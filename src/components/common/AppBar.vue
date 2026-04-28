@@ -12,8 +12,12 @@
       <v-icon>mdi-dock-left</v-icon>
     </v-btn>
 
-    <v-btn icon variant="text" @click="toggleTheme">
+    <v-btn icon variant="text" color="primary" @click="toggleTheme">
       <v-icon>{{ isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night' }}</v-icon>
+    </v-btn>
+
+    <v-btn icon variant="text" @click="logout">
+      <v-icon>mdi-logout</v-icon>
     </v-btn>
   </v-app-bar>
 </template>
@@ -23,6 +27,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useTheme } from '@/plugins/vuetify/theme'
+import { useAuth } from '@/composables/useAuth'
 
 const emit = defineEmits<{
   'toggle-drawer': []
@@ -32,6 +37,7 @@ const emit = defineEmits<{
 const route = useRoute()
 const { isDark, toggleTheme } = useTheme()
 const { isMobile } = useBreakpoint()
+const { logout } = useAuth()
 
 const pageTitle = computed(() => (route.meta.title as string) || 'Dashboard')
 </script>

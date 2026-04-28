@@ -1,5 +1,6 @@
 declare module 'vuetify/styles'
 declare module '*.scss'
+declare module '*.css'
 
 interface ImportMetaEnv {
     readonly VITE_APP_NAME: string

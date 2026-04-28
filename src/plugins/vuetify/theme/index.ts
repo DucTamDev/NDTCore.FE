@@ -1,12 +1,15 @@
-export type { ThemeMode, ResolvedThemeMode, SystemColorScheme, ThemeContext } from './theme.types'
+export type { ThemeMode, ResolvedThemeMode, SystemColorScheme, ThemeContext, ThemeProviderType } from './theme.types'
 export {
     THEME_MODE,
-    RESOLVED_THEME_MODE,
-    SYSTEM_COLOR_SCHEME,
-    THEME_INJECTION_KEY,
+    THEME_MODE_CLASS,
+    THEME_PAIRS,
     DARK_THEMES,
     THEME_MODES,
     RESOLVED_THEME_MODES,
+    DEFAULT_THEME,
+    THEME_PROVIDER_TYPE,
+    THEME_CONFIG,
+    THEME_INJECTION_KEY,
 } from './theme.types'
 
 export { useTheme } from './useTheme'

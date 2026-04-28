@@ -35,12 +35,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { menuConfig } from '@/core/constants/menu-config.constants'
-import type { MenuItem } from '@/models/menu.models'
+import type { MenuItem } from '@/core/types'
 
 defineProps<{
   rail?: boolean
 }>()
-
 
 const visibleItems = computed(() => menuConfig.filter(hasAccess))
 

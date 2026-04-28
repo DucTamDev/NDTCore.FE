@@ -4,7 +4,8 @@
       <div class="text-center mb-10">
         <v-chip color="primary" variant="tonal" class="mb-4">Cơ hội kinh doanh</v-chip>
         <h2 class="text-h4 font-weight-bold text-on-surface">
-          Nhượng quyền <em class="text-primary">Soli Tea</em>
+          Nhượng quyền
+          <span class="text-primary text font-weight-bold"> Soli Tea </span>
         </h2>
       </div>
 
