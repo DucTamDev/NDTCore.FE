@@ -17,8 +17,6 @@ export const routes: RouteRecordRaw[] = [
             },
         ],
     },
-
-    // ================= AUTH =================
     {
         path: APP_ROUTES.AUTH.BASE.PATH,
         component: () => import('@/layouts/AuthLayout.vue'),
@@ -43,12 +41,9 @@ export const routes: RouteRecordRaw[] = [
             },
         ],
     },
-
-    // ================= ADMIN =================
     {
         path: APP_ROUTES.ADMIN.BASE.PATH,
         component: () => import('@/layouts/AdminLayout.vue'),
-        // beforeEnter: authGuard,
         meta: { requiresAuth: true },
         children: [
             {
@@ -67,17 +62,80 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/views/UsersView.vue'),
                 meta: {
                     title: 'Users',
-                    permissions: [{ resource: 'users', action: 'read' }],
                     breadcrumb: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Users', disabled: true },
                     ],
                 },
             },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.BRANDS.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME,
+                component: () => import('@/views/BrandsView.vue'),
+                meta: {
+                    title: 'Thương hiệu',
+                    breadcrumb: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Thương hiệu', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.BRAND_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.BRAND_DETAIL.NAME,
+                component: () => import('@/views/BrandDetailView.vue'),
+                meta: {
+                    title: 'Chi tiết thương hiệu',
+                    breadcrumb: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Thương hiệu', to: `${APP_ROUTES.ADMIN.BASE.PATH}/${APP_ROUTES.ADMIN.CHILDREN.BRANDS.PATH}` },
+                        { title: 'Chi tiết', disabled: true },
+                    ],
+                },
+            },
+
+            {
+                path: 'products',
+                name: 'admin:products',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'product-categories',
+                name: 'admin:product-categories',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'stores',
+                name: 'admin:stores',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'sales',
+                name: 'admin:sales',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'orders',
+                name: 'admin:orders',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'reports/revenue',
+                name: 'admin:reports-revenue',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'reports/shift',
+                name: 'admin:reports-shift',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+            {
+                path: 'reports/top-products',
+                name: 'admin:reports-top-products',
+                component: () => import('@/components/common/ComingSoonView.vue'),
+            },
         ],
     },
-
-    // ================= NOT FOUND =================
     {
         path: APP_ROUTES.NOT_FOUND.PATH,
         component: () => import('@/layouts/BlankLayout.vue'),
