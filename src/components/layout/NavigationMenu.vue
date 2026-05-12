@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { menuConfig } from '@/core/constants/menu-config.constants'
-import { isMenuSection } from '@/core/types'
+import { isMenuSection } from '@/core/types/_index'
 import { useMenuAccess } from '@/composables/useMenuAccess'
 import NavigationMenuItem from './NavigationMenuItem.vue'
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { LoadingState } from '@/core/types'
+import type { LoadingState } from '@/core/types/_index'
 
 export const useUserStore = defineStore('users', () => {
     const total = ref(0)

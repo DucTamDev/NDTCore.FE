@@ -3,11 +3,10 @@ import axios, {
     AxiosError,
     AxiosHeaders,
     type AxiosInstance,
-    type AxiosRequestConfig,
     type CreateAxiosDefaults,
 } from 'axios'
 
-import type { QueryParams, ApiInternalConfig, QueueItem } from '@/core/api/types/api.types'
+import type { ApiInternalConfig, QueueItem } from '@/core/api/types/api.types'
 import { HTTP_CONFIG } from '@/core/api/config/http.config'
 import { retryRequest, shouldRetry } from '@/core/api/policies/retry.policy'
 import type { ApiResponse } from '@/core/api/dtos/common.dtos'
@@ -191,12 +190,13 @@ export class ApiClient {
     // HTTP METHODS
     // ─────────────────────────────────────────────
 
-    async get<T>(
-        url: string,
-        params?: QueryParams,
-        config?: Partial<ApiInternalConfig>,
-    ): Promise<T> {
-        return (await this.httpClient.get<T>(url, { params, ...config })).data
+    async get<T>(url: string, params?: object, config?: Partial<ApiInternalConfig>): Promise<T> {
+        return (
+            await this.httpClient.get<T>(url, {
+                params: params,
+                ...config,
+            })
+        ).data
     }
 
     async post<T, D = unknown>(

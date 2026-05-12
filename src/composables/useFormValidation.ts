@@ -1,5 +1,5 @@
 import { VALIDATION_RULES, type ValidationRule } from '@/core/constants/validation-rule.constants'
-import type { ValidationRules } from '@/core/types'
+import type { ValidationRules } from '@/core/types/_index'
 
 export type { ValidationRules }
 

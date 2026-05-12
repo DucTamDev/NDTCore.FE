@@ -36,4 +36,5 @@ export const componentDefaults: NonNullable<VuetifyOptions['defaults']> = {
   VProgressCircular: { size: 32, width: 3 },
   VDataTable: { density: 'comfortable', hover: true, fixedHeader: true },
   VDataTableServer: { density: 'comfortable', hover: true, fixedHeader: true },
+  // VPagination: {variant: 'text',activeColor: 'primary',rounded: 'circle'},
 }

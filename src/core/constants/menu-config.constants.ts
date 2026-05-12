@@ -1,4 +1,4 @@
-import type { MenuEntry } from '@/core/types'
+import type { MenuEntry } from '@/core/types/_index'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { SYSTEM_ROLES } from './app.constants'
 

@@ -1,6 +1,11 @@
 <template>
   <slot v-if="isApp" />
-  <div v-else ref="containerRef" :data-theme="resolvedTheme">
+  <div
+    v-else
+    ref="containerRef"
+    :data-theme="resolvedTheme"
+    class="theme-provider d-flex flex-1-1"
+  >
     <slot />
   </div>
 </template>

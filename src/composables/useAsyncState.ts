@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue'
-import type { AsyncStateOptions } from '@/core/types'
+import type { AsyncStateOptions } from '@/core/types/_index'
 
 export type { AsyncStateOptions }
 

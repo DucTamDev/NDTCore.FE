@@ -2,6 +2,7 @@
     <v-list-item
         v-if="!item.children"
         :to="item.to ? { name: item.to } : undefined"
+        :active="item.to ? route.name === item.to : undefined"
         :prepend-icon="item.icon"
         :title="item.title"
         color="primary"
@@ -27,10 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import type { MenuItem } from '@/core/types'
+import { useRoute } from 'vue-router'
+import type { MenuItem } from '@/core/types/_index'
 import { useMenuAccess } from '@/composables/useMenuAccess'
 
 defineProps<{ item: MenuItem }>()
 
+const route = useRoute()
 const { hasAccess } = useMenuAccess()
 </script>

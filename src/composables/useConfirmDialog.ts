@@ -1,5 +1,5 @@
 import { useUiStore } from '@/stores/ui.store'
-import type { ConfirmDialogOptions } from '@/core/types'
+import type { ConfirmDialogOptions } from '@/core/types/_index'
 
 export function useConfirmDialog() {
   const uiStore = useUiStore()

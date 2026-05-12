@@ -15,6 +15,24 @@ export const routes: RouteRecordRaw[] = [
                     requiresAuth: false,
                 },
             },
+            {
+                path: '/example',
+                name: 'example',
+                component: () => import('@/views/examples/UI.Example.vue'),
+                meta: {
+                    title: 'Example',
+                    requiresAuth: false,
+                },
+            },
+            {
+                path: '/example/ui4',
+                name: 'example-ui4',
+                component: () => import('@/views/examples/UI4.Example.vue'),
+                meta: {
+                    title: 'UI4 Brand List Example',
+                    requiresAuth: false,
+                },
+            },
         ],
     },
     {
@@ -49,20 +67,20 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME,
-                component: () => import('@/views/DashboardView.vue'),
+                component: () => import('@/views/dashboards/DashboardView.vue'),
                 meta: {
                     title: 'Dashboard',
-                    breadcrumb: [{ title: 'Dashboard', disabled: true }],
+                    breadcrumbs: [{ title: 'Dashboard', disabled: true }],
                     requiresAuth: true,
                 },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.USERS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.USERS.NAME,
-                component: () => import('@/views/UsersView.vue'),
+                component: () => import('@/views/dashboards/users/UsersView.vue'),
                 meta: {
                     title: 'Users',
-                    breadcrumb: [
+                    breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Users', disabled: true },
                     ],
@@ -71,10 +89,10 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.BRANDS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME,
-                component: () => import('@/views/BrandsView.vue'),
+                component: () => import('@/modules/brand/views/BrandsView.vue'),
                 meta: {
                     title: 'Thương hiệu',
-                    breadcrumb: [
+                    breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Thương hiệu', disabled: true },
                     ],
@@ -83,17 +101,11 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.BRAND_DETAIL.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.BRAND_DETAIL.NAME,
-                component: () => import('@/views/BrandDetailView.vue'),
+                component: () => import('@/modules/brand/views/BrandDetailView.vue'),
                 meta: {
                     title: 'Chi tiết thương hiệu',
-                    breadcrumb: [
-                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
-                        { title: 'Thương hiệu', to: `${APP_ROUTES.ADMIN.BASE.PATH}/${APP_ROUTES.ADMIN.CHILDREN.BRANDS.PATH}` },
-                        { title: 'Chi tiết', disabled: true },
-                    ],
                 },
             },
-
             {
                 path: 'products',
                 name: 'admin:products',

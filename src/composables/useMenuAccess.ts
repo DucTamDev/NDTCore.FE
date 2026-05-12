@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/auth.store'
-import type { MenuItem, MenuSection } from '@/core/types'
+import type { MenuItem, MenuSection } from '@/core/types/_index'
 
 export function checkAccess(item: MenuItem, userRoles: string[]): boolean {
     const roleOk = !item.roles?.length || item.roles.some(r => userRoles.includes(r))
