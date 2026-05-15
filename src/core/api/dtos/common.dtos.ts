@@ -12,7 +12,6 @@ export interface ApiResponseMetadata {
 
 export interface ApiResponse<T = unknown> {
     IsSuccess: boolean
-    IsFailure: boolean
     Data: T | null
     Message: string | null
     Error: ApiError | null

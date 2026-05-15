@@ -141,7 +141,7 @@ All route names and paths are defined in `src/core/constants/app-routes.constant
 All backend responses follow `ApiResponse<T>` from `src/core/api/dtos/common.dtos.ts`:
 
 ```ts
-{ IsSuccess, IsFailure, Data: T | null, Message, Error: { ErrorCode, Message, Meta }, Metadata }
+{ IsSuccess, Data: T | null, Message, Error: { ErrorCode, Message, Meta }, Metadata }
 ```
 
 Paged responses use `PagedApiResponse<T>` which extends this with `PageNumber`, `PageSize`, `TotalCount`, etc.
