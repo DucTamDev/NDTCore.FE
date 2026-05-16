@@ -6,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="d-flex flex-column flex-sm-row align-sm-start justify-space-between ga-3 pa-4 pb-0">
+  <div class="d-flex flex-column flex-sm-row align-sm-start justify-space-between ga-3 pb-0">
     <div class="d-flex flex-column ga-1">
       <slot name="breadcrumb" />
       <div class="text-h5 font-weight-bold">{{ title }}</div>
