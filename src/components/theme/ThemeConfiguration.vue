@@ -38,23 +38,23 @@
               <v-card-title>Theme Controls</v-card-title>
               <v-card-text>
                 <div class="d-flex flex-column ga-2">
-                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme('light')">
+                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme(THEME_MODE.Light)">
                     <v-icon start>mdi-white-balance-sunny</v-icon>
                     Light
                   </v-btn>
-                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme('dark')">
+                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme(THEME_MODE.Dark)">
                     <v-icon start>mdi-moon-waning-crescent</v-icon>
                     Dark
                   </v-btn>
-                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme('soli-light')">
+                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme(THEME_MODE.WebLight)">
                     <v-icon start>mdi-brightness-5</v-icon>
-                    Soli Light
+                    Web Light
                   </v-btn>
-                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme('soli-dark')">
+                  <v-btn color="primary" variant="tonal" block @click="ctx.setTheme(THEME_MODE.WebDark)">
                     <v-icon start>mdi-brightness-3</v-icon>
-                    Soli Dark
+                    Web Dark
                   </v-btn>
-                  <v-btn color="secondary" variant="tonal" block @click="ctx.setTheme('system')">
+                  <v-btn color="secondary" variant="tonal" block @click="ctx.setTheme(THEME_MODE.System)">
                     <v-icon start>mdi-brightness-auto</v-icon>
                     System
                   </v-btn>
@@ -131,6 +131,7 @@
 <script setup lang="ts">
 import { useTheme } from '@/plugins/vuetify/theme'
 import ThemeSelector from '@/components/theme/ThemeSelector.vue'
+import {THEME_MODE} from '@/plugins/vuetify/theme/index'
 
 const ctx = useTheme()
 

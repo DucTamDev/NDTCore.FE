@@ -1,4 +1,4 @@
-import { brandClient } from '@/modules/brand/api/brand.client'
+import { brandApi } from '@/modules/brand/api/brand.api'
 import { brandMapper } from '@/modules/brand/mappers/brand.mapper'
 import type {
     BrandFilterDto,
@@ -10,7 +10,7 @@ import type { PagedResult } from '@/core/types/pagination.types'
 
 class BrandService {
     async getPagedBrandsAsync(filter: BrandFilterDto): Promise<PagedResult<BrandViewModel>> {
-        const response = await brandClient.getPagedAsync(filter)
+        const response = await brandApi.getPagedAsync(filter)
         return {
             items: brandMapper.toViewModels(response.Data ?? []),
             pageNumber: response.PageNumber,
@@ -23,17 +23,17 @@ class BrandService {
     }
 
     async getBrandAsync(id: number): Promise<BrandViewModel | null> {
-        const response = await brandClient.getByIdAsync(id)
+        const response = await brandApi.getByIdAsync(id)
         return response.Data ? brandMapper.toViewModel(response.Data) : null
     }
 
     async getBrandsByUserIdAsync(userId: string): Promise<BrandViewModel[]> {
-        const response = await brandClient.getByUserIdAsync(userId)
+        const response = await brandApi.getByUserIdAsync(userId)
         return brandMapper.toViewModels(response.Data ?? [])
     }
 
     async createBrandAsync(payload: CreateBrandRequest): Promise<BrandViewModel | null> {
-        const response = await brandClient.createAsync(payload)
+        const response = await brandApi.createAsync(payload)
         return response.Data ? brandMapper.createResponseToViewModel(response.Data) : null
     }
 
@@ -41,16 +41,16 @@ class BrandService {
         id: number,
         payload: UpdateBrandRequest,
     ): Promise<BrandViewModel | null> {
-        const response = await brandClient.updateAsync(id, payload)
+        const response = await brandApi.updateAsync(id, payload)
         return response.Data ? brandMapper.updateResponseToViewModel(response.Data) : null
     }
 
     async deleteBrandAsync(id: number): Promise<void> {
-        await brandClient.deleteAsync(id)
+        await brandApi.deleteAsync(id)
     }
 
     async removeUserFromBrandAsync(id: number, userId: string): Promise<void> {
-        await brandClient.removeUserAsync(id, userId)
+        await brandApi.removeUserAsync(id, userId)
     }
 }
 

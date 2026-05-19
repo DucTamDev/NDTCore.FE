@@ -1,54 +1,15 @@
-// src/core/api/clients/identity.client.ts
-import { ApiClient } from './api.client'
-import { API_ENDPOINTS } from '@/core/constants/api.constants'
-import { createLogger } from '@/core/logger/logger'
-import type {
-    LoginRequest,
-    LoginResponse,
-    RefreshTokenRequest,
-    RefreshTokenResponse,
-} from '@/core/api/dtos/auth.dtos'
-import type { ApiResponse } from '@/core/api/dtos/common.dtos'
-import type { UserProfileResponse } from '@/core/api/dtos/user.dtos'
-import { ApiInternalConfig } from '../types/api.types'
+import { BaseClient } from './base.client'
 
-const log = createLogger('identity')
+const IDENTITY_BASE_URL = import.meta.env.VITE_IDENTITY_BASE_URL
+if (!IDENTITY_BASE_URL) {
+    throw new Error('[IdentityClient] VITE_IDENTITY_API_URL is not defined')
+}
 
-class IdentityClient extends ApiClient {
+class IdentityClient extends BaseClient {
     constructor() {
         super({
-            baseURL: import.meta.env.VITE_IDENTITY_API_URL,
-            timeout: 20_000,
+            baseURL: IDENTITY_BASE_URL,
         })
-    }
-
-    loginAsync(payload: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-        const config: Partial<ApiInternalConfig> = {
-            skipAuth: true,
-        }
-
-        return this.post<ApiResponse<LoginResponse>>(
-            API_ENDPOINTS.IDENTITY.AUTH_API.LOGIN,
-            payload,
-            config,
-        )
-    }
-
-    refreshAsync(payload: RefreshTokenRequest): Promise<ApiResponse<RefreshTokenResponse>> {
-        const config: Partial<ApiInternalConfig> = {
-            skipAuth: true,
-            skipAuthRefresh: true,
-        }
-
-        return this.post<ApiResponse<RefreshTokenResponse>>(
-            API_ENDPOINTS.IDENTITY.AUTH_API.REFRESH,
-            payload,
-            config,
-        )
-    }
-
-    getMeAsync(): Promise<ApiResponse<UserProfileResponse>> {
-        return this.get<ApiResponse<UserProfileResponse>>(API_ENDPOINTS.IDENTITY.USERS_API.GET_ME)
     }
 }
 

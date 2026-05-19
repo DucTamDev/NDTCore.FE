@@ -27,7 +27,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useTheme } from '@/plugins/vuetify/theme'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth } from '@/modules/auth/composables/useAuth'
 
 const emit = defineEmits<{
   'toggle-drawer': []

@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="model" :rail="rail" @update:rail="emit('update:rail', $event)">
+  <v-navigation-drawer v-model="model" :rail="rail">
     <NavigationMenu :rail="rail" />
   </v-navigation-drawer>
 </template>
@@ -8,10 +8,5 @@
 import NavigationMenu from './NavigationMenu.vue'
 
 const model = defineModel<boolean>({ required: true })
-
-defineProps<{ rail: boolean }>()
-
-const emit = defineEmits<{
-  'update:rail': [value: boolean]
-}>()
+const rail  = defineModel<boolean>('rail', { required: true })
 </script>

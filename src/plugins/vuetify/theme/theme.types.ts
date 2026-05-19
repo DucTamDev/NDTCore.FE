@@ -3,8 +3,8 @@ import type { ComputedRef, InjectionKey, Ref } from 'vue'
 export const THEME_MODE = {
     Light:     'light',
     Dark:      'dark',
-    SoliLight: 'soli-light',
-    SoliDark:  'soli-dark',
+    WebLight: 'web-light',
+    WebDark:  'web-dark',
     System:    'system',
 } as const
 
@@ -24,12 +24,12 @@ export const THEME_MODE_CLASS = Object.fromEntries(
 export const THEME_PAIRS: Record<ResolvedThemeMode, ResolvedThemeMode> = {
     [THEME_MODE.Light]:     THEME_MODE.Dark,
     [THEME_MODE.Dark]:      THEME_MODE.Light,
-    [THEME_MODE.SoliLight]: THEME_MODE.SoliDark,
-    [THEME_MODE.SoliDark]:  THEME_MODE.SoliLight,
+    [THEME_MODE.WebLight]: THEME_MODE.WebDark,
+    [THEME_MODE.WebDark]:  THEME_MODE.WebLight,
 }
 
-export const DARK_THEMES = new Set<ResolvedThemeMode>([THEME_MODE.Dark, THEME_MODE.SoliDark])
-export const DEFAULT_THEME: ThemeMode = THEME_MODE.SoliLight
+export const DARK_THEMES = new Set<ResolvedThemeMode>([THEME_MODE.Dark, THEME_MODE.WebDark])
+export const DEFAULT_THEME: ThemeMode = THEME_MODE.WebLight
 
 export interface ThemeContext {
     readonly theme: Readonly<Ref<ThemeMode>>
@@ -47,7 +47,7 @@ export const THEME_PROVIDER_TYPE = {
 export type ThemeProviderType = (typeof THEME_PROVIDER_TYPE)[keyof typeof THEME_PROVIDER_TYPE]
 
 export const THEME_CONFIG: Record<ThemeProviderType, { storageKey: string; defaultTheme: ThemeMode }> = {
-    [THEME_PROVIDER_TYPE.App]:   { storageKey: 'app_theme',   defaultTheme: THEME_MODE.SoliLight },
+    [THEME_PROVIDER_TYPE.App]:   { storageKey: 'app_theme',   defaultTheme: THEME_MODE.WebLight },
     [THEME_PROVIDER_TYPE.Admin]: { storageKey: 'admin_theme', defaultTheme: THEME_MODE.Light },
 }
 

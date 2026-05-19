@@ -7,7 +7,7 @@ import { zIndexTokens } from './z-index'
 import { breakpointTokens } from './breakpoint'
 import { transitionTokens } from './transition'
 import type { ColorTokens, ThemeTokens } from '../types'
-import { soliDarkColorTokens, soliLightColorTokens } from './themes/soli'
+import { webDarkColorTokens, webLightColorTokens } from './themes/web.theme'
 
 const base = {
     spacing: spacingTokens,
@@ -23,8 +23,8 @@ export const baseTokens = base
 
 export const lightTokens = createTheme(lightColorTokens)
 export const darkTokens = createTheme(darkColorTokens)
-export const soliLightTokens = createTheme(soliLightColorTokens)
-export const soliDarkTokens = createTheme(soliDarkColorTokens)
+export const webLightTokens = createTheme(webLightColorTokens)
+export const webDarkTokens = createTheme(webDarkColorTokens)
 
 function createTheme(colorTokens: ColorTokens): ThemeTokens {
     return {

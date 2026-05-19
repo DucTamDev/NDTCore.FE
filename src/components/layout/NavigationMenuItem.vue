@@ -1,39 +1,40 @@
 <template>
+  <v-list-item
+    v-if="!item.children"
+    :to="item.to ? { name: item.to } : undefined"
+    :active="item.to ? route.name === item.to : undefined"
+    :prepend-icon="item.icon"
+    :title="item.title"
+    color="primary"
+  >
+    <template v-if="item.badge" #append>
+      <v-chip size="x-small" :color="item.badge.color">{{ item.badge.text }}</v-chip>
+    </template>
+  </v-list-item>
+
+  <v-list-group v-else :value="item.title">
+    <template #activator="{ props }">
+      <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title" />
+    </template>
+
     <v-list-item
-        v-if="!item.children"
-        :to="item.to ? { name: item.to } : undefined"
-        :active="item.to ? route.name === item.to : undefined"
-        :prepend-icon="item.icon"
-        :title="item.title"
-        color="primary"
-    >
-        <template v-if="item.badge" #append>
-            <v-chip size="x-small" :color="item.badge.color">{{ item.badge.text }}</v-chip>
-        </template>
-    </v-list-item>
-
-    <v-list-group v-else :value="item.title">
-        <template #activator="{ props }">
-            <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title" />
-        </template>
-
-        <v-list-item
-            v-for="child in item.children.filter(hasAccess)"
-            :key="child.title"
-            :to="child.to ? { name: child.to } : undefined"
-            :title="child.title"
-            color="primary"
-        />
-    </v-list-group>
+      v-for="child in item.children.filter(hasAccess)"
+      :key="child.title"
+      :to="child.to ? { name: child.to } : undefined"
+      :title="child.title"
+      color="primary"
+    />
+  </v-list-group>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import type { MenuItem } from '@/core/types/_index'
-import { useMenuAccess } from '@/composables/useMenuAccess'
 
-defineProps<{ item: MenuItem }>()
+defineProps<{
+  item: MenuItem
+  hasAccess: (item: MenuItem) => boolean
+}>()
 
 const route = useRoute()
-const { hasAccess } = useMenuAccess()
 </script>

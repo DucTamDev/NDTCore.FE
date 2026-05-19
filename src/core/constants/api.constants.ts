@@ -7,7 +7,7 @@ export const API_ENDPOINTS = {
         },
         USERS_API: {
             GET_PAGED: '/admin/users',
-            GET_ME: 'admin/users/me',
+            GET_PROFILE: 'admin/users/profile',
         },
     },
     BRAND: {

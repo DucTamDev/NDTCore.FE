@@ -74,8 +74,8 @@ const { theme, setTheme } = useTheme()
 const themeOptions: ThemeOption[] = [
   { mode: THEME_MODE.Light, label: 'Light', icon: 'mdi-white-balance-sunny' },
   { mode: THEME_MODE.Dark, label: 'Dark', icon: 'mdi-moon-waning-crescent' },
-  { mode: THEME_MODE.SoliLight, label: 'Soli Light', icon: 'mdi-brightness-5' },
-  { mode: THEME_MODE.SoliDark, label: 'Soli Dark', icon: 'mdi-brightness-3' },
+  { mode: THEME_MODE.WebLight, label: 'Soli Light', icon: 'mdi-brightness-5' },
+  { mode: THEME_MODE.WebDark, label: 'Soli Dark', icon: 'mdi-brightness-3' },
   { mode: THEME_MODE.System, label: 'System', icon: 'mdi-brightness-auto' },
 ]
 

@@ -1,6 +1,6 @@
 import { storageService } from './storage.service'
 import { STORAGE_KEYS, STORAGE_TYPE, type StorageType } from './storage.keys'
-import type { AuthTokenModel } from '@/models/auth.model'
+import type { AuthTokenModel } from '@/core/models/auth.model'
 
 class TokenStorageService {
     save(tokens: AuthTokenModel): void {

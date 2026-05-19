@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useUiStore } from '@/stores/ui.store'
+import { useUIStore } from '@/core/stores/ui.store'
 
-const ui = useUiStore()
+const uiStore = useUIStore()
 </script>
 
 <template>
-  <v-overlay :model-value="ui.isGlobalLoading" class="align-center justify-center" persistent>
+  <v-overlay :model-value="uiStore.isAppLoading" class="align-center justify-center" persistent>
     <v-progress-circular color="primary" indeterminate size="56" width="4" />
   </v-overlay>
 </template>

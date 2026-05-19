@@ -1,5 +1,5 @@
 import type { ThemeDefinition } from 'vuetify'
-import { darkTokens, lightTokens, soliDarkTokens, soliLightTokens } from '@/plugins/vuetify/tokens'
+import { darkTokens, lightTokens, webDarkTokens as webDarkTokens, webLightTokens as webLightTokens } from '@/plugins/vuetify/tokens'
 import { buildColors } from './build-colors'
 import { buildVariables } from './build-variables'
 
@@ -25,22 +25,22 @@ export const darkTheme: ThemeDefinition = {
   ),
 }
 
-export const soliLightTheme: ThemeDefinition = {
+export const webLightTheme: ThemeDefinition = {
   dark: false,
-  colors: buildColors(soliLightTokens.color.semantic),
+  colors: buildColors(webLightTokens.color.semantic),
   variables: buildVariables(
-    soliLightTokens.color.semantic,
+    webLightTokens.color.semantic,
     darkTokens.radius,
     darkTokens.typography,
     darkTokens.transition,
   ),
 }
 
-export const soliDarkTheme: ThemeDefinition = {
+export const webDarkTheme: ThemeDefinition = {
   dark: true,
-  colors: buildColors(soliDarkTokens.color.semantic),
+  colors: buildColors(webDarkTokens.color.semantic),
   variables: buildVariables(
-    soliDarkTokens.color.semantic,
+    webDarkTokens.color.semantic,
     darkTokens.radius,
     darkTokens.typography,
     darkTokens.transition,

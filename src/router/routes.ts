@@ -9,7 +9,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: '',
                 name: APP_ROUTES.HOME.NAME,
-                component: () => import('@/views/HomeView.vue'),
+                component: () => import('@/modules/home/views/HomeView.vue'),
                 meta: {
                     title: 'Home',
                     requiresAuth: false,
@@ -42,7 +42,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.AUTH.CHILDREN.LOGIN.PATH,
                 name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME,
-                component: () => import('@/views/LoginView.vue'),
+                component: () => import('@/modules/auth/views/LoginView.vue'),
                 meta: {
                     title: 'Đăng nhập',
                     requiresAuth: false,
@@ -51,7 +51,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.AUTH.CHILDREN.REGISTER.PATH,
                 name: APP_ROUTES.AUTH.CHILDREN.REGISTER.NAME,
-                component: () => import('@/views/RegisterView.vue'),
+                component: () => import('@/modules/auth/views/RegisterView.vue'),
                 meta: {
                     title: 'Đăng ký',
                     requiresAuth: false,
@@ -67,7 +67,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME,
-                component: () => import('@/views/dashboards/DashboardView.vue'),
+                component: () => import('@/modules/dashboard/views/DashboardView.vue'),
                 meta: {
                     title: 'Dashboard',
                     breadcrumbs: [{ title: 'Dashboard', disabled: true }],
@@ -77,7 +77,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.USERS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.USERS.NAME,
-                component: () => import('@/views/dashboards/users/UsersView.vue'),
+                component: () => import('@/components/common/ComingSoonView.vue'),
                 meta: {
                     title: 'Users',
                     breadcrumbs: [
