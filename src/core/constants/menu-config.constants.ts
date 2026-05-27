@@ -33,6 +33,16 @@ export const menuConfig: MenuEntry[] = [
                 ],
             },
             {
+                title: 'Nhà nhượng quyền',
+                icon: 'mdi-handshake-outline',
+                to: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME,
+                roles: [
+                    SYSTEM_ROLES.SUPER_ADMIN,
+                    SYSTEM_ROLES.ORG_ADMIN,
+                    SYSTEM_ROLES.BRAND_MANAGER,
+                ],
+            },
+            {
                 title: 'Sản phẩm',
                 icon: 'mdi-package-variant-closed',
                 roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
