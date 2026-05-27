@@ -15,24 +15,6 @@ export const routes: RouteRecordRaw[] = [
                     requiresAuth: false,
                 },
             },
-            {
-                path: '/example',
-                name: 'example',
-                component: () => import('@/views/examples/UI.Example.vue'),
-                meta: {
-                    title: 'Example',
-                    requiresAuth: false,
-                },
-            },
-            {
-                path: '/example/ui4',
-                name: 'example-ui4',
-                component: () => import('@/views/examples/UI4.Example.vue'),
-                meta: {
-                    title: 'UI4 Brand List Example',
-                    requiresAuth: false,
-                },
-            },
         ],
     },
     {
@@ -117,9 +99,34 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/components/common/ComingSoonView.vue'),
             },
             {
-                path: 'stores',
-                name: 'admin:stores',
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME,
+                component: () => import('@/modules/brand/views/FranchiseesView.vue'),
+                meta: { title: 'Nhà nhượng quyền', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEE_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEE_DETAIL.NAME,
+                component: () => import('@/modules/brand/views/FranchiseeDetailView.vue'),
+                meta: { title: 'Chi tiết nhà nhượng quyền', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.STORES.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME,
+                component: () => import('@/modules/store/views/StoresView.vue'),
+                meta: { title: 'Cửa hàng', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.STORE_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.STORE_DETAIL.NAME,
+                component: () => import('@/modules/store/views/StoreDetailView.vue'),
+                meta: { title: 'Chi tiết cửa hàng', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.NAME,
+                component: () => import('@/modules/store/views/StoreMembersView.vue'),
+                meta: { title: 'Thành viên cửa hàng', requiresAuth: true },
             },
             {
                 path: 'sales',
