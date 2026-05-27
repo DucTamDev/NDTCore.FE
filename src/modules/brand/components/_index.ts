@@ -1,2 +1,6 @@
 export * from './BrandForm.vue'
 export * from './BrandList.vue'
+export { default as FranchiseeList } from './FranchiseeList.vue'
+export { default as FranchiseeForm } from './FranchiseeForm.vue'
+export { default as FranchiseeMemberList } from './FranchiseeMemberList.vue'
+export { default as FranchiseeOverviewTab } from './detail/FranchiseeOverviewTab.vue'
