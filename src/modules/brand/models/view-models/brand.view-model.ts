@@ -6,8 +6,6 @@ export interface BrandViewModel extends Record<string, unknown> {
     isActive: boolean
     legalName?: string | null
     taxCode?: string | null
-    currency?: string | null
-    timeZone?: string | null
     createdAt?: string | null
     createdBy?: string | null
     updatedAt?: string | null
