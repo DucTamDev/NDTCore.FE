@@ -6,5 +6,5 @@ export interface BrandFilterDto {
     CreatedAfter?: string | null
     CreatedBefore?: string | null
     SortBy?: string | null
-    SortDescending?: boolean | null
+    SortDirection?: string | null
 }
