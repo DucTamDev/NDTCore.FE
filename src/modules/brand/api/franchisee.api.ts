@@ -17,7 +17,7 @@ import type {
 
 export const franchiseeApi = {
     getPagedAsync(filter: FranchiseeFilterDto): Promise<PagedApiResponse<FranchiseeDto>> {
-        return brandClient.get(API_ENDPOINTS.BRAND.FRANCHISEE_API.GET_PAGED, { params: filter })
+        return brandClient.get(API_ENDPOINTS.BRAND.FRANCHISEE_API.GET_PAGED, filter)
     },
 
     getByIdAsync(id: number): Promise<ApiResponse<FranchiseeDto>> {
