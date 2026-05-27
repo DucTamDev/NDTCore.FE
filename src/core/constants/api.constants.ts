@@ -23,10 +23,31 @@ export const API_ENDPOINTS = {
             ASSIGN_USERS: (id: number) => `/admin/brand/${id}/users`,
             REMOVE_USER: (id: number, userId: string) => `/admin/brand/${id}/users/${userId}`,
         },
+        FRANCHISEE_API: {
+            GET_PAGED: '/admin/franchisee',
+            GET_BY_ID: (id: number) => `/admin/franchisee/${id}`,
+            GET_BY_USER_ID: (userId: string) => `/admin/franchisee/by-user/${userId}`,
+            GET_BY_BRAND_ID: (brandId: number) => `/admin/franchisee/by-brand/${brandId}`,
+            CREATE: '/admin/franchisee',
+            UPDATE: (id: number) => `/admin/franchisee/${id}`,
+            DELETE: (id: number) => `/admin/franchisee/${id}`,
+            GET_MEMBERS: (id: number) => `/admin/franchisee/${id}/users`,
+            ASSIGN_USERS: (id: number) => `/admin/franchisee/${id}/users`,
+            REMOVE_USER: (id: number, userId: string) => `/admin/franchisee/${id}/users/${userId}`,
+        },
     },
     STORE: {
         STORE_API: {
-            GET_PAGED: '/stores',
+            GET_PAGED: '/admin/store',
+            CREATE: '/admin/store',
+            GET_BY_ID: (id: number) => `/admin/store/${id}`,
+            UPDATE: (id: number) => `/admin/store/${id}`,
+            DELETE: (id: number) => `/admin/store/${id}`,
+        },
+        STORE_MEMBER_API: {
+            GET_BY_STORE: (storeId: number) => `/admin/store/${storeId}/members`,
+            ASSIGN: (storeId: number) => `/admin/store/${storeId}/members`,
+            REMOVE: (storeId: number, userId: string) => `/admin/store/${storeId}/members/${userId}`,
         },
     },
     ORDER: {
