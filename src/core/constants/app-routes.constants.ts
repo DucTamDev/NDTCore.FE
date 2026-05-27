@@ -47,6 +47,26 @@ export const APP_ROUTES = {
                 NAME: 'admin:brand-detail',
                 PATH: 'brands/:id',
             },
+            FRANCHISEES: {
+                NAME: 'admin:franchisees',
+                PATH: 'franchisees',
+            },
+            FRANCHISEE_DETAIL: {
+                NAME: 'admin:franchisee-detail',
+                PATH: 'franchisees/:id',
+            },
+            STORES: {
+                NAME: 'admin:stores',
+                PATH: 'stores',
+            },
+            STORE_DETAIL: {
+                NAME: 'admin:store-detail',
+                PATH: 'stores/:id',
+            },
+            STORE_MEMBERS: {
+                NAME: 'admin:store-members',
+                PATH: 'store-members',
+            },
         },
     },
 
