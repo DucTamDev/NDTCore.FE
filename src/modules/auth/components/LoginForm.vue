@@ -62,8 +62,10 @@ import { useAuth } from '@/modules/auth/composables/useAuth'
 import { useToastNotification } from '@/composables/useToastNotification'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { VALIDATION_RULES } from '@/core/constants/validation-rule.constants'
+import { useUserStore } from '@/modules/user/stores/user.store'
 
-const { login } = useAuth()
+const { login, logout } = useAuth()
+const { fetchProfile } = useUserStore()
 const { error: notifyError } = useToastNotification()
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
 
@@ -91,7 +93,10 @@ async function handleLogin() {
       Email: form.email,
       Password: form.password,
     })
+
+    await fetchProfile()
   } catch (error) {
+    await logout()
     notifyError(error instanceof Error ? error.message : 'Đăng nhập thất bại.')
   } finally {
     loading.value = false

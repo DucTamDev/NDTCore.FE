@@ -109,10 +109,8 @@ import { APP_ROUTES } from '@/core/constants/_index'
 import { brandMapper } from '@/modules/brand/mappers/brand.mapper'
 import { useBrand } from '@/modules/brand/composables/useBrand'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
-import { CURRENCY } from '@/core/constants/currency.constants'
-import { TIMEZONE } from '@/core/constants/timezone.constants'
-import BrandOverviewTab from '@/modules/brand/components/detail/BrandOverviewTab.vue'
-import BrandStoresTab from '@/modules/brand/components/detail/BrandStoresTab.vue'
+import BrandOverviewTab from '@/modules/brand/components/brand/detail/BrandOverviewTab.vue'
+import BrandStoresTab from '@/modules/brand/components/brand/detail/BrandStoresTab.vue'
 
 const route = useRoute()
 const { getBrand, updateBrand } = useBrand()
@@ -127,8 +125,6 @@ const editForm = reactive<BrandFormModel>({
   name: '',
   legalName: null,
   taxCode: null,
-  currency: CURRENCY.DEFAULT,
-  timeZone: TIMEZONE.DEFAULT,
   isActive: true,
 })
 
@@ -141,8 +137,6 @@ function syncFormFromBrand() {
   editForm.isActive = mapped?.isActive ?? false
   editForm.legalName = mapped?.legalName
   editForm.taxCode = mapped?.taxCode
-  editForm.currency = mapped?.currency
-  editForm.timeZone = mapped?.timeZone
   snapshot.value = { ...editForm }
 }
 
@@ -157,8 +151,6 @@ const isDirty = computed(() => {
     editForm.name !== snapshot.value.name ||
     editForm.legalName !== snapshot.value.legalName ||
     editForm.taxCode !== snapshot.value.taxCode ||
-    editForm.currency !== snapshot.value.currency ||
-    editForm.timeZone !== snapshot.value.timeZone ||
     editForm.isActive !== snapshot.value.isActive
   )
 })
@@ -191,8 +183,6 @@ async function saveChanges() {
       isActive: editForm.isActive,
       legalName: editForm.legalName?.trim() ?? null,
       taxCode: editForm.taxCode?.trim() ?? null,
-      currency: editForm.currency,
-      timeZone: editForm.timeZone,
     })
     const updated = await updateBrand(brandId, dto)
     if (updated) {

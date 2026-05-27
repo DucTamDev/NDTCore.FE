@@ -15,16 +15,12 @@ export const useAuthStore = defineStore('auth', () => {
     const isInitialized = ref(false)
     const isLoggedIn = ref(false)
 
-    // ─────────────────────────────
-    // INTERNAL
-    // ─────────────────────────────
-
     function setToken(data: any) {
         const authToken: AuthTokenModel = {
-            accessToken: data.AccessToken,
-            refreshToken: data.RefreshToken,
-            accessTokenExpiration: data.AccessTokenExpiration,
-            refreshTokenExpiration: data.RefreshTokenExpiration,
+            accessToken: data?.AccessToken,
+            refreshToken: data?.RefreshToken,
+            accessTokenExpiration: data?.AccessTokenExpiration,
+            refreshTokenExpiration: data?.RefreshTokenExpiration,
         }
         tokenStorageService.save(authToken)
     }
@@ -39,9 +35,6 @@ export const useAuthStore = defineStore('auth', () => {
         isInitialized.value = false
         log.info('Auth reset')
     }
-    // ─────────────────────────────
-    // INITIALIZE
-    // ─────────────────────────────
 
     async function initialize(): Promise<void> {
         if (isInitialized.value) return
@@ -61,10 +54,6 @@ export const useAuthStore = defineStore('auth', () => {
             isInitialized.value = true
         }
     }
-
-    // ─────────────────────────────
-    // LOGIN
-    // ─────────────────────────────
 
     async function login(payload: LoginRequest): Promise<void> {
         log.info('Login start')
@@ -91,10 +80,6 @@ export const useAuthStore = defineStore('auth', () => {
 
         return data
     }
-
-    // ─────────────────────────────
-    // LOGOUT
-    // ─────────────────────────────
 
     function logout(): void {
         clearSession()

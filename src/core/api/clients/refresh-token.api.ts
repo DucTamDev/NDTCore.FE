@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import type { ApiResponse } from '@/core/api/dtos/common.dtos'
+import type { ApiResponse } from '@/core/models/common.dto'
 import type { AuthTokenModel } from '@/core/models/auth.model'
 
 import { tokenStorageService } from '@/core/storage/token-storage.service'

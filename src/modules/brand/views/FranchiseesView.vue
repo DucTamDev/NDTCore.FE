@@ -63,8 +63,8 @@ import {
 } from '@/modules/brand/constants/franchisee-list.constants'
 import type { FranchiseeFormModel } from '@/modules/brand/models/form-models/franchisee.model'
 import type { FranchiseeViewModel } from '@/modules/brand/models/view-models/franchisee.view-model'
-import FranchiseeList from '@/modules/brand/components/FranchiseeList.vue'
-import FranchiseeForm from '@/modules/brand/components/FranchiseeForm.vue'
+import FranchiseeList from '@/modules/brand/components/franchisee/FranchiseeList.vue'
+import FranchiseeForm from '@/modules/brand/components/franchisee/FranchiseeForm.vue'
 import { brandService } from '@/modules/brand/services/brand.service'
 import { useUserStore } from '@/modules/user/stores/user.store'
 

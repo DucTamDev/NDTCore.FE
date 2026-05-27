@@ -57,8 +57,8 @@ import { useBrand } from '@/modules/brand/composables/useBrand'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
 import type { BrandViewModel } from '@/modules/brand/models/view-models/brand.view-model'
 import { BRAND_ROW_ACTION } from '@/modules/brand/constants/brand-list.constants'
-import BrandForm from '@/modules/brand/components/BrandForm.vue'
-import BrandList from '@/modules/brand/components/BrandList.vue'
+import BrandForm from '@/modules/brand/components/brand/BrandForm.vue'
+import BrandList from '@/modules/brand/components/brand/BrandList.vue'
 
 const router = useRouter()
 const { getPagedBrands, createBrand, updateBrand, deleteBrand } = useBrand()
@@ -75,7 +75,7 @@ const fetchBrands = async (
     Keyword: (params.filters['keyword'] as string | null) ?? null,
     IsActive: status === 'active' ? true : status === 'inactive' ? false : null,
     SortBy: params.sortBy?.key ?? null,
-    SortDescending: params.sortBy ? params.sortBy.order === 'desc' : null,
+    SortDirection: params.sortBy?.order ?? null,
   })
   return { items: result.items, total: result.totalCount }
 }

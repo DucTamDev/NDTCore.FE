@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { BENEFITS, STEPS, INVEST_ROWS } from '@/seed-data/home/_index.ts'
+import { BENEFITS, STEPS, INVEST_ROWS } from '@/modules/home/seeds/_index'
 
 const PROFITS = [
   { amount: '30–40 triệu/tháng', note: 'sau 2–3 tháng vận hành', color: 'primary' },

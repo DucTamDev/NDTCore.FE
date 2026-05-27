@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from '@/core/constants/api.constants'
-import type { ApiResponse, PagedApiResponse } from '@/core/api/dtos/common.dtos'
+import type { ApiResponse, PagedApiResponse } from '@/core/models/common.dto'
 import type {
     BrandDto,
     BrandFilterDto,

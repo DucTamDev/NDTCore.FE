@@ -4,7 +4,3 @@ export interface AuthTokenModel {
     accessTokenExpiration: string
     refreshTokenExpiration: string
 }
-
-export interface AuthUserModel {
-    roles: string[]
-}

@@ -56,7 +56,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
-import { useHomeScroll } from '@/composables/useHomeScroll'
+import { useHomeScroll } from '@/modules/home/composables/useHomeScroll'
 
 const { scrolled } = useHomeScroll()
 const drawer = ref(false)

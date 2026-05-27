@@ -6,7 +6,7 @@ import axios, {
     type InternalAxiosRequestConfig,
 } from 'axios'
 
-import type { ApiResponse } from '@/core/api/dtos/common.dtos'
+import type { ApiResponse } from '@/core/models/common.dto'
 
 import { tokenStorageService } from '@/core/storage/token-storage.service'
 import { HTTP_HEADER, ERROR_CODES } from '@/core/constants/http.constants'

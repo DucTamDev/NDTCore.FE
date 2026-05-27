@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { ContactForm } from '@/seed-data/home/_index.ts'
+import type { ContactForm } from '@/modules/home/seeds/_index'
 
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }>; reset: () => void } | null>(null)
 const isSubmitting = ref(false)

@@ -1,18 +1,18 @@
 import { storageService } from './storage.service'
-import { STORAGE_KEYS, STORAGE_TYPE, type StorageType } from './storage.keys'
+import { STORAGE_KEYS } from './storage.constant'
 import type { AuthTokenModel } from '@/core/models/auth.model'
 
 class TokenStorageService {
     save(tokens: AuthTokenModel): void {
-        storageService.set(STORAGE_KEYS.AUTH_TOKENS, tokens, STORAGE_TYPE.LOCAL)
+        storageService.set(STORAGE_KEYS.AUTH_TOKENS, tokens)
     }
 
     get(): AuthTokenModel | null {
-        return storageService.get<AuthTokenModel>(STORAGE_KEYS.AUTH_TOKENS, STORAGE_TYPE.LOCAL)
+        return storageService.get<AuthTokenModel>(STORAGE_KEYS.AUTH_TOKENS)
     }
 
     clear(): void {
-        storageService.remove(STORAGE_KEYS.AUTH_TOKENS, STORAGE_TYPE.LOCAL)
+        storageService.remove(STORAGE_KEYS.AUTH_TOKENS)
     }
 
     getAccessToken(): string | null {

@@ -58,7 +58,6 @@ export const BRAND_LIST_FILTER_FIELDS: FilterField[] = [
 export const BRAND_LIST_COLUMNS: TableColumn[] = [
     { key: 'name', title: 'Thương hiệu', sortable: true, minWidth: '200px' },
     { key: 'code', title: 'Mã', width: '110px' },
-    { key: 'currency', title: 'Tiền tệ', width: '90px', align: 'center', hideBelow: 'md' },
     { key: 'isActive', title: 'Trạng thái', width: '130px', align: 'center' },
     { key: 'updatedAt', title: 'Cập nhật', width: '150px', hideBelow: 'lg' },
     { key: 'actions', title: '', width: '120px', align: 'end' },

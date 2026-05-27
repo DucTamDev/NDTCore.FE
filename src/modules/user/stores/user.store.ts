@@ -13,10 +13,6 @@ export const useUserStore = defineStore('user', () => {
     const loading = ref(false)
     const error = ref<string | null>(null)
 
-    // ─────────────────────────────
-    // GETTERS
-    // ─────────────────────────────
-
     const isLoaded = computed(() => profile.value !== null)
 
     const fullName = computed(() => profile.value?.FullName ?? '')
@@ -29,12 +25,8 @@ export const useUserStore = defineStore('user', () => {
             : (parts[0]?.[0] ?? '?').toUpperCase()
     })
 
-    // ─────────────────────────────
-    // FETCH PROFILE
-    // ─────────────────────────────
-
     async function fetchProfile(): Promise<void> {
-        if (isLoaded.value) return // đã có rồi thì không gọi lại
+        if (isLoaded.value) return
 
         loading.value = true
         error.value = null
@@ -54,10 +46,6 @@ export const useUserStore = defineStore('user', () => {
             loading.value = false
         }
     }
-
-    // ─────────────────────────────
-    // RESET
-    // ─────────────────────────────
 
     function reset(): void {
         profile.value = null

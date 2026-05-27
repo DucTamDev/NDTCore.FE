@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { MENU_TABS, ALL_MENU } from '@/seed-data/home/_index.ts'
+import { MENU_TABS, ALL_MENU } from '@/modules/home/seeds/_index'
 
 const activeTab = ref('milk-tea')
 const filteredMenu = computed(() => ALL_MENU.filter((i) => i.cat === activeTab.value))

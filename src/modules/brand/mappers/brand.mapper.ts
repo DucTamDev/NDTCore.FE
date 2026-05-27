@@ -4,8 +4,6 @@ import type {
     UpdateBrandRequest,
     UpdateBrandResponse,
 } from '@/modules/brand/models/dtos/_index'
-import { CURRENCY } from '@/core/constants/currency.constants'
-import { TIMEZONE } from '@/core/constants/timezone.constants'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
 import type { BrandViewModel } from '@/modules/brand/models/view-models/brand.view-model'
 import { BrandDto } from '@/modules/brand/models/dtos/brand.dto'
@@ -24,8 +22,6 @@ export const brandMapper = {
             isActive: dto.IsActive ?? null,
             legalName: dto.LegalName ?? null,
             taxCode: dto.TaxCode ?? null,
-            currency: dto.Currency ?? null,
-            timeZone: dto.TimeZone ?? null,
             createdAt: dto.CreatedAt,
             createdBy: dto.CreatedBy,
             updatedAt: dto.UpdatedAt,
@@ -43,8 +39,6 @@ export const brandMapper = {
             isActive: brand.isActive ?? false,
             legalName: brand.legalName ?? null,
             taxCode: brand.taxCode ?? null,
-            currency: brand.currency ?? CURRENCY.DEFAULT,
-            timeZone: brand.timeZone ?? TIMEZONE.DEFAULT,
             createdAt: brand.createdAt,
             createdBy: brand.createdBy,
             updatedAt: brand.updatedAt,
@@ -61,8 +55,6 @@ export const brandMapper = {
             isActive: response.IsActive ?? null,
             legalName: response.LegalName ?? null,
             taxCode: response.TaxCode ?? null,
-            currency: response.Currency ?? null,
-            timeZone: response.TimeZone ?? null,
             createdAt: response.CreatedAt ?? null,
             createdBy: response.CreatedBy ?? null,
             updatedAt: null,
@@ -79,8 +71,6 @@ export const brandMapper = {
             isActive: response.IsActive ?? null,
             legalName: response.LegalName ?? null,
             taxCode: response.TaxCode ?? null,
-            currency: response.Currency ?? null,
-            timeZone: response.TimeZone ?? null,
             createdAt: null,
             createdBy: null,
             updatedAt: response.UpdatedAt ?? null,
@@ -93,8 +83,6 @@ export const brandMapper = {
             Name: form.name.trim(),
             LegalName: form.legalName?.trim() ?? null,
             TaxCode: form.taxCode?.trim() ?? null,
-            Currency: form.currency ?? null,
-            TimeZone: form.timeZone ?? null,
         }
     },
 
@@ -104,8 +92,6 @@ export const brandMapper = {
             IsActive: form.isActive ?? null,
             LegalName: form.legalName?.trim() ?? null,
             TaxCode: form.taxCode?.trim() ?? null,
-            Currency: form.currency ?? null,
-            TimeZone: form.timeZone ?? null,
         }
     },
 }

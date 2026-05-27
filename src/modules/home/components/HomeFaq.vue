@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { FAQS } from '@/seed-data/home/_index.ts'
+import { FAQS } from '@/modules/home/seeds/_index'
 </script>
 
 <style scoped>

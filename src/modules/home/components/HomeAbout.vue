@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { VALUES } from '@/seed-data/home/_index.ts'
+import { VALUES } from '@/modules/home/seeds/_index'
 
 const ABOUT_CARDS = [
   {

@@ -1,5 +1,5 @@
 import { storageAdapter } from './storage.adapter'
-import { STORAGE_TYPE, type StorageKey, type StorageType } from './storage.keys'
+import type { StorageKey } from './storage.constant'
 import { createLogger } from '@/core/logger/logger'
 
 const log = createLogger('storage')
@@ -15,28 +15,28 @@ class StorageService {
         }
     }
 
-    get<T>(key: StorageKey, type: StorageType = STORAGE_TYPE.LOCAL): T | null {
-        return this.safeParse<T>(storageAdapter.get(key, type))
+    get<T>(key: StorageKey): T | null {
+        return this.safeParse<T>(storageAdapter.get(key))
     }
 
-    set<T>(key: StorageKey, value: T, type: StorageType = STORAGE_TYPE.LOCAL): void {
+    set<T>(key: StorageKey, value: T): void {
         try {
-            storageAdapter.set(key, JSON.stringify(value), type)
+            storageAdapter.set(key, JSON.stringify(value))
         } catch (err) {
             log.error(`Set failed: ${key}`, err)
         }
     }
 
-    remove(key: StorageKey, type: StorageType = STORAGE_TYPE.LOCAL): void {
-        storageAdapter.remove(key, type)
+    remove(key: StorageKey): void {
+        storageAdapter.remove(key)
     }
 
-    clear(type: StorageType = STORAGE_TYPE.LOCAL): void {
-        storageAdapter.clear(type)
+    clear(): void {
+        storageAdapter.clear()
     }
 
-    has(key: StorageKey, type: StorageType = STORAGE_TYPE.LOCAL): boolean {
-        return storageAdapter.get(key, type) !== null
+    has(key: StorageKey): boolean {
+        return storageAdapter.get(key) !== null
     }
 }
 
