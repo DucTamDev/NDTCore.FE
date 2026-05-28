@@ -43,6 +43,7 @@
         <v-window v-model="activeTab">
           <v-window-item value="overview">
             <StoreOverviewTab
+              :store="store.data.value"
               :form="editForm"
               :is-dirty="isDirty"
               :submitting="submitting"

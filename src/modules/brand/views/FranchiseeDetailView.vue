@@ -60,6 +60,7 @@
         <v-window v-model="activeTab">
           <v-window-item value="overview">
             <FranchiseeOverviewTab
+              :franchisee="franchisee.data.value"
               :form="editForm"
               :is-dirty="isDirty"
               :submitting="submitting"
@@ -177,7 +178,11 @@ async function saveChanges() {
       franchiseeMapper.formModelToUpdateRequest(editForm),
     )
     if (updated) {
-      franchisee.data.value = updated
+      franchisee.data.value = {
+        ...updated,
+        createdAt: franchisee.data.value?.createdAt,
+        createdBy: franchisee.data.value?.createdBy,
+      }
       syncFormFromFranchisee()
     }
   } finally {

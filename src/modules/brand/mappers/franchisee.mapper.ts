@@ -45,10 +45,6 @@ export const franchiseeMapper = {
             joinedDate: vm.joinedDate ?? null,
             terminatedDate: vm.terminatedDate ?? null,
             isActive: vm.isActive ?? true,
-            createdAt: vm.createdAt ?? null,
-            createdBy: vm.createdBy ?? null,
-            updatedAt: vm.updatedAt ?? null,
-            updatedBy: vm.updatedBy ?? null,
         }
     },
 

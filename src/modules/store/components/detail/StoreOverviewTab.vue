@@ -1,30 +1,39 @@
 <template>
   <div>
+    <!-- ── Tab toolbar ──────────────────────────────────────────── -->
     <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
-      <v-btn variant="text" rounded="lg" size="small" prepend-icon="mdi-arrow-left" @click="$router.back()">
+      <v-btn
+        variant="text"
+        rounded="lg"
+        size="small"
+        prepend-icon="mdi-arrow-left"
+        @click="handleBack"
+      >
         Quay lại
       </v-btn>
+
       <div class="d-flex align-center ga-2">
         <v-slide-x-reverse-transition>
           <v-btn
-            v-if="isDirty"
+            v-if="props.isDirty"
             variant="text"
             rounded="lg"
             size="small"
-            :disabled="submitting"
-            @click="emit('discard')"
+            :disabled="props.submitting"
+            @click="handleDiscard"
           >
             Hủy thay đổi
           </v-btn>
         </v-slide-x-reverse-transition>
+
         <v-btn
           color="primary"
           variant="flat"
           rounded="lg"
           size="small"
           prepend-icon="mdi-content-save-outline"
-          :loading="submitting"
-          :disabled="!isDirty"
+          :loading="props.submitting"
+          :disabled="!props.isDirty"
           @click="emit('save')"
         >
           Lưu thay đổi
@@ -34,75 +43,395 @@
 
     <v-divider />
 
+    <!-- ── Content ─────────────────────────────────────────────── -->
     <div class="pa-5">
       <v-row>
+        <!-- ── Thông tin chung ────────────────────────────────── -->
         <v-col cols="12" md="6">
-          <v-card elevation="0" rounded="lg">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            height="100%"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
             <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-store-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
               <v-list-item-title class="font-weight-semibold">Thông tin chung</v-list-item-title>
             </v-list-item>
+
             <v-divider />
+
             <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field :model-value="form.name" label="Tên cửa hàng *" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'name', $event)" />
-              <v-text-field :model-value="form.code" label="Mã cửa hàng" variant="outlined" density="comfortable" readonly />
-              <div class="d-flex ga-4">
-                <v-switch :model-value="form.isActive" label="Đang hoạt động" color="primary" hide-details @update:model-value="emit('update:form', 'isActive', $event)" />
-                <v-switch :model-value="form.isAcceptingOrders" label="Nhận đơn" color="primary" hide-details @update:model-value="emit('update:form', 'isAcceptingOrders', $event)" />
+              <v-text-field
+                :model-value="props.form.name"
+                label="Tên cửa hàng *"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-store"
+                @update:model-value="emit('update:form', 'name', $event)"
+              />
+
+              <v-text-field
+                :model-value="props.form.code"
+                label="Mã cửa hàng"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-pound"
+                readonly
+                hint="Mã cửa hàng không thể thay đổi"
+                persistent-hint
+              />
+
+              <div>
+                <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>
+                <v-btn-toggle
+                  :model-value="props.form.isActive ? 'active' : 'inactive'"
+                  density="comfortable"
+                  rounded="lg"
+                  mandatory
+                  class="w-100"
+                  @update:model-value="emit('update:form', 'isActive', $event === 'active')"
+                >
+                  <v-btn
+                    value="active"
+                    :color="props.form.isActive ? 'primary' : undefined"
+                    variant="outlined"
+                    class="text-none flex-1-1"
+                    prepend-icon="mdi-check-circle-outline"
+                  >
+                    Đang hoạt động
+                  </v-btn>
+                  <v-btn
+                    value="inactive"
+                    :color="!props.form.isActive ? 'error' : undefined"
+                    variant="outlined"
+                    class="text-none flex-1-1"
+                    prepend-icon="mdi-close-circle-outline"
+                  >
+                    Ngưng hoạt động
+                  </v-btn>
+                </v-btn-toggle>
+              </div>
+
+              <div>
+                <div class="text-caption text-medium-emphasis mb-2 ml-1">Nhận đơn hàng</div>
+                <v-btn-toggle
+                  :model-value="props.form.isAcceptingOrders ? 'yes' : 'no'"
+                  density="comfortable"
+                  rounded="lg"
+                  mandatory
+                  class="w-100"
+                  @update:model-value="emit('update:form', 'isAcceptingOrders', $event === 'yes')"
+                >
+                  <v-btn
+                    value="yes"
+                    :color="props.form.isAcceptingOrders ? 'primary' : undefined"
+                    variant="outlined"
+                    class="text-none flex-1-1"
+                    prepend-icon="mdi-cart-check"
+                  >
+                    Đang nhận đơn
+                  </v-btn>
+                  <v-btn
+                    value="no"
+                    :color="!props.form.isAcceptingOrders ? 'error' : undefined"
+                    variant="outlined"
+                    class="text-none flex-1-1"
+                    prepend-icon="mdi-cart-off"
+                  >
+                    Ngừng nhận đơn
+                  </v-btn>
+                </v-btn-toggle>
               </div>
             </div>
           </v-card>
         </v-col>
 
+        <!-- ── Liên hệ ─────────────────────────────────────────── -->
         <v-col cols="12" md="6">
-          <v-card elevation="0" rounded="lg">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            height="100%"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
             <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-phone-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
               <v-list-item-title class="font-weight-semibold">Liên hệ</v-list-item-title>
             </v-list-item>
+
             <v-divider />
+
             <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field :model-value="form.phone" label="Số điện thoại" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'phone', $event)" />
-              <v-text-field :model-value="form.email" label="Email" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'email', $event)" />
+              <v-text-field
+                :model-value="props.form.phone"
+                label="Số điện thoại"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-phone-outline"
+                clearable
+                @update:model-value="emit('update:form', 'phone', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.email"
+                label="Email"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-email-outline"
+                clearable
+                @update:model-value="emit('update:form', 'email', $event || null)"
+              />
             </div>
           </v-card>
         </v-col>
 
+        <!-- ── Địa chỉ ─────────────────────────────────────────── -->
         <v-col cols="12" md="6">
-          <v-card elevation="0" rounded="lg">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            height="100%"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
             <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-map-marker-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
               <v-list-item-title class="font-weight-semibold">Địa chỉ</v-list-item-title>
             </v-list-item>
+
             <v-divider />
+
             <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field :model-value="form.address" label="Địa chỉ" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'address', $event)" />
-              <v-text-field :model-value="form.province" label="Tỉnh/Thành" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'province', $event)" />
-              <v-text-field :model-value="form.district" label="Quận/Huyện" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'district', $event)" />
-              <v-text-field :model-value="form.ward" label="Phường/Xã" variant="outlined" density="comfortable" color="primary" @update:model-value="emit('update:form', 'ward', $event)" />
+              <v-text-field
+                :model-value="props.form.address"
+                label="Địa chỉ"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-road"
+                clearable
+                @update:model-value="emit('update:form', 'address', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.province"
+                label="Tỉnh/Thành"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-map-outline"
+                clearable
+                @update:model-value="emit('update:form', 'province', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.district"
+                label="Quận/Huyện"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-map-outline"
+                clearable
+                @update:model-value="emit('update:form', 'district', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.ward"
+                label="Phường/Xã"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-map-outline"
+                clearable
+                @update:model-value="emit('update:form', 'ward', $event || null)"
+              />
             </div>
           </v-card>
         </v-col>
 
+        <!-- ── Vận hành ────────────────────────────────────────── -->
         <v-col cols="12" md="6">
-          <v-card elevation="0" rounded="lg">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            height="100%"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
             <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-clock-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
               <v-list-item-title class="font-weight-semibold">Vận hành</v-list-item-title>
             </v-list-item>
+
             <v-divider />
+
             <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field :model-value="form.openTime" label="Giờ mở cửa" variant="outlined" density="comfortable" color="primary" placeholder="HH:mm" @update:model-value="emit('update:form', 'openTime', $event)" />
-              <v-text-field :model-value="form.closeTime" label="Giờ đóng cửa" variant="outlined" density="comfortable" color="primary" placeholder="HH:mm" @update:model-value="emit('update:form', 'closeTime', $event)" />
-              <v-text-field :model-value="form.timeZone" label="Múi giờ" variant="outlined" density="comfortable" color="primary" placeholder="Asia/Ho_Chi_Minh" @update:model-value="emit('update:form', 'timeZone', $event)" />
+              <v-text-field
+                :model-value="props.form.openTime"
+                label="Giờ mở cửa"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-clock-start"
+                placeholder="HH:mm"
+                clearable
+                @update:model-value="emit('update:form', 'openTime', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.closeTime"
+                label="Giờ đóng cửa"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-clock-end"
+                placeholder="HH:mm"
+                clearable
+                @update:model-value="emit('update:form', 'closeTime', $event || null)"
+              />
+
+              <v-text-field
+                :model-value="props.form.timeZone"
+                label="Múi giờ"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                prepend-inner-icon="mdi-earth"
+                placeholder="Asia/Ho_Chi_Minh"
+                clearable
+                @update:model-value="emit('update:form', 'timeZone', $event || null)"
+              />
             </div>
+          </v-card>
+        </v-col>
+
+        <!-- ── Lịch sử ─────────────────────────────────────────── -->
+        <v-col cols="12">
+          <v-card elevation="0" rounded="lg" class="info-card">
+            <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-history" size="16" color="primary" />
+                </v-sheet>
+              </template>
+              <v-list-item-title class="font-weight-semibold">Lịch sử</v-list-item-title>
+            </v-list-item>
+
+            <v-divider />
+
+            <v-row no-gutters>
+              <v-col cols="12" sm="6">
+                <v-list lines="two" density="comfortable">
+                  <v-list-item min-height="60">
+                    <template #prepend>
+                      <v-icon icon="mdi-clock-plus-outline" size="18" class="mr-1 opacity-40" />
+                    </template>
+                    <v-list-item-title class="mb-1">Tạo lúc</v-list-item-title>
+                    <v-list-item-subtitle class="font-weight-medium text-high-emphasis">
+                      {{ formatStoreDate(props.store.createdAt) }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+
+              <v-divider vertical />
+
+              <v-col cols="12" sm="6">
+                <v-list lines="two" density="comfortable">
+                  <v-list-item min-height="60">
+                    <template #prepend>
+                      <v-icon icon="mdi-account-plus-outline" size="18" class="mr-1 opacity-40" />
+                    </template>
+                    <v-list-item-title class="mb-1">Tạo bởi</v-list-item-title>
+                    <v-list-item-subtitle class="font-weight-medium text-high-emphasis">
+                      {{ props.store.createdBy || '---' }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+
+              <v-divider />
+
+              <v-col cols="12" sm="6">
+                <v-list lines="two" density="comfortable">
+                  <v-list-item min-height="60">
+                    <template #prepend>
+                      <v-icon icon="mdi-clock-edit-outline" size="18" class="mr-1 opacity-40" />
+                    </template>
+                    <v-list-item-title class="mb-1">Cập nhật lúc</v-list-item-title>
+                    <v-list-item-subtitle class="font-weight-medium text-high-emphasis">
+                      {{ formatStoreDate(props.store.updatedAt) }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+
+              <v-divider vertical />
+
+              <v-col cols="12" sm="6">
+                <v-list lines="two" density="comfortable">
+                  <v-list-item min-height="60">
+                    <template #prepend>
+                      <v-icon icon="mdi-account-edit-outline" size="18" class="mr-1 opacity-40" />
+                    </template>
+                    <v-list-item-title class="mb-1">Cập nhật bởi</v-list-item-title>
+                    <v-list-item-subtitle class="font-weight-medium text-high-emphasis">
+                      {{ props.store.updatedBy || '---' }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
     </div>
+
+    <!-- ── Confirm dialog ────────────────────────────────────────── -->
+    <AppDialog
+      v-model="isConfirmOpen"
+      title="Bỏ thay đổi?"
+      size="sm"
+      confirm-label="Bỏ thay đổi"
+      cancel-label="Ở lại"
+      @confirm="onConfirm"
+      @cancel="onCancel"
+    >
+      Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất.
+    </AppDialog>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { AppDialog } from '@/components/ui'
+import { APP_ROUTES } from '@/core/constants/_index'
+import type { StoreViewModel } from '@/modules/store/models/view-models/store.view-model'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
+import { formatStoreDate } from '@/modules/store/utils/store.utils'
 
-defineProps<{
+const props = defineProps<{
+  store: StoreViewModel
   form: StoreFormModel
   isDirty: boolean
   submitting: boolean
@@ -113,4 +442,54 @@ const emit = defineEmits<{
   save: []
   discard: []
 }>()
+
+const router = useRouter()
+
+type PendingAction = 'back' | 'discard'
+
+const isConfirmOpen = ref(false)
+const pendingAction = ref<PendingAction | null>(null)
+
+function openConfirm(action: PendingAction) {
+  pendingAction.value = action
+  isConfirmOpen.value = true
+}
+
+function onConfirm() {
+  isConfirmOpen.value = false
+  if (pendingAction.value === 'back') {
+    void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
+  } else if (pendingAction.value === 'discard') {
+    emit('discard')
+  }
+  pendingAction.value = null
+}
+
+function onCancel() {
+  isConfirmOpen.value = false
+  pendingAction.value = null
+}
+
+function handleBack() {
+  if (props.isDirty) {
+    openConfirm('back')
+  } else {
+    void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
+  }
+}
+
+function handleDiscard() {
+  openConfirm('discard')
+}
 </script>
+
+<style scoped>
+.info-card {
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  transition: border-color 0.2s ease;
+}
+
+.info-card--dirty {
+  border-color: rgb(var(--v-theme-primary));
+}
+</style>
