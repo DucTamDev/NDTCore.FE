@@ -27,9 +27,10 @@
       :form="selectedStore ? storeMapper.toFormModel(selectedStore) : null"
       :is-edit="!!selectedStore"
       :brand-options="brandOptions"
-      :franchisee-options="franchiseeOptions"
+      :franchisee-options="formFranchiseeOptions"
       :submitting="submitting"
       @submit="saveStore"
+      @brand-change="onFormBrandChange"
     />
 
     <AppDialog
@@ -49,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { AppDialog } from '@/components/ui'
 import type { FilterOption } from '@/components/ui'
@@ -71,11 +72,13 @@ const router = useRouter()
 const { getPagedStores, createStore, updateStore, deleteStore } = useStore()
 const userStore = useUserStore()
 
-// ── Filter options (loaded once on mount) ──────────────────────────────────
+// ── Filter options ─────────────────────────────────────────────────────────
 const brandOptions = ref<FilterOption[]>([])
-const franchiseeOptions = ref<FilterOption[]>([])
+const allUserFranchiseeOptions = ref<FilterOption[]>([])  // loaded once on mount
+const filterFranchiseeOptions = ref<FilterOption[]>([])   // filter bar — updates per brand selection
+const formFranchiseeOptions = ref<FilterOption[]>([])     // form dialog — per selected brand
 const filterFields = computed(() =>
-  buildStoreFilterFields(brandOptions.value, franchiseeOptions.value),
+  buildStoreFilterFields(brandOptions.value, filterFranchiseeOptions.value),
 )
 
 // ── List page ───────────────────────────────────────────────────────────────
@@ -103,6 +106,19 @@ const listPage = useListPage<StoreViewModel>({
 
 const viewItems = computed<StoreViewModel[]>(() => listPage.items.value ?? [])
 
+watch(
+  () => listPage.filters.activeFilters.value['brandId'],
+  async (brandId) => {
+    listPage.filters.setFilter('franchiseeId', null)
+    if (!brandId) {
+      filterFranchiseeOptions.value = allUserFranchiseeOptions.value
+      return
+    }
+    const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(Number(brandId))
+    filterFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+  },
+)
+
 // ── Form dialog ─────────────────────────────────────────────────────────────
 const selectedStore = ref<StoreViewModel | null>(null)
 const isFormDialogOpen = ref(false)
@@ -111,6 +127,15 @@ const submitting = ref(false)
 const openCreateDialog = () => {
   selectedStore.value = null
   isFormDialogOpen.value = true
+}
+
+const onFormBrandChange = async (brandId: number | null) => {
+  if (!brandId) {
+    formFranchiseeOptions.value = []
+    return
+  }
+  const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
+  formFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
 }
 
 const saveStore = async (form: StoreFormModel) => {
@@ -169,7 +194,8 @@ onMounted(async () => {
       franchiseeService.getFranchiseesByUserIdAsync(userId),
     ])
     brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
-    franchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+    allUserFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+    filterFranchiseeOptions.value = allUserFranchiseeOptions.value
   }
   await listPage.refresh()
 })

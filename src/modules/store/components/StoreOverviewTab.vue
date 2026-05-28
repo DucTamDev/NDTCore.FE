@@ -288,11 +288,11 @@
               <v-text-field
                 :model-value="props.form.openTime"
                 label="Giờ mở cửa"
+                type="time"
                 variant="outlined"
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-clock-start"
-                placeholder="HH:mm"
                 clearable
                 @update:model-value="emit('update:form', 'openTime', $event || null)"
               />
@@ -300,11 +300,11 @@
               <v-text-field
                 :model-value="props.form.closeTime"
                 label="Giờ đóng cửa"
+                type="time"
                 variant="outlined"
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-clock-end"
-                placeholder="HH:mm"
                 clearable
                 @update:model-value="emit('update:form', 'closeTime', $event || null)"
               />
@@ -320,6 +320,62 @@
                 clearable
                 @update:model-value="emit('update:form', 'timeZone', $event || null)"
               />
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- ── Phân loại ─────────────────────────────────────────── -->
+        <v-col cols="12">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
+            <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet rounded="md" width="32" height="32" class="d-flex align-center justify-center mr-1">
+                  <v-icon icon="mdi-tag-multiple-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
+              <v-list-item-title class="font-weight-semibold">Phân loại</v-list-item-title>
+            </v-list-item>
+
+            <v-divider />
+
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <v-autocomplete
+                    :model-value="props.form.brandId"
+                    label="Thương hiệu *"
+                    variant="outlined"
+                    density="comfortable"
+                    color="primary"
+                    prepend-inner-icon="mdi-domain"
+                    :items="props.brandOptions"
+                    item-title="label"
+                    item-value="value"
+                    @update:model-value="onBrandChange($event)"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-autocomplete
+                    :model-value="props.form.franchiseeId"
+                    label="Nhà nhượng quyền"
+                    variant="outlined"
+                    density="comfortable"
+                    color="primary"
+                    prepend-inner-icon="mdi-handshake-outline"
+                    :items="props.franchiseeOptions"
+                    item-title="label"
+                    item-value="value"
+                    clearable
+                    :placeholder="props.form.brandId ? 'Trực thuộc thương hiệu' : 'Chọn thương hiệu trước'"
+                    :disabled="!props.form.brandId"
+                    @update:model-value="emit('update:form', 'franchiseeId', $event ?? null)"
+                  />
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-col>
@@ -425,6 +481,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { AppDialog } from '@/components/ui'
+import type { FilterOption } from '@/components/ui'
 import { APP_ROUTES } from '@/core/constants/_index'
 import type { StoreViewModel } from '@/modules/store/models/view-models/store.view-model'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
@@ -435,13 +492,22 @@ const props = defineProps<{
   form: StoreFormModel
   isDirty: boolean
   submitting: boolean
+  brandOptions: FilterOption[]
+  franchiseeOptions: FilterOption[]
 }>()
 
 const emit = defineEmits<{
   'update:form': [field: keyof StoreFormModel, value: unknown]
+  'brand-change': [brandId: number | null]
   save: []
   discard: []
 }>()
+
+function onBrandChange(brandId: number | null) {
+  emit('update:form', 'brandId', brandId)
+  emit('update:form', 'franchiseeId', null)
+  emit('brand-change', brandId)
+}
 
 const router = useRouter()
 

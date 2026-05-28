@@ -2,7 +2,9 @@ export interface StoreDto {
     Id: number
     TenantId: string
     BrandId: number
+    BrandName?: string | null
     FranchiseeId?: number | null
+    FranchiseeName?: string | null
     Name: string
     Code: string
     Slug?: string | null

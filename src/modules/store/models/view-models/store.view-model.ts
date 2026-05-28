@@ -2,7 +2,9 @@ export interface StoreViewModel extends Record<string, unknown> {
     id: number
     tenantId: string
     brandId: number
+    brandName?: string | null
     franchiseeId?: number | null
+    franchiseeName?: string | null
     name: string
     code: string
     slug?: string | null

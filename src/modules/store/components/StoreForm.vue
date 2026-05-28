@@ -23,7 +23,7 @@
             variant="outlined"
             density="comfortable"
             color="primary"
-            @update:model-value="update('brandId', $event)"
+            @update:model-value="onBrandChange($event)"
           />
         </v-col>
         <v-col v-if="!isEdit" cols="12" md="6">
@@ -128,10 +128,10 @@
       <div class="text-subtitle-2 font-weight-semibold mb-3">Vận hành</div>
       <v-row dense>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.openTime" label="Giờ mở cửa" variant="outlined" density="comfortable" color="primary" placeholder="HH:mm" @update:model-value="update('openTime', $event)" />
+          <v-text-field :model-value="localForm.openTime" label="Giờ mở cửa" type="time" variant="outlined" density="comfortable" color="primary" clearable @update:model-value="update('openTime', $event || null)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.closeTime" label="Giờ đóng cửa" variant="outlined" density="comfortable" color="primary" placeholder="HH:mm" @update:model-value="update('closeTime', $event)" />
+          <v-text-field :model-value="localForm.closeTime" label="Giờ đóng cửa" type="time" variant="outlined" density="comfortable" color="primary" clearable @update:model-value="update('closeTime', $event || null)" />
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field :model-value="localForm.timeZone" label="Múi giờ" variant="outlined" density="comfortable" color="primary" placeholder="Asia/Ho_Chi_Minh" @update:model-value="update('timeZone', $event)" />
@@ -166,6 +166,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   submit: [form: StoreFormModel]
+  'brand-change': [brandId: number | null]
 }>()
 
 const EMPTY_FORM: StoreFormModel = {
@@ -205,6 +206,12 @@ watch(
 
 function update<K extends keyof StoreFormModel>(key: K, value: StoreFormModel[K]) {
   localForm.value[key] = value
+}
+
+function onBrandChange(brandId: number | null) {
+  localForm.value.brandId = brandId
+  localForm.value.franchiseeId = null
+  emit('brand-change', brandId)
 }
 
 function handleSubmit() {

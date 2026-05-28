@@ -106,7 +106,7 @@ import { APP_ROUTES } from '@/core/constants/_index'
 import { franchiseeMapper } from '@/modules/brand/mappers/franchisee.mapper'
 import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
 import type { FranchiseeFormModel } from '@/modules/brand/models/form-models/franchisee.model'
-import FranchiseeOverviewTab from '@/modules/brand/components/franchisee/detail/FranchiseeOverviewTab.vue'
+import FranchiseeOverviewTab from '@/modules/brand/components/franchisee/FranchiseeOverviewTab.vue'
 import FranchiseeMemberList from '@/modules/brand/components/franchisee/FranchiseeMemberList.vue'
 
 const route = useRoute()

@@ -109,8 +109,8 @@ import { APP_ROUTES } from '@/core/constants/_index'
 import { brandMapper } from '@/modules/brand/mappers/brand.mapper'
 import { useBrand } from '@/modules/brand/composables/useBrand'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
-import BrandOverviewTab from '@/modules/brand/components/brand/detail/BrandOverviewTab.vue'
-import BrandStoresTab from '@/modules/brand/components/brand/detail/BrandStoresTab.vue'
+import BrandOverviewTab from '@/modules/brand/components/brand/BrandOverviewTab.vue'
+import BrandStoresTab from '@/modules/brand/components/brand/BrandStoresTab.vue'
 
 const route = useRoute()
 const { getBrand, updateBrand } = useBrand()

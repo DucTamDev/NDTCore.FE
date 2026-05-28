@@ -25,6 +25,14 @@
                 <div>
                   <div class="text-h6 font-weight-bold text-high-emphasis">{{ store.data.value.name }}</div>
                   <div class="text-body-2 text-medium-emphasis mt-1">{{ store.data.value.code }}</div>
+                  <div class="d-flex align-center ga-2 mt-2 flex-wrap">
+                    <v-chip v-if="store.data.value.brandName" size="small" color="primary" variant="tonal" prepend-icon="mdi-domain">
+                      {{ store.data.value.brandName }}
+                    </v-chip>
+                    <v-chip v-if="store.data.value.franchiseeName" size="small" color="secondary" variant="tonal" prepend-icon="mdi-handshake-outline">
+                      {{ store.data.value.franchiseeName }}
+                    </v-chip>
+                  </div>
                 </div>
               </div>
             </div>
@@ -47,7 +55,10 @@
               :form="editForm"
               :is-dirty="isDirty"
               :submitting="submitting"
+              :brand-options="brandOptions"
+              :franchisee-options="franchiseeOptions"
               @update:form="onFormUpdate"
+              @brand-change="onBrandChange"
               @save="saveChanges"
               @discard="discardChanges"
             />
@@ -75,18 +86,26 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import type { FilterOption } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { storeMapper } from '@/modules/store/mappers/store.mapper'
 import { useStore } from '@/modules/store/composables/useStore'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
-import StoreOverviewTab from '@/modules/store/components/detail/StoreOverviewTab.vue'
+import StoreOverviewTab from '@/modules/store/components/StoreOverviewTab.vue'
+import { brandService } from '@/modules/brand/services/brand.service'
+import { franchiseeService } from '@/modules/brand/services/franchisee.service'
+import { useUserStore } from '@/modules/user/stores/user.store'
 
 const route = useRoute()
 const { getStore, updateStore } = useStore()
+const userStore = useUserStore()
 
 const storeId = Number(route.params['id'])
 const activeTab = ref('overview')
+
+const brandOptions = ref<FilterOption[]>([])
+const franchiseeOptions = ref<FilterOption[]>([])
 
 const store = useAsyncState(() => getStore(storeId))
 
@@ -124,14 +143,38 @@ function syncFormFromStore() {
   snapshot.value = { ...editForm }
 }
 
+async function loadBrandOptions() {
+  await userStore.fetchProfile()
+  const userId = userStore.profile?.Id
+  if (!userId) return
+  const brands = await brandService.getBrandsByUserIdAsync(userId)
+  brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
+}
+
+async function loadFranchiseeOptions(brandId: number | null) {
+  if (!brandId) {
+    franchiseeOptions.value = []
+    return
+  }
+  const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
+  franchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+}
+
+async function onBrandChange(brandId: number | null) {
+  await loadFranchiseeOptions(brandId)
+}
+
 onMounted(async () => {
-  await store.execute()
+  await Promise.all([store.execute(), loadBrandOptions()])
   syncFormFromStore()
+  await loadFranchiseeOptions(editForm.brandId)
 })
 
 const isDirty = computed(() => {
   if (!snapshot.value) return false
   return (
+    editForm.brandId !== snapshot.value.brandId ||
+    editForm.franchiseeId !== snapshot.value.franchiseeId ||
     editForm.name !== snapshot.value.name ||
     editForm.slug !== snapshot.value.slug ||
     editForm.isActive !== snapshot.value.isActive ||

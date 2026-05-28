@@ -1,6 +1,8 @@
 import type { StoreDto } from './store.dto'
 
 export interface UpdateStoreRequest {
+    BrandId: number
+    FranchiseeId?: number | null
     Name: string
     Slug?: string | null
     LogoUrl?: string | null

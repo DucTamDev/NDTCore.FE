@@ -6,6 +6,12 @@ import type { UpdateStoreRequest } from '@/modules/store/models/dtos/update-stor
 import type { StoreViewModel } from '@/modules/store/models/view-models/store.view-model'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
 
+// input type="time" yields "HH:mm"; .NET TimeOnly requires "HH:mm:ss"
+function toTimeOnly(value: string | null | undefined): string | null {
+    if (!value) return null
+    return value.length === 5 ? `${value}:00` : value
+}
+
 export const storeMapper = {
     toViewModels(dtos: StoreDto[]): StoreViewModel[] {
         return (dtos ?? []).map((dto) => this.toViewModel(dto))
@@ -16,7 +22,9 @@ export const storeMapper = {
             id: dto.Id,
             tenantId: dto.TenantId,
             brandId: dto.BrandId,
+            brandName: dto.BrandName ?? null,
             franchiseeId: dto.FranchiseeId ?? null,
+            franchiseeName: dto.FranchiseeName ?? null,
             name: dto.Name,
             code: dto.Code,
             slug: dto.Slug ?? null,
@@ -98,14 +106,16 @@ export const storeMapper = {
             Country: form.country?.trim() ?? null,
             Latitude: form.latitude ?? null,
             Longitude: form.longitude ?? null,
-            OpenTime: form.openTime ?? null,
-            CloseTime: form.closeTime ?? null,
+            OpenTime: toTimeOnly(form.openTime),
+            CloseTime: toTimeOnly(form.closeTime),
             TimeZone: form.timeZone?.trim() ?? null,
         }
     },
 
     formModelToUpdateRequest(form: StoreFormModel): UpdateStoreRequest {
         return {
+            BrandId: form.brandId!,
+            FranchiseeId: form.franchiseeId ?? null,
             Name: form.name.trim(),
             Slug: form.slug?.trim() ?? null,
             LogoUrl: form.logoUrl?.trim() ?? null,
@@ -121,8 +131,8 @@ export const storeMapper = {
             Country: form.country?.trim() ?? null,
             Latitude: form.latitude ?? null,
             Longitude: form.longitude ?? null,
-            OpenTime: form.openTime ?? null,
-            CloseTime: form.closeTime ?? null,
+            OpenTime: toTimeOnly(form.openTime),
+            CloseTime: toTimeOnly(form.closeTime),
             TimeZone: form.timeZone?.trim() ?? null,
         }
     },
