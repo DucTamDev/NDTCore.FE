@@ -89,9 +89,10 @@ export const routes: RouteRecordRaw[] = [
                 },
             },
             {
-                path: 'products',
-                name: 'admin:products',
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                path: APP_ROUTES.PRODUCT.PRODUCTS.PATH,
+                name: APP_ROUTES.PRODUCT.PRODUCTS.NAME,
+                component: () => import('@/modules/product/views/ProductsView.vue'),
+                meta: { title: 'Sản phẩm', requiresAuth: true },
             },
             {
                 path: APP_ROUTES.PRODUCT.CATEGORIES.PATH,
@@ -124,13 +125,13 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.PRODUCT.OPTION_GROUPS.PATH,
                 name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                component: () => import('@/modules/product/views/OptionGroupsView.vue'),
                 meta: { title: 'Nhóm option', requiresAuth: true },
             },
             {
                 path: APP_ROUTES.PRODUCT.OPTIONS.PATH,
                 name: APP_ROUTES.PRODUCT.OPTIONS.NAME,
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                component: () => import('@/modules/product/views/OptionsView.vue'),
                 meta: { title: 'Options', requiresAuth: true },
             },
             {

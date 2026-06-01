@@ -75,6 +75,10 @@ export const APP_ROUTES = {
             NAME: 'admin:products',
             PATH: 'products',
         },
+        PRODUCT_DETAIL: {
+            NAME: 'admin:product-detail',
+            PATH: 'products/:id',
+        },
         CATEGORIES: {
             NAME: 'admin:product-categories',
             PATH: 'product/categories',
