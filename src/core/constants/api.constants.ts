@@ -53,4 +53,20 @@ export const API_ENDPOINTS = {
     ORDER: {
         ORDER_API: {},
     },
+    PRODUCT: {
+        CATEGORY_API: {
+            GET_PAGED: '/admin/category',
+            CREATE: '/admin/category',
+            GET_BY_ID: (id: number) => `/admin/category/${id}`,
+            UPDATE: (id: number) => `/admin/category/${id}`,
+            DELETE: (id: number) => `/admin/category/${id}`,
+        },
+        TAG_API: {
+            GET_PAGED: '/admin/tag',
+            CREATE: '/admin/tag',
+            GET_BY_ID: (id: number) => `/admin/tag/${id}`,
+            UPDATE: (id: number) => `/admin/tag/${id}`,
+            DELETE: (id: number) => `/admin/tag/${id}`,
+        },
+    },
 } as const

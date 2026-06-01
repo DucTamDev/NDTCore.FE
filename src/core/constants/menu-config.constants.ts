@@ -45,10 +45,33 @@ export const menuConfig: MenuEntry[] = [
             {
                 title: 'Sản phẩm',
                 icon: 'mdi-package-variant-closed',
-                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
+                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
                 children: [
-                    { title: 'Danh sách sản phẩm', to: 'admin:products' },
-                    { title: 'Danh mục', to: 'admin:product-categories' },
+                    {
+                        title: 'Danh sách sản phẩm',
+                        icon: 'mdi-food-variant',
+                        to: APP_ROUTES.PRODUCT.PRODUCTS.NAME,
+                    },
+                    {
+                        title: 'Danh mục',
+                        icon: 'mdi-format-list-bulleted-type',
+                        to: APP_ROUTES.PRODUCT.CATEGORIES.NAME,
+                    },
+                    {
+                        title: 'Nhãn',
+                        icon: 'mdi-tag-multiple-outline',
+                        to: APP_ROUTES.PRODUCT.TAGS.NAME,
+                    },
+                    {
+                        title: 'Nhóm option',
+                        icon: 'mdi-tune-variant',
+                        to: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
+                    },
+                    {
+                        title: 'Options',
+                        icon: 'mdi-checkbox-multiple-marked-outline',
+                        to: APP_ROUTES.PRODUCT.OPTIONS.NAME,
+                    },
                 ],
             },
             {

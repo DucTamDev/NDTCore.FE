@@ -94,9 +94,44 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/components/common/ComingSoonView.vue'),
             },
             {
-                path: 'product-categories',
-                name: 'admin:product-categories',
+                path: APP_ROUTES.PRODUCT.CATEGORIES.PATH,
+                name: APP_ROUTES.PRODUCT.CATEGORIES.NAME,
+                component: () => import('@/modules/product/views/CategoriesView.vue'),
+                meta: {
+                    title: 'Danh mục sản phẩm',
+                    requiresAuth: true,
+                    breadcrumbs: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Sản phẩm' },
+                        { title: 'Danh mục', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.TAGS.PATH,
+                name: APP_ROUTES.PRODUCT.TAGS.NAME,
+                component: () => import('@/modules/product/views/TagsView.vue'),
+                meta: {
+                    title: 'Nhãn sản phẩm',
+                    requiresAuth: true,
+                    breadcrumbs: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Sản phẩm' },
+                        { title: 'Nhãn', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.OPTION_GROUPS.PATH,
+                name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
                 component: () => import('@/components/common/ComingSoonView.vue'),
+                meta: { title: 'Nhóm option', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.OPTIONS.PATH,
+                name: APP_ROUTES.PRODUCT.OPTIONS.NAME,
+                component: () => import('@/components/common/ComingSoonView.vue'),
+                meta: { title: 'Options', requiresAuth: true },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.PATH,

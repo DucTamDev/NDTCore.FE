@@ -70,6 +70,29 @@ export const APP_ROUTES = {
         },
     },
 
+    PRODUCT: {
+        PRODUCTS: {
+            NAME: 'admin:products',
+            PATH: 'products',
+        },
+        CATEGORIES: {
+            NAME: 'admin:product-categories',
+            PATH: 'product/categories',
+        },
+        TAGS: {
+            NAME: 'admin:product-tags',
+            PATH: 'product/tags',
+        },
+        OPTION_GROUPS: {
+            NAME: 'admin:product-option-groups',
+            PATH: 'product/option-groups',
+        },
+        OPTIONS: {
+            NAME: 'admin:product-options',
+            PATH: 'product/options',
+        },
+    },
+
     NOT_FOUND: {
         NAME: 'not-found',
         PATH: '/:pathMatch(.*)*',
