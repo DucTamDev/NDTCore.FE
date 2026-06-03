@@ -331,6 +331,7 @@
                     :items="props.brandOptions"
                     item-title="label"
                     item-value="value"
+                    :error-messages="props.formErrors?.brandId"
                     @update:model-value="onBrandChange($event)"
                   />
                 </v-col>
@@ -385,6 +386,7 @@ const props = defineProps<{
   submitting: boolean
   brandOptions: FilterOption[]
   franchiseeOptions: FilterOption[]
+  formErrors?: { brandId?: string }
 }>()
 
 const emit = defineEmits<{

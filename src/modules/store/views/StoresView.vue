@@ -57,24 +57,24 @@ import type { FilterOption } from '@/components/ui'
 import { useListPage } from '@/components/ui/composables'
 import type { ListPageParams } from '@/components/ui/composables'
 import { APP_ROUTES, DEFAULT_PAGINATION } from '@/core/constants/_index'
-import { storeMapper } from '@/modules/store/mappers/store.mapper'
+import { toCreatePayload } from '@/modules/store/adapters/store.adapter'
 import { useStore } from '@/modules/store/composables/useStore'
 import { buildStoreFilterFields, STORE_ROW_ACTION } from '@/modules/store/constants/store-list.constants'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
 import type { StoreViewModel } from '@/modules/store/models/view-models/store.view-model'
 import StoreList from '@/modules/store/components/store/StoreList.vue'
 import StoreForm from '@/modules/store/components/store/StoreForm.vue'
-import { brandService } from '@/modules/brand/services/brand.service'
-import { franchiseeService } from '@/modules/brand/services/franchisee.service'
-import { useUserStore } from '@/modules/user/stores/user.store'
+import { useBrand } from '@/modules/brand/composables/useBrand'
+import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
 
 const router = useRouter()
 const { getPagedStores, createStore, deleteStore } = useStore()
-const userStore = useUserStore()
+const { getPagedBrands } = useBrand()
+const { getPagedFranchisees } = useFranchisee()
 
 // ── Filter options ─────────────────────────────────────────────────────────
 const brandOptions = ref<FilterOption[]>([])
-const allUserFranchiseeOptions = ref<FilterOption[]>([])
+const allFranchiseeOptions = ref<FilterOption[]>([])
 const filterFranchiseeOptions = ref<FilterOption[]>([])
 const formFranchiseeOptions = ref<FilterOption[]>([])
 const filterFields = computed(() =>
@@ -110,9 +110,9 @@ watch(
   () => listPage.filters.activeFilters.value['brandId'],
   async (brandId) => {
     listPage.filters.setFilter('franchiseeId', null)
-    if (!brandId) { filterFranchiseeOptions.value = allUserFranchiseeOptions.value; return }
-    const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(Number(brandId))
-    filterFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+    if (!brandId) { filterFranchiseeOptions.value = allFranchiseeOptions.value; return }
+    const result = await getPagedFranchisees({ PageNumber: 1, PageSize: 200, BrandId: Number(brandId) })
+    filterFranchiseeOptions.value = result.items.map((f) => ({ label: f.name, value: f.id }))
   },
 )
 
@@ -126,14 +126,14 @@ const openCreateDialog = () => {
 
 const onFormBrandChange = async (brandId: number | null) => {
   if (!brandId) { formFranchiseeOptions.value = []; return }
-  const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
-  formFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+  const result = await getPagedFranchisees({ PageNumber: 1, PageSize: 200, BrandId: brandId })
+  formFranchiseeOptions.value = result.items.map((f) => ({ label: f.name, value: f.id }))
 }
 
 const saveStore = async (form: StoreFormModel) => {
   submitting.value = true
   try {
-    await createStore(storeMapper.formModelToCreateRequest(form))
+    await createStore(toCreatePayload(form))
     isFormDialogOpen.value = false
     await listPage.refresh()
   } finally {
@@ -148,11 +148,12 @@ const deleting = ref(false)
 
 const doDelete = async () => {
   if (!storeToDelete.value) return
+  const id = storeToDelete.value.id
+  isDeleteDialogOpen.value = false
+  storeToDelete.value = null
   deleting.value = true
   try {
-    await deleteStore(storeToDelete.value.id)
-    isDeleteDialogOpen.value = false
-    storeToDelete.value = null
+    await deleteStore(id)
     await listPage.refresh()
   } finally {
     deleting.value = false
@@ -170,17 +171,13 @@ const handleRowAction = (key: string, item: StoreViewModel) => {
 }
 
 onMounted(async () => {
-  await userStore.fetchProfile()
-  const userId = userStore.profile?.Id
-  if (userId) {
-    const [brands, franchisees] = await Promise.all([
-      brandService.getBrandsByUserIdAsync(userId),
-      franchiseeService.getFranchiseesByUserIdAsync(userId),
-    ])
-    brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
-    allUserFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
-    filterFranchiseeOptions.value = allUserFranchiseeOptions.value
-  }
+  const [brandsResult, franchiseesResult] = await Promise.all([
+    getPagedBrands({ PageNumber: 1, PageSize: 200 }),
+    getPagedFranchisees({ PageNumber: 1, PageSize: 200 }),
+  ])
+  brandOptions.value = brandsResult.items.map((b) => ({ label: b.name, value: b.id }))
+  allFranchiseeOptions.value = franchiseesResult.items.map((f) => ({ label: f.name, value: f.id }))
+  filterFranchiseeOptions.value = allFranchiseeOptions.value
   await listPage.refresh()
 })
 </script>

@@ -53,6 +53,7 @@
             <StoreOverviewTab
               :entity="store.data.value"
               :form="editForm"
+              :form-errors="formErrors"
               :is-dirty="isDirty"
               :submitting="submitting"
               :brand-options="brandOptions"
@@ -81,7 +82,6 @@
       </template>
     </AppEmptyState>
 
-    <!-- Confirm bỏ thay đổi -->
     <AppConfirmDialog
       v-model="confirmOpen"
       title="Bỏ thay đổi?"
@@ -103,14 +103,14 @@ import { useStore } from '@/modules/store/composables/useStore'
 import { toForm, toPayload, emptyForm, TRACKED_FIELDS } from '@/modules/store/adapters/store.adapter'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
 import StoreOverviewTab from '@/modules/store/components/store/StoreOverviewTab.vue'
-import { brandService } from '@/modules/brand/services/brand.service'
-import { franchiseeService } from '@/modules/brand/services/franchisee.service'
-import { useUserStore } from '@/modules/user/stores/user.store'
+import { useBrand } from '@/modules/brand/composables/useBrand'
+import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
 
 const route = useRoute()
 const router = useRouter()
 const { getStore, updateStore } = useStore()
-const userStore = useUserStore()
+const { getPagedBrands } = useBrand()
+const { getPagedFranchisees } = useFranchisee()
 
 const storeId = Number(route.params['id'])
 if (isNaN(storeId)) void router.replace({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
@@ -122,6 +122,7 @@ const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
 const brandOptions = ref<FilterOption[]>([])
 const franchiseeOptions = ref<FilterOption[]>([])
+const formErrors = reactive<{ brandId?: string }>({})
 
 const store = useAsyncState(() => getStore(storeId))
 
@@ -165,17 +166,14 @@ function onConfirmUnsaved() {
 }
 
 async function loadBrandOptions() {
-    await userStore.fetchProfile()
-    const userId = userStore.profile?.Id
-    if (!userId) return
-    const brands = await brandService.getBrandsByUserIdAsync(userId)
-    brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
+    const result = await getPagedBrands({ PageNumber: 1, PageSize: 200 })
+    brandOptions.value = result.items.map((b) => ({ label: b.name, value: b.id }))
 }
 
 async function loadFranchiseeOptions(brandId: number | null) {
     if (!brandId) { franchiseeOptions.value = []; return }
-    const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
-    franchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+    const result = await getPagedFranchisees({ PageNumber: 1, PageSize: 200, BrandId: brandId })
+    franchiseeOptions.value = result.items.map((f) => ({ label: f.name, value: f.id }))
 }
 
 async function onBrandChange(brandId: number | null) {
@@ -183,7 +181,8 @@ async function onBrandChange(brandId: number | null) {
 }
 
 async function saveChanges() {
-    if (!editForm.brandId) return
+    if (!editForm.brandId) { formErrors.brandId = 'Thương hiệu là bắt buộc'; return }
+    delete formErrors.brandId
     submitting.value = true
     try {
         await updateStore(storeId, toPayload(editForm))
@@ -198,6 +197,6 @@ onMounted(async () => {
     if (isNaN(storeId)) return
     await Promise.all([store.execute(), loadBrandOptions()])
     syncFormFromStore()
-    await loadFranchiseeOptions(editForm.brandId)
+    await loadFranchiseeOptions(editForm.brandId ?? null)
 })
 </script>
