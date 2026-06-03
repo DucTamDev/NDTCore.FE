@@ -29,7 +29,7 @@
             <v-col cols="12" md="6">
                 <v-select
                     v-model="form.parentId"
-                    :items="parentOptions"
+                    :items="parentOptions.filter((p) => p.id !== editId)"
                     item-title="name"
                     item-value="id"
                     label="Danh mục cha"
@@ -45,7 +45,7 @@
                 />
             </v-col>
             <v-col cols="12" md="3" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" />
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 

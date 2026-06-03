@@ -5,7 +5,7 @@
             :columns="TAG_LIST_COLUMNS"
             :loading="loading"
             item-key="id"
-            @row-click="(item) => emit(TAG_LIST_EMIT.ROW_ACTION, TAG_ROW_ACTION.EDIT, item)"
+            @row-click="(item) => emit(TAG_LIST_EMIT.ROW_ACTION, TAG_ROW_ACTION.DETAIL, item)"
         >
             <template #[`item.colorHex`]="{ item }">
                 <div class="d-flex align-center ga-2">
@@ -43,13 +43,7 @@
                     icon="mdi-tag-multiple-outline"
                     title="Chưa có nhãn"
                     description="Tạo nhãn đầu tiên để gắn vào sản phẩm."
-                >
-                    <template #actions>
-                        <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(TAG_LIST_EMIT.CREATE)">
-                            Thêm nhãn
-                        </v-btn>
-                    </template>
-                </AppEmptyState>
+                />
             </template>
         </AppDataTable>
 

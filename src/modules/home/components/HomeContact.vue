@@ -15,9 +15,9 @@
               <div>
                 <div class="text-caption text-on-primary opacity-75">{{ info.label }}</div>
                 <component
-                  :is="info.href ? 'a' : 'span'"
+                  :is="'span'"
                   :href="info.href ?? undefined"
-                  class="text-lime-accent-2 font-weight-medium text-decoration-none"
+                  class="font-weight-medium text-decoration-none"
                 >
                   {{ info.value }}
                 </component>

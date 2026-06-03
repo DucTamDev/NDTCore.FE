@@ -47,23 +47,17 @@
                 />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field
-                    v-model.number="form.basePrice"
-                    label="Giá bán *"
-                    type="number"
-                    min="0"
-                    :rules="[rules.required, minPriceRule]"
-                    suffix="₫"
+                <AppCurrencyField
+                    v-model="form.basePrice"
+                    label="Giá gốc *"
+                    :required="true"
                 />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field
-                    v-model.number="form.costPrice"
+                <AppCurrencyField
+                    v-model="form.costPrice"
                     label="Giá vốn"
-                    type="number"
-                    min="0"
-                    :rules="[minCostPriceRule]"
-                    suffix="₫"
+                    :nullable="true"
                 />
             </v-col>
             <v-col cols="12">
@@ -83,10 +77,10 @@
                 />
             </v-col>
             <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" />
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
             <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isFeatured" label="Sản phẩm nổi bật" color="warning" />
+                <v-switch v-model="form.isFeatured" label="Sản phẩm nổi bật" color="warning" base-color="grey" />
             </v-col>
         </v-row>
 
@@ -102,6 +96,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
+import { AppCurrencyField } from '@/components/ui'
 import type { ProductFormModel } from '../models/form-models/product.model'
 
 interface CategoryOption {
@@ -135,12 +130,6 @@ const { rules } = useFormValidation()
 
 const slugRule = (v: string) =>
     !v || /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(v) || 'Slug chỉ gồm chữ thường, số và dấu gạch ngang'
-
-const minPriceRule = (v: number) =>
-    v >= 0 || 'Giá bán phải lớn hơn hoặc bằng 0'
-
-const minCostPriceRule = (v: number | null) =>
-    v === null || v === undefined || v >= 0 || 'Giá vốn phải lớn hơn hoặc bằng 0'
 
 function autoSlug() {
     if (!isEditMode.value) {

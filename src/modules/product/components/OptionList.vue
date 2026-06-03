@@ -5,11 +5,11 @@
             :columns="OPTION_LIST_COLUMNS"
             :loading="loading"
             item-key="id"
-            @row-click="(item) => emit(OPTION_LIST_EMIT.ROW_ACTION, OPTION_ROW_ACTION.EDIT, item)"
+            @row-click="(item) => emit(OPTION_LIST_EMIT.ROW_ACTION, OPTION_ROW_ACTION.DETAIL, item)"
         >
             <template #[`item.defaultPrice`]="{ item }">
                 <span class="text-body-2">
-                    {{ item.defaultPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}
+                    {{ item.defaultPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) ?? '0 ₫' }}
                 </span>
             </template>
 
@@ -32,13 +32,7 @@
                     icon="mdi-checkbox-multiple-marked-outline"
                     title="Chưa có option"
                     description="Thêm option vào nhóm để cấu hình lựa chọn cho sản phẩm."
-                >
-                    <template #actions>
-                        <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(OPTION_LIST_EMIT.CREATE)">
-                            Thêm option
-                        </v-btn>
-                    </template>
-                </AppEmptyState>
+                />
             </template>
         </AppDataTable>
 

@@ -5,18 +5,16 @@ export const PRODUCT_LIST_EMIT = {
     PAGE_CHANGE: 'page-change',
     PAGE_SIZE_CHANGE: 'page-size-change',
     ROW_ACTION: 'row-action',
-    CREATE: 'create',
 } as const
 
 export type ProductListEmits = {
     (event: typeof PRODUCT_LIST_EMIT.PAGE_CHANGE, page: number): void
     (event: typeof PRODUCT_LIST_EMIT.PAGE_SIZE_CHANGE, size: number): void
     (event: typeof PRODUCT_LIST_EMIT.ROW_ACTION, key: string, item: ProductViewModel): void
-    (event: typeof PRODUCT_LIST_EMIT.CREATE): void
 }
 
 export const PRODUCT_ROW_ACTION = {
-    EDIT: 'edit',
+    DETAIL: 'detail',
     DELETE: 'delete',
 } as const
 
@@ -32,7 +30,7 @@ export const PRODUCT_LIST_COLUMNS: TableColumn[] = [
 ]
 
 export const PRODUCT_ROW_ACTIONS: RowAction<ProductViewModel>[] = [
-    { key: PRODUCT_ROW_ACTION.EDIT, label: 'Chỉnh sửa', icon: 'mdi-pencil-outline', color: 'primary' },
+    { key: PRODUCT_ROW_ACTION.DETAIL, label: 'Xem chi tiết', icon: 'mdi-eye-outline', color: 'secondary' },
     { key: PRODUCT_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

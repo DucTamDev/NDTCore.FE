@@ -40,6 +40,20 @@
                     </template>
                 </v-text-field>
             </v-col>
+            <v-col cols="12">
+                <div class="d-flex align-center ga-3 mt-1">
+                    <span class="text-body-2 text-medium-emphasis">Preview:</span>
+                    <v-chip
+                        :style="{
+                            backgroundColor: form.colorHex || '#E0E0E0',
+                            color: form.textColor || '#000000',
+                        }"
+                        size="small"
+                    >
+                        {{ form.name || 'Tên nhãn' }}
+                    </v-chip>
+                </div>
+            </v-col>
             <v-col cols="12" md="3">
                 <v-text-field
                     v-model.number="form.displayOrder"
@@ -49,7 +63,7 @@
                 />
             </v-col>
             <v-col cols="12" md="3" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" />
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 

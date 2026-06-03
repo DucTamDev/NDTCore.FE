@@ -87,6 +87,10 @@ export const APP_ROUTES = {
             NAME: 'admin:product-tags',
             PATH: 'product/tags',
         },
+        TAG_DETAIL: {
+            NAME: 'admin:product-tag-detail',
+            PATH: 'product/tags/:id',
+        },
         OPTION_GROUPS: {
             NAME: 'admin:product-option-groups',
             PATH: 'product/option-groups',
@@ -94,6 +98,18 @@ export const APP_ROUTES = {
         OPTIONS: {
             NAME: 'admin:product-options',
             PATH: 'product/options',
+        },
+        CATEGORY_DETAIL: {
+            NAME: 'admin:product-category-detail',
+            PATH: 'product/categories/:id',
+        },
+        OPTION_GROUP_DETAIL: {
+            NAME: 'admin:product-option-group-detail',
+            PATH: 'product/option-groups/:id',
+        },
+        OPTION_DETAIL: {
+            NAME: 'admin:product-option-detail',
+            PATH: 'product/options/:id',
         },
     },
 

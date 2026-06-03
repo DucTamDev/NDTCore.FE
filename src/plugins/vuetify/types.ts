@@ -51,6 +51,8 @@ export interface SemanticColorRole {
 
   readonly background: string;
   readonly surface: string;
+  readonly surfaceVariant: string;
+  readonly onSurfaceVariant: string; 
   readonly surfaceElevated: string;
   readonly surfaceOverlay: string;
 

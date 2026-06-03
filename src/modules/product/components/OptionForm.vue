@@ -1,6 +1,16 @@
 <template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
+            <v-col v-if="!isEditMode" cols="12">
+                <v-autocomplete
+                    v-model="form.groupId"
+                    :items="groupOptions"
+                    item-value="id"
+                    item-title="name"
+                    label="Nhóm option *"
+                    :rules="[(v: number | null) => !!v || 'Vui lòng chọn nhóm option']"
+                />
+            </v-col>
             <v-col cols="12" md="8">
                 <v-text-field
                     v-model="form.name"
@@ -9,12 +19,9 @@
                 />
             </v-col>
             <v-col cols="12" md="4">
-                <v-text-field
-                    v-model.number="form.defaultPrice"
+                <AppCurrencyField
+                    v-model="form.defaultPrice"
                     label="Giá mặc định"
-                    type="number"
-                    min="0"
-                    :rules="[(v: number) => v >= 0 || 'Giá không được âm']"
                 />
             </v-col>
             <v-col cols="12">
@@ -41,7 +48,7 @@
                 />
             </v-col>
             <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" />
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 
@@ -57,15 +64,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
+import { AppCurrencyField } from '@/components/ui'
 import type { OptionFormModel } from '../models/form-models/option.model'
 
 interface Props {
     modelValue: OptionFormModel
     isSubmitting: boolean
     editId?: number | null
+    groupOptions?: { id: number; name: string }[]
 }
 
-const props = withDefaults(defineProps<Props>(), { editId: null })
+const props = withDefaults(defineProps<Props>(), { editId: null, groupOptions: () => [] })
 
 const emit = defineEmits<{
     'update:modelValue': [value: OptionFormModel]

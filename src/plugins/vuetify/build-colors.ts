@@ -28,7 +28,7 @@ export function buildColors(colors: SemanticColorRole): VuetifyColors {
     'info-lighten-1': toHex(colors.infoSubtle),
     background: toHex(colors.background),
     surface: toHex(colors.surface),
-    'surface-variant': toHex(colors.surfaceElevated),
+    'surface-variant': toHex(colors.surfaceVariant),
     'surface-bright': toHex(colors.surfaceElevated),
     'on-primary': toHex(colors.onPrimary),
     'on-secondary': toHex(colors.onSecondary),
@@ -39,6 +39,6 @@ export function buildColors(colors: SemanticColorRole): VuetifyColors {
     'on-info': toHex(colors.onInfo),
     'on-background': toHex(colors.textPrimary),
     'on-surface': toHex(colors.textPrimary),
-    'on-surface-variant': toHex(colors.textSecondary),
+    'on-surface-variant': toHex(colors.onSurfaceVariant),
   }
 }

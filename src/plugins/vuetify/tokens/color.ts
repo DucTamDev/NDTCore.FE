@@ -42,6 +42,8 @@ export const lightColorTokens = {
 
     background:      gray[50],
     surface:         white,
+    surfaceVariant:  gray[100],
+    onSurfaceVariant: gray[600],
     surfaceElevated: white,
     surfaceOverlay:  gray[900],
 
@@ -98,6 +100,8 @@ export const darkColorTokens = {
 
     background:      zinc[950],
     surface:         zinc[900],
+    surfaceVariant:  zinc[800],
+    onSurfaceVariant: gray[400],
     surfaceElevated: zinc[800],
     surfaceOverlay:  zinc[950],
 

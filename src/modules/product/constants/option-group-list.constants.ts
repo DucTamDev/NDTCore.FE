@@ -5,20 +5,16 @@ export const OPTION_GROUP_LIST_EMIT = {
     PAGE_CHANGE: 'page-change',
     PAGE_SIZE_CHANGE: 'page-size-change',
     ROW_ACTION: 'row-action',
-    CREATE: 'create',
-    ROW_SELECT: 'row-select',
 } as const
 
 export type OptionGroupListEmits = {
     (event: typeof OPTION_GROUP_LIST_EMIT.PAGE_CHANGE, page: number): void
     (event: typeof OPTION_GROUP_LIST_EMIT.PAGE_SIZE_CHANGE, size: number): void
     (event: typeof OPTION_GROUP_LIST_EMIT.ROW_ACTION, key: string, item: OptionGroupViewModel): void
-    (event: typeof OPTION_GROUP_LIST_EMIT.CREATE): void
-    (event: typeof OPTION_GROUP_LIST_EMIT.ROW_SELECT, item: OptionGroupViewModel): void
 }
 
 export const OPTION_GROUP_ROW_ACTION = {
-    EDIT: 'edit',
+    DETAIL: 'detail',
     DELETE: 'delete',
 } as const
 
@@ -32,7 +28,7 @@ export const OPTION_GROUP_LIST_COLUMNS: TableColumn[] = [
 ]
 
 export const OPTION_GROUP_ROW_ACTIONS: RowAction<OptionGroupViewModel>[] = [
-    { key: OPTION_GROUP_ROW_ACTION.EDIT, label: 'Chỉnh sửa', icon: 'mdi-pencil-outline', color: 'primary' },
+    { key: OPTION_GROUP_ROW_ACTION.DETAIL, label: 'Xem chi tiết', icon: 'mdi-eye-outline', color: 'secondary' },
     { key: OPTION_GROUP_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

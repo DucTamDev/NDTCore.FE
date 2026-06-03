@@ -92,6 +92,7 @@
             :model-value="localForm.isActive"
             label="Đang hoạt động"
             color="primary"
+            base-color="grey"
             density="comfortable"
             hide-details
             @update:model-value="localForm.isActive = !!$event"

@@ -50,6 +50,8 @@ export const webLightColorTokens = {
     // Surface — nền trắng xanh nhạt, gợi cảm giác trong lành
     background:      emerald[50],
     surface:         white,
+    surfaceVariant:  emerald[100],
+    onSurfaceVariant: emerald[600],
     surfaceElevated: white,
     surfaceOverlay:  gray[900],
 
@@ -110,6 +112,8 @@ export const webDarkColorTokens = {
     // Surface — dark mode lấy zinc nhưng thoáng màu emerald ở nền tổng
     background:      zinc[950],
     surface:         zinc[900],
+    surfaceVariant:  zinc[800],
+    onSurfaceVariant: emerald[400],
     surfaceElevated: zinc[800],
     surfaceOverlay:  zinc[950],
 

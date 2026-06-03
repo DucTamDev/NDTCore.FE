@@ -5,7 +5,7 @@
             :columns="CATEGORY_LIST_COLUMNS"
             :loading="loading"
             item-key="id"
-            @row-click="(item) => emit(CATEGORY_LIST_EMIT.ROW_ACTION, CATEGORY_ROW_ACTION.EDIT, item)"
+            @row-click="(item) => emit(CATEGORY_LIST_EMIT.ROW_ACTION, CATEGORY_ROW_ACTION.DETAIL, item)"
         >
             <template #[`item.slug`]="{ item }">
                 <span class="text-caption text-medium-emphasis">{{ item.slug ?? '—' }}</span>

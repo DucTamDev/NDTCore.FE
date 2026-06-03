@@ -76,6 +76,7 @@
               :model-value="localForm.isActive"
               label="Đang hoạt động"
               color="primary"
+              base-color="grey"
               hide-details
               @update:model-value="update('isActive', !!$event)"
             />
@@ -83,6 +84,7 @@
               :model-value="localForm.isAcceptingOrders"
               label="Nhận đơn"
               color="primary"
+              base-color="grey"
               hide-details
               @update:model-value="update('isAcceptingOrders', !!$event)"
             />

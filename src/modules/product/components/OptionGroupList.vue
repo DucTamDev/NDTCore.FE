@@ -5,7 +5,7 @@
             :columns="OPTION_GROUP_LIST_COLUMNS"
             :loading="loading"
             item-key="id"
-            @row-click="(item) => emit(OPTION_GROUP_LIST_EMIT.ROW_SELECT, item)"
+            @row-click="(item) => emit(OPTION_GROUP_LIST_EMIT.ROW_ACTION, OPTION_GROUP_ROW_ACTION.DETAIL, item)"
         >
             <template #[`item.uiType`]="{ item }">
                 <v-chip
@@ -36,13 +36,7 @@
                     icon="mdi-tune-variant"
                     title="Chưa có nhóm option"
                     description="Tạo nhóm option đầu tiên để cấu hình lựa chọn cho sản phẩm."
-                >
-                    <template #actions>
-                        <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(OPTION_GROUP_LIST_EMIT.CREATE)">
-                            Thêm nhóm
-                        </v-btn>
-                    </template>
-                </AppEmptyState>
+                />
             </template>
         </AppDataTable>
 
@@ -70,6 +64,7 @@ import {
 import {
     OPTION_GROUP_LIST_EMIT,
     OPTION_GROUP_LIST_COLUMNS,
+    OPTION_GROUP_ROW_ACTION,
     OPTION_GROUP_ROW_ACTIONS,
     OPTION_GROUP_STATUS_CONFIG,
     UI_TYPE_LABELS,

@@ -35,7 +35,7 @@
                 />
             </v-col>
             <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" />
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 

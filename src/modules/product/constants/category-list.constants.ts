@@ -16,6 +16,7 @@ export type CategoryListEmits = {
 }
 
 export const CATEGORY_ROW_ACTION = {
+    DETAIL: 'detail',
     EDIT: 'edit',
     DELETE: 'delete',
 } as const
@@ -31,7 +32,7 @@ export const CATEGORY_LIST_COLUMNS: TableColumn[] = [
 ]
 
 export const CATEGORY_ROW_ACTIONS: RowAction<CategoryViewModel>[] = [
-    { key: CATEGORY_ROW_ACTION.EDIT, label: 'Chỉnh sửa', icon: 'mdi-pencil-outline', color: 'primary' },
+    { key: CATEGORY_ROW_ACTION.DETAIL, label: 'Xem chi tiết', icon: 'mdi-eye-outline', color: 'default' },
     { key: CATEGORY_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

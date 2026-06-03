@@ -82,6 +82,12 @@ export const API_ENDPOINTS = {
             GET_BY_ID: (id: number) => `/admin/option/${id}`,
             UPDATE: (id: number) => `/admin/option/${id}`,
             DELETE: (id: number) => `/admin/option/${id}`,
+            // Plan E — store overrides
+            GET_STORE_AVAILABILITY: (id: number) => `/admin/options/${id}/store-availability`,
+            UPSERT_STORE_AVAILABILITY: (id: number) => `/admin/options/${id}/store-availability`,
+            REMOVE_STORE_AVAILABILITY: (id: number, storeId: number) => `/admin/options/${id}/store-availability/${storeId}`,
+            UPSERT_STORE_PRICE: (id: number) => `/admin/options/${id}/store-prices`,
+            REMOVE_STORE_PRICE: (id: number, storeId: number) => `/admin/options/${id}/store-prices/${storeId}`,
         },
         PRODUCT_API: {
             GET_PAGED: '/admin/products',
@@ -91,6 +97,39 @@ export const API_ENDPOINTS = {
             DELETE: (id: number) => `/admin/products/${id}`,
             ADD_IMAGE: (id: number) => `/admin/products/${id}/images`,
             DELETE_IMAGE: (id: number, imageId: number) => `/admin/products/${id}/images/${imageId}`,
+            // Plan D — relations
+            GET_TAGS: (id: number) => `/admin/products/${id}/tags`,
+            ASSIGN_TAG: (id: number) => `/admin/products/${id}/tags`,
+            REMOVE_TAG: (id: number, tagId: number) => `/admin/products/${id}/tags/${tagId}`,
+            GET_OPTION_GROUPS: (id: number) => `/admin/products/${id}/option-groups`,
+            ASSIGN_OPTION_GROUP: (id: number) => `/admin/products/${id}/option-groups`,
+            UPDATE_OPTION_GROUP: (id: number, groupId: number) => `/admin/products/${id}/option-groups/${groupId}`,
+            REMOVE_OPTION_GROUP: (id: number, groupId: number) => `/admin/products/${id}/option-groups/${groupId}`,
+            GET_OPTION_CONFIGS: (id: number) => `/admin/products/${id}/option-configs`,
+            UPSERT_OPTION_CONFIG: (id: number) => `/admin/products/${id}/option-configs`,
+            REMOVE_OPTION_CONFIG: (id: number, optionId: number) => `/admin/products/${id}/option-configs/${optionId}`,
+        },
+        STORE_OVERRIDE_API: {
+            GET_PRODUCT_OVERVIEW: (productId: number) =>
+                `/admin/store-overrides/products/${productId}/overview`,
+            UPSERT_PRODUCT_AVAILABILITY: (productId: number, storeId: number) =>
+                `/admin/store-overrides/products/${productId}/stores/${storeId}/availability`,
+            REMOVE_PRODUCT_AVAILABILITY: (productId: number, storeId: number) =>
+                `/admin/store-overrides/products/${productId}/stores/${storeId}/availability`,
+            UPSERT_PRODUCT_PRICE: (productId: number, storeId: number) =>
+                `/admin/store-overrides/products/${productId}/stores/${storeId}/price`,
+            REMOVE_PRODUCT_PRICE: (productId: number, storeId: number) =>
+                `/admin/store-overrides/products/${productId}/stores/${storeId}/price`,
+            GET_OPTION_OVERVIEW: (optionId: number) =>
+                `/admin/store-overrides/options/${optionId}/overview`,
+            UPSERT_OPTION_AVAILABILITY: (optionId: number, storeId: number) =>
+                `/admin/store-overrides/options/${optionId}/stores/${storeId}/availability`,
+            REMOVE_OPTION_AVAILABILITY: (optionId: number, storeId: number) =>
+                `/admin/store-overrides/options/${optionId}/stores/${storeId}/availability`,
+            UPSERT_OPTION_PRICE: (optionId: number, storeId: number) =>
+                `/admin/store-overrides/options/${optionId}/stores/${storeId}/price`,
+            REMOVE_OPTION_PRICE: (optionId: number, storeId: number) =>
+                `/admin/store-overrides/options/${optionId}/stores/${storeId}/price`,
         },
     },
 } as const

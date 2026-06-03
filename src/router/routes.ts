@@ -135,6 +135,45 @@ export const routes: RouteRecordRaw[] = [
                 meta: { title: 'Options', requiresAuth: true },
             },
             {
+                path: APP_ROUTES.PRODUCT.PRODUCT_DETAIL.PATH,
+                name: APP_ROUTES.PRODUCT.PRODUCT_DETAIL.NAME,
+                component: () => import('@/modules/product/views/ProductDetailView.vue'),
+                meta: { title: 'Chi tiết sản phẩm', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.CATEGORY_DETAIL.PATH,
+                name: APP_ROUTES.PRODUCT.CATEGORY_DETAIL.NAME,
+                component: () => import('@/modules/product/views/CategoryDetailView.vue'),
+                meta: { title: 'Chi tiết danh mục', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.TAG_DETAIL.PATH,
+                name: APP_ROUTES.PRODUCT.TAG_DETAIL.NAME,
+                component: () => import('@/modules/product/views/TagDetailView.vue'),
+                meta: {
+                    title: 'Chi tiết nhãn',
+                    requiresAuth: true,
+                    breadcrumbs: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Sản phẩm' },
+                        { title: 'Nhãn', to: `/admin/${APP_ROUTES.PRODUCT.TAGS.PATH}` },
+                        { title: 'Chi tiết', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.OPTION_GROUP_DETAIL.PATH,
+                name: APP_ROUTES.PRODUCT.OPTION_GROUP_DETAIL.NAME,
+                component: () => import('@/modules/product/views/OptionGroupDetailView.vue'),
+                meta: { title: 'Chi tiết nhóm option', requiresAuth: true },
+            },
+            {
+                path: APP_ROUTES.PRODUCT.OPTION_DETAIL.PATH,
+                name: APP_ROUTES.PRODUCT.OPTION_DETAIL.NAME,
+                component: () => import('@/modules/product/views/OptionDetailView.vue'),
+                meta: { title: 'Chi tiết option', requiresAuth: true },
+            },
+            {
                 path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME,
                 component: () => import('@/modules/brand/views/FranchiseesView.vue'),

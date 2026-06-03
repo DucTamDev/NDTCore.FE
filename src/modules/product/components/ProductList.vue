@@ -5,7 +5,7 @@
             :columns="PRODUCT_LIST_COLUMNS"
             :loading="loading"
             item-key="id"
-            @row-click="(item) => emit(PRODUCT_LIST_EMIT.ROW_ACTION, PRODUCT_ROW_ACTION.EDIT, item)"
+            @row-click="(item) => emit(PRODUCT_LIST_EMIT.ROW_ACTION, PRODUCT_ROW_ACTION.DETAIL, item)"
         >
             <template #[`item.sku`]="{ item }">
                 <span class="text-caption text-medium-emphasis font-weight-medium">{{ item.sku }}</span>
@@ -51,13 +51,7 @@
                     icon="mdi-package-variant-closed"
                     title="Chưa có sản phẩm"
                     description="Tạo sản phẩm đầu tiên để bắt đầu bán hàng."
-                >
-                    <template #actions>
-                        <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(PRODUCT_LIST_EMIT.CREATE)">
-                            Thêm sản phẩm
-                        </v-btn>
-                    </template>
-                </AppEmptyState>
+                />
             </template>
         </AppDataTable>
 
