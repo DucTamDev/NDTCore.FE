@@ -9,6 +9,8 @@ export const useCategoryStore = defineStore('product-category', () => {
     const total = ref(0)
     const isLoading = ref(false)
 
+    const parentItems = ref<CategoryViewModel[]>([])
+
     async function fetchPaged(filter: CategoryFilterDto) {
         isLoading.value = true
         try {
@@ -20,11 +22,16 @@ export const useCategoryStore = defineStore('product-category', () => {
         }
     }
 
+    async function fetchParents() {
+        parentItems.value = await categoryService.getParentsAsync()
+    }
+
     function $reset() {
         items.value = []
         total.value = 0
         isLoading.value = false
+        parentItems.value = []
     }
 
-    return { items, total, isLoading, fetchPaged, $reset }
+    return { items, total, isLoading, parentItems, fetchPaged, fetchParents, $reset }
 })

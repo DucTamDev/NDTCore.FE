@@ -155,11 +155,11 @@ const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.v
 
 const categoryOptionsWithAll = computed((): { id: number | null; name: string }[] => [
     { id: null, name: 'Tất cả' },
-    ...categoryStore.items.map((c) => ({ id: c.id, name: c.name })),
+    ...categoryStore.parentItems.map((c) => ({ id: c.id, name: c.name })),
 ])
 
 const categoryOptions = computed(() =>
-    categoryStore.items.map((c) => ({ id: c.id, name: c.name })),
+    categoryStore.parentItems.map((c) => ({ id: c.id, name: c.name })),
 )
 
 const statusOptionsWithAll = [
@@ -225,7 +225,7 @@ async function onConfirmDelete() {
 }
 
 onMounted(async () => {
-    await categoryStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
+    await categoryStore.fetchParents()
     void fetchData()
 })
 </script>

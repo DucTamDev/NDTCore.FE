@@ -16,6 +16,10 @@ export const categoryApi = {
         return productClient.get(API_ENDPOINTS.PRODUCT.CATEGORY_API.GET_PAGED, params)
     },
 
+    getParentsAsync(): Promise<ApiResponse<CategoryDto[]>> {
+        return productClient.get(API_ENDPOINTS.PRODUCT.CATEGORY_API.GET_PARENTS)
+    },
+
     getByIdAsync(id: number): Promise<ApiResponse<CategoryDto>> {
         return productClient.get(API_ENDPOINTS.PRODUCT.CATEGORY_API.GET_BY_ID(id))
     },

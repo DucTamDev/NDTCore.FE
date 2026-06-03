@@ -18,6 +18,11 @@ class CategoryService {
         }
     }
 
+    async getParentsAsync(): Promise<CategoryViewModel[]> {
+        const response = await categoryApi.getParentsAsync()
+        return categoryMapper.toViewModels(response.Data ?? [])
+    }
+
     async getByIdAsync(id: number): Promise<CategoryViewModel | null> {
         const response = await categoryApi.getByIdAsync(id)
         return response.Data ? categoryMapper.toViewModel(response.Data) : null

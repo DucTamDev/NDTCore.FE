@@ -56,6 +56,7 @@ export const API_ENDPOINTS = {
     PRODUCT: {
         CATEGORY_API: {
             GET_PAGED: '/admin/category',
+            GET_PARENTS: '/admin/category/parents',
             CREATE: '/admin/category',
             GET_BY_ID: (id: number) => `/admin/category/${id}`,
             UPDATE: (id: number) => `/admin/category/${id}`,

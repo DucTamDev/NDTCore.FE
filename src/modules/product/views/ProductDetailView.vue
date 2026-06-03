@@ -152,7 +152,7 @@ const product = useAsyncState(() => productService.getByIdAsync(productId))
 const { updateProduct } = useProduct()
 const categoryStore = useCategoryStore()
 
-const categoryOptions = computed(() => categoryStore.items.map((c) => ({ id: c.id, name: c.name })))
+const categoryOptions = computed(() => categoryStore.parentItems.map((c) => ({ id: c.id, name: c.name })))
 
 const TRACKED_FIELDS: ReadonlyArray<keyof ProductFormModel> = [
     'name', 'slug', 'description', 'shortDescription', 'categoryId',
@@ -218,7 +218,7 @@ async function saveChanges() {
 
 onMounted(async () => {
     if (isNaN(productId)) return
-    await categoryStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
+    await categoryStore.fetchParents()
     await product.execute()
     syncFormFromEntity()
 })
