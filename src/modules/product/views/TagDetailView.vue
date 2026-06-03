@@ -127,7 +127,7 @@ import { tagService } from '../services/tag.service'
 import { useTag } from '../composables/useTag'
 import { toForm, toPayload, emptyForm } from '../adapters/tag.adapter'
 import type { TagFormModel } from '../models/form-models/tag.model'
-import TagOverviewTab from '../components/TagOverviewTab.vue'
+import TagOverviewTab from '../components/tag/TagOverviewTab.vue'
 
 const route = useRoute()
 const router = useRouter()

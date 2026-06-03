@@ -142,8 +142,8 @@ import { useOption } from '../composables/useOption'
 import { toForm, toPayload, emptyForm } from '../adapters/option-group.adapter'
 import type { OptionGroupFormModel } from '../models/form-models/option-group.model'
 import type { OptionViewModel } from '../models/view-models/option.view-model'
-import OptionList from '../components/OptionList.vue'
-import OptionGroupOverviewTab from '../components/OptionGroupOverviewTab.vue'
+import OptionList from '../components/option/OptionList.vue'
+import OptionGroupOverviewTab from '../components/option-group/OptionGroupOverviewTab.vue'
 
 const route = useRoute()
 const router = useRouter()

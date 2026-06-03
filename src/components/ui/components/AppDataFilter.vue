@@ -48,7 +48,8 @@ const getFieldValue = (key: string): string | null => {
         variant="outlined"
         hide-details
         clearable
-        style="min-width: 180px; max-width: 280px"
+        persistent-clear
+        style="min-width: 180px; max-width: 280px; flex: 0 0 auto"
         @update:model-value="update(field.key, $event ?? null)"
         @keyup.enter="emit(APP_DATA_FILTER_EMIT.SEARCH)"
       />
@@ -64,8 +65,7 @@ const getFieldValue = (key: string): string | null => {
         density="compact"
         variant="outlined"
         hide-details
-        clearable
-        style="min-width: 160px; max-width: 240px"
+        style="min-width: 160px; max-width: 240px; flex: 0 0 auto"
         @update:model-value="update(field.key, $event ?? null)"
       />
 
@@ -80,11 +80,10 @@ const getFieldValue = (key: string): string | null => {
         density="compact"
         variant="outlined"
         hide-details
-        clearable
         multiple
         chips
         closable-chips
-        style="min-width: 200px; max-width: 320px"
+        style="min-width: 200px; max-width: 320px; flex: 0 0 auto"
         @update:model-value="update(field.key, ($event as string[])?.length ? $event : null)"
       />
 
@@ -98,7 +97,8 @@ const getFieldValue = (key: string): string | null => {
         variant="outlined"
         hide-details
         clearable
-        style="min-width: 160px; max-width: 200px"
+        persistent-clear
+        style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
         @update:model-value="update(field.key, $event || null)"
       />
 
@@ -112,7 +112,8 @@ const getFieldValue = (key: string): string | null => {
           variant="outlined"
           hide-details
           clearable
-          style="min-width: 160px; max-width: 200px"
+          persistent-clear
+          style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
           @update:model-value="updateDateRange(field.key, 0, $event ?? '')"
         />
         <v-text-field
@@ -123,7 +124,8 @@ const getFieldValue = (key: string): string | null => {
           variant="outlined"
           hide-details
           clearable
-          style="min-width: 160px; max-width: 200px"
+          persistent-clear
+          style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
           @update:model-value="updateDateRange(field.key, 1, $event ?? '')"
         />
       </template>

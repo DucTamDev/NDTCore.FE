@@ -20,5 +20,5 @@
 
 <script setup lang="ts">
 import { AppBreadcrumb, AppPageHeader } from '@/components/ui'
-import StoreMemberList from '@/modules/store/components/StoreMemberList.vue'
+import StoreMemberList from '@/modules/store/components/store/StoreMemberList.vue'
 </script>

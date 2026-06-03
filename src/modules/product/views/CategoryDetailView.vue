@@ -158,8 +158,8 @@ import { useCategory } from '../composables/useCategory'
 import { toForm, toPayload, emptyForm } from '../adapters/category.adapter'
 import type { CategoryFormModel } from '../models/form-models/category.model'
 import type { CategoryViewModel } from '../models/view-models/category.view-model'
-import CategoryList from '../components/CategoryList.vue'
-import CategoryOverviewTab from '../components/CategoryOverviewTab.vue'
+import CategoryList from '../components/category/CategoryList.vue'
+import CategoryOverviewTab from '../components/category/CategoryOverviewTab.vue'
 
 const route = useRoute()
 const router = useRouter()

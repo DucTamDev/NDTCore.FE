@@ -111,8 +111,8 @@ import { optionService } from '../services/option.service'
 import { useOption } from '../composables/useOption'
 import { useOptionGroupStore } from '../stores/option-group.store'
 import { toForm, toPayload, emptyForm } from '../adapters/option.adapter'
-import OptionOverviewTab from '../components/OptionOverviewTab.vue'
-import OptionStoreOverridesTab from '../components/OptionStoreOverridesTab.vue'
+import OptionOverviewTab from '../components/option/OptionOverviewTab.vue'
+import OptionStoreOverridesTab from '../components/option/OptionStoreOverridesTab.vue'
 import type { OptionFormModel } from '../models/form-models/option.model'
 
 const route = useRoute()

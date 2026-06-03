@@ -30,6 +30,7 @@
                             density="compact"
                             hide-details
                             clearable
+                            persistent-clear
                             @update:model-value="(v) => { filterKeyword = v }"
                             @keyup.enter="onSearchClick"
                         />
@@ -48,7 +49,7 @@
                     </v-col>
                     <v-col cols="12" md="4" class="d-flex justify-end ga-2">
                         <v-btn
-                            v-if="hasActiveFilters"
+                            :style="{ visibility: hasActiveFilters ? 'visible' : 'hidden' }"
                             variant="text"
                             size="small"
                             prepend-icon="mdi-filter-remove-outline"
@@ -112,8 +113,8 @@ import {
     AppDialog,
     AppConfirmDialog,
 } from '@/components/ui'
-import TagList from '../components/TagList.vue'
-import TagForm from '../components/TagForm.vue'
+import TagList from '../components/tag/TagList.vue'
+import TagForm from '../components/tag/TagForm.vue'
 import { useTag } from '../composables/useTag'
 import { emptyForm, toCreatePayload } from '../adapters/tag.adapter'
 import { TAG_ROW_ACTION } from '../constants/tag-list.constants'

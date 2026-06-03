@@ -129,11 +129,11 @@ import { useProduct } from '../composables/useProduct'
 import { useCategoryStore } from '../stores/category.store'
 import { toForm, toPayload, emptyForm } from '../adapters/product.adapter'
 import type { ProductFormModel } from '../models/form-models/product.model'
-import ProductOverviewTab from '../components/ProductOverviewTab.vue'
-import ProductTagsTab from '../components/ProductTagsTab.vue'
-import ProductOptionGroupsTab from '../components/ProductOptionGroupsTab.vue'
-import ProductOptionConfigsTab from '../components/ProductOptionConfigsTab.vue'
-import ProductStoreOverridesTab from '../components/ProductStoreOverridesTab.vue'
+import ProductOverviewTab from '../components/product/ProductOverviewTab.vue'
+import ProductTagsTab from '../components/product/ProductTagsTab.vue'
+import ProductOptionGroupsTab from '../components/product/ProductOptionGroupsTab.vue'
+import ProductOptionConfigsTab from '../components/product/ProductOptionConfigsTab.vue'
+import ProductStoreOverridesTab from '../components/product/ProductStoreOverridesTab.vue'
 
 const route = useRoute()
 const router = useRouter()

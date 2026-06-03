@@ -29,6 +29,7 @@
                             density="compact"
                             hide-details
                             clearable
+                            persistent-clear
                             @update:model-value="(v) => { filterKeyword = v }"
                             @keyup.enter="onSearchClick"
                         />
@@ -59,7 +60,7 @@
                     </v-col>
                     <v-col cols="12" md="3" class="d-flex justify-end ga-2">
                         <v-btn
-                            v-if="hasActiveFilters"
+                            :style="{ visibility: hasActiveFilters ? 'visible' : 'hidden' }"
                             variant="text"
                             size="small"
                             prepend-icon="mdi-filter-remove-outline"
@@ -124,8 +125,8 @@ import {
     AppDialog,
     AppConfirmDialog,
 } from '@/components/ui'
-import ProductList from '../components/ProductList.vue'
-import ProductForm from '../components/ProductForm.vue'
+import ProductList from '../components/product/ProductList.vue'
+import ProductForm from '../components/product/ProductForm.vue'
 import { useProduct } from '../composables/useProduct'
 import { useCategoryStore } from '../stores/category.store'
 import { emptyForm, toCreatePayload } from '../adapters/product.adapter'

@@ -30,6 +30,7 @@
                             density="compact"
                             hide-details
                             clearable
+                            persistent-clear
                             @update:model-value="(v) => { filterKeyword = v }"
                             @keyup.enter="onSearchClick"
                         />
@@ -48,7 +49,7 @@
                     </v-col>
                     <v-col cols="12" md="4" class="d-flex justify-end ga-2">
                         <v-btn
-                            v-if="hasActiveFilters"
+                            :style="{ visibility: hasActiveFilters ? 'visible' : 'hidden' }"
                             variant="text"
                             size="small"
                             prepend-icon="mdi-filter-remove-outline"
@@ -113,8 +114,8 @@ import {
     AppDialog,
     AppConfirmDialog,
 } from '@/components/ui'
-import CategoryList from '../components/CategoryList.vue'
-import CategoryForm from '../components/CategoryForm.vue'
+import CategoryList from '../components/category/CategoryList.vue'
+import CategoryForm from '../components/category/CategoryForm.vue'
 import { useCategory } from '../composables/useCategory'
 import { useCategoryStore } from '../stores/category.store'
 import { emptyForm, toCreatePayload } from '../adapters/category.adapter'
