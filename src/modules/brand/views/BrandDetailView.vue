@@ -62,14 +62,15 @@
         <v-window v-model="activeTab">
           <v-window-item value="overview">
             <BrandOverviewTab
-              :brand="brand.data.value"
+              :entity="brand.data.value"
               :form="editForm"
               :errors="formErrors"
               :is-dirty="isDirty"
               :submitting="submitting"
               @update:form="onFormUpdate"
               @save="saveChanges"
-              @discard="discardChanges"
+              @discard="onDiscard"
+              @back="onBack"
             />
           </v-window-item>
           <v-window-item value="stores">
@@ -97,104 +98,107 @@
         </v-btn>
       </template>
     </AppEmptyState>
+
+    <!-- Confirm bỏ thay đổi -->
+    <AppConfirmDialog
+      v-model="confirmOpen"
+      title="Bỏ thay đổi?"
+      message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+      confirm-label="Bỏ thay đổi"
+      @confirm="onConfirmUnsaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
-import { brandMapper } from '@/modules/brand/mappers/brand.mapper'
 import { useBrand } from '@/modules/brand/composables/useBrand'
+import { toForm, toPayload, emptyForm, TRACKED_FIELDS } from '@/modules/brand/adapters/brand.adapter'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
 import BrandOverviewTab from '@/modules/brand/components/brand/BrandOverviewTab.vue'
 import BrandStoresTab from '@/modules/brand/components/brand/BrandStoresTab.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { getBrand, updateBrand } = useBrand()
 
 const brandId = Number(route.params['id'])
+if (isNaN(brandId)) void router.replace({ name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME })
+
 const activeTab = ref('overview')
+const submitting = ref(false)
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
 const brand = useAsyncState(() => getBrand(brandId))
 
-// ── Inline edit form ──────────────────────────────────────────
-const editForm = reactive<BrandFormModel>({
-  name: '',
-  legalName: null,
-  taxCode: null,
-  isActive: true,
-})
-
+const editForm = reactive<BrandFormModel>(emptyForm())
 const snapshot = ref<BrandFormModel | null>(null)
-
-function syncFormFromBrand() {
-  if (!brand.data.value) return
-  const mapped = brandMapper.toFormModel(brand.data.value)
-  editForm.name = mapped?.name ?? ''
-  editForm.isActive = mapped?.isActive ?? false
-  editForm.legalName = mapped?.legalName
-  editForm.taxCode = mapped?.taxCode
-  snapshot.value = { ...editForm }
-}
-
-onMounted(async () => {
-  await brand.execute()
-  syncFormFromBrand()
-})
-
-const isDirty = computed(() => {
-  if (!snapshot.value) return false
-  return (
-    editForm.name !== snapshot.value.name ||
-    editForm.legalName !== snapshot.value.legalName ||
-    editForm.taxCode !== snapshot.value.taxCode ||
-    editForm.isActive !== snapshot.value.isActive
-  )
-})
-
 const formErrors = reactive<Partial<Record<keyof BrandFormModel, string>>>({})
 
-function onFormUpdate(field: keyof BrandFormModel, value: unknown) {
-  ;(editForm as Record<string, unknown>)[field] = value
-  if (field === 'name' && typeof value === 'string' && value.trim()) {
-    delete formErrors.name
-  }
+function syncFormFromBrand() {
+    if (!brand.data.value) return
+    Object.assign(editForm, toForm(brand.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
 }
 
-// ── Save / Discard ───────────────────────────────────────────
-const submitting = ref(false)
+const isDirty = computed(() => {
+    if (!snapshot.value) return false
+    return TRACKED_FIELDS.some((f) => editForm[f] !== snapshot.value![f])
+})
+
+function onFormUpdate(field: keyof BrandFormModel, value: unknown) {
+    ;(editForm as Record<string, unknown>)[field] = value
+    if (field === 'name' && typeof value === 'string' && value.trim()) delete formErrors.name
+}
 
 function discardChanges() {
-  syncFormFromBrand()
-  formErrors.name = undefined
+    syncFormFromBrand()
+    delete formErrors.name
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
 }
 
 async function saveChanges() {
-  formErrors.name = editForm.name?.trim() ? undefined : 'Tên thương hiệu là bắt buộc'
-  if (formErrors.name) return
-
-  submitting.value = true
-  try {
-    const dto = brandMapper.formModelToUpdateRequest({
-      name: editForm.name.trim(),
-      isActive: editForm.isActive,
-      legalName: editForm.legalName?.trim() ?? null,
-      taxCode: editForm.taxCode?.trim() ?? null,
-    })
-    const updated = await updateBrand(brandId, dto)
-    if (updated) {
-      brand.data.value = {
-        ...updated,
-        createdAt: brand.data.value?.createdAt,
-        createdBy: brand.data.value?.createdBy,
-      }
-      syncFormFromBrand()
+    if (!editForm.name?.trim()) {
+        formErrors.name = 'Tên thương hiệu là bắt buộc'
+        return
     }
-  } finally {
-    submitting.value = false
-  }
+    delete formErrors.name
+    submitting.value = true
+    try {
+        const ok = await updateBrand(brandId, toPayload(editForm))
+        if (ok) {
+            await brand.execute()
+            syncFormFromBrand()
+        }
+    } finally {
+        submitting.value = false
+    }
 }
+
+onMounted(async () => {
+    if (isNaN(brandId)) return
+    await brand.execute()
+    syncFormFromBrand()
+})
 </script>

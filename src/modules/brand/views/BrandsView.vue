@@ -22,8 +22,8 @@
 
     <BrandForm
       v-model="isFormDialogOpen"
-      :title="selectedBrand ? 'Cập nhật thương hiệu' : 'Tạo thương hiệu'"
-      :brand="brandMapper.toFormModel(selectedBrand)"
+      title="Tạo thương hiệu"
+      :brand="null"
       :submitting="submitting"
       @submit="saveBrand"
     />
@@ -61,7 +61,7 @@ import BrandForm from '@/modules/brand/components/brand/BrandForm.vue'
 import BrandList from '@/modules/brand/components/brand/BrandList.vue'
 
 const router = useRouter()
-const { getPagedBrands, createBrand, updateBrand, deleteBrand } = useBrand()
+const { getPagedBrands, createBrand, deleteBrand } = useBrand()
 
 // ─── List page ────────────────────────────────────────────────────────────────
 
@@ -90,25 +90,18 @@ const viewItems = computed<BrandViewModel[]>(() => listPage.items.value ?? [])
 
 // ─── Form dialog ──────────────────────────────────────────────────────────────
 
-const selectedBrand = ref<BrandViewModel | null>(null)
 const isFormDialogOpen = ref(false)
 const submitting = ref(false)
 
 const openCreateDialog = () => {
-  selectedBrand.value = null
   isFormDialogOpen.value = true
 }
 
 const saveBrand = async (form: BrandFormModel) => {
   submitting.value = true
   try {
-    if (selectedBrand.value) {
-      await updateBrand(selectedBrand.value.id, brandMapper.formModelToUpdateRequest(form))
-    } else {
-      await createBrand(brandMapper.formModelToCreateRequest(form))
-    }
+    await createBrand(brandMapper.formModelToCreateRequest(form))
     isFormDialogOpen.value = false
-    selectedBrand.value = null
     await listPage.refresh()
   } finally {
     submitting.value = false
@@ -142,9 +135,6 @@ const handleRowAction = (key: string, item: BrandViewModel) => {
       name: APP_ROUTES.ADMIN.CHILDREN.BRAND_DETAIL.NAME,
       params: { id: item.id },
     })
-  } else if (key === BRAND_ROW_ACTION.EDIT) {
-    selectedBrand.value = item
-    isFormDialogOpen.value = true
   } else if (key === BRAND_ROW_ACTION.DELETE) {
     brandToDelete.value = item
     isDeleteDialogOpen.value = true

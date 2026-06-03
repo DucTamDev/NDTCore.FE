@@ -7,7 +7,7 @@
             <template #breadcrumb>
                 <AppBreadcrumb
                     :items="[
-                        { title: 'Dashboard', to: '/admin' },
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
                         { title: 'Options', disabled: true },
                     ]"
@@ -21,19 +21,50 @@
         <!-- Filter bar -->
         <v-card rounded="lg" variant="outlined">
             <v-card-text class="pa-3">
-                <v-row dense>
+                <v-row dense align="center">
                     <v-col cols="12" md="4">
-                        <v-autocomplete
-                            v-model="filterGroupId"
-                            :items="groupOptions"
-                            item-value="id"
-                            item-title="name"
-                            label="Lọc theo nhóm"
-                            clearable
+                        <v-text-field
+                            :model-value="filterKeyword"
+                            label="Tìm kiếm"
+                            prepend-inner-icon="mdi-magnify"
                             density="compact"
                             hide-details
-                            @update:model-value="onFilterChange"
+                            clearable
+                            @update:model-value="(v) => { filterKeyword = v }"
+                            @keyup.enter="onSearchClick"
                         />
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <v-autocomplete
+                            :model-value="filterGroupId"
+                            :items="groupOptionsWithAll"
+                            item-value="id"
+                            item-title="name"
+                            label="Nhóm option"
+                            density="compact"
+                            hide-details
+                            @update:model-value="(v) => { filterGroupId = v }"
+                        />
+                    </v-col>
+                    <v-col cols="12" md="4" class="d-flex justify-end ga-2">
+                        <v-btn
+                            v-if="hasActiveFilters"
+                            variant="text"
+                            size="small"
+                            prepend-icon="mdi-filter-remove-outline"
+                            @click="clearFilters"
+                        >
+                            Xóa lọc
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            variant="tonal"
+                            size="small"
+                            prepend-icon="mdi-magnify"
+                            @click="onSearchClick"
+                        >
+                            Tìm kiếm
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -86,54 +117,77 @@ import OptionList from '../components/OptionList.vue'
 import OptionForm from '../components/OptionForm.vue'
 import { useOption } from '../composables/useOption'
 import { useOptionGroupStore } from '../stores/option-group.store'
-import { createEmptyOptionForm } from '../models/form-models/option.model'
+import { emptyForm, toCreatePayload } from '../adapters/option.adapter'
 import { OPTION_ROW_ACTION } from '../constants/option-list.constants'
 import { APP_ROUTES } from '@/core/constants/_index'
 import type { OptionViewModel } from '../models/view-models/option.view-model'
-import type { CreateOptionRequest } from '../models/dtos/option.dto'
+import type { OptionFormModel } from '../models/form-models/option.model'
+
+const DEFAULT_PAGE_SIZE = 20
 
 const router = useRouter()
 const { items, total, isLoading, isSubmitting, loadOptions, createOption, deleteOption } = useOption()
 const groupStore = useOptionGroupStore()
-const groupOptions = computed(() => groupStore.items.map((g) => ({ id: g.id, name: g.name })))
+
+const groupOptions = computed(() =>
+    groupStore.items.map((g) => ({ id: g.id, name: g.name })),
+)
+
+const groupOptionsWithAll = computed((): { id: number | null; name: string }[] => [
+    { id: null, name: 'Tất cả' },
+    ...groupStore.items.map((g) => ({ id: g.id, name: g.name })),
+])
 
 const page = ref(1)
-const pageSize = ref(20)
+const pageSize = ref(DEFAULT_PAGE_SIZE)
+const filterKeyword = ref<string | null>(null)
 const filterGroupId = ref<number | null>(null)
 const dialogOpen = ref(false)
-const formModel = ref(createEmptyOptionForm())
+const formModel = ref<OptionFormModel>(emptyForm())
 const confirmOpen = ref(false)
 const confirmItem = ref<OptionViewModel | null>(null)
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
 
-async function fetchData() {
-    await loadOptions({ PageNumber: page.value, PageSize: pageSize.value, GroupId: filterGroupId.value })
-}
+const hasActiveFilters = computed(() =>
+    !!(filterKeyword.value?.trim()) || filterGroupId.value !== null,
+)
 
-function onFilterChange() { page.value = 1; void fetchData() }
+async function fetchData() {
+    await loadOptions({
+        PageNumber: page.value,
+        PageSize: pageSize.value,
+        Keyword: filterKeyword.value || undefined,
+        GroupId: filterGroupId.value,
+    })
+}
 
 function onPageChange(p: number) { page.value = p; void fetchData() }
 
 function onPageSizeChange(s: number) { pageSize.value = s; page.value = 1; void fetchData() }
 
+function onSearchClick() {
+    page.value = 1
+    void fetchData()
+}
+
+function clearFilters() {
+    filterKeyword.value = null
+    filterGroupId.value = null
+    page.value = 1
+    void fetchData()
+}
+
 function openCreateDialog() {
-    formModel.value = createEmptyOptionForm(filterGroupId.value ?? undefined)
+    const f = emptyForm()
+    f.groupId = filterGroupId.value     // pre-fill group từ filter hiện tại
+    formModel.value = f
     dialogOpen.value = true
 }
 
-async function onFormSubmit(form: typeof formModel.value) {
+async function onFormSubmit(form: OptionFormModel) {
     if (form.groupId === null) return
-    const payload: CreateOptionRequest = {
-        GroupId: form.groupId,
-        Name: form.name,
-        DefaultPrice: form.defaultPrice,
-        Description: form.description || null,
-        ImageUrl: form.imageUrl || null,
-        DisplayOrder: form.displayOrder,
-        IsActive: form.isActive,
-    }
-    const result = await createOption(payload)
+    const result = await createOption(toCreatePayload(form as OptionFormModel & { groupId: number }))
     if (result) { dialogOpen.value = false; void fetchData() }
 }
 

@@ -60,20 +60,21 @@
                 <v-window v-model="activeTab">
                     <v-window-item value="overview">
                         <OptionGroupOverviewTab
-                            :group="group.data.value"
+                            :entity="group.data.value"
                             :form="editForm"
                             :errors="formErrors"
                             :is-dirty="isDirty"
                             :submitting="submitting"
                             @update:form="onFormUpdate"
                             @save="saveChanges"
-                            @discard="discardChanges"
+                            @discard="onDiscard"
+                            @back="onBack"
                         />
                     </v-window-item>
 
                     <v-window-item value="options">
                         <div class="pa-4">
-                            <v-progress-linear v-if="optionsLoading" indeterminate color="primary" class="mb-3" />
+                            <v-progress-linear :indeterminate="optionsLoading" color="primary" :style="{ opacity: optionsLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
                             <OptionList
                                 :items="optionItems"
                                 :loading="optionsLoading"
@@ -117,21 +118,29 @@
                 </v-btn>
             </template>
         </AppEmptyState>
+
+        <!-- Confirm bỏ thay đổi -->
+        <AppConfirmDialog
+            v-model="confirmOpen"
+            title="Bỏ thay đổi?"
+            message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+            confirm-label="Bỏ thay đổi"
+            @confirm="onConfirmUnsaved"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { optionGroupService } from '../services/option-group.service'
 import { useOptionGroup } from '../composables/useOptionGroup'
 import { useOption } from '../composables/useOption'
-import { createEmptyOptionGroupForm } from '../models/form-models/option-group.model'
+import { toForm, toPayload, emptyForm } from '../adapters/option-group.adapter'
 import type { OptionGroupFormModel } from '../models/form-models/option-group.model'
-import type { UpdateOptionGroupRequest } from '../models/dtos/option-group.dto'
 import type { OptionViewModel } from '../models/view-models/option.view-model'
 import OptionList from '../components/OptionList.vue'
 import OptionGroupOverviewTab from '../components/OptionGroupOverviewTab.vue'
@@ -139,8 +148,15 @@ import OptionGroupOverviewTab from '../components/OptionGroupOverviewTab.vue'
 const route = useRoute()
 const router = useRouter()
 const groupId = Number(route.params['id'])
-if (isNaN(groupId)) void router.replace({ name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME })
 const activeTab = ref('overview')
+const submitting = ref(false)
+const editForm = reactive<OptionGroupFormModel>(emptyForm())
+const snapshot = ref<OptionGroupFormModel | null>(null)
+const formErrors = reactive<Partial<Record<keyof OptionGroupFormModel, string>>>({})
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
+
+if (isNaN(groupId)) void router.replace({ name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME })
 
 const group = useAsyncState(() => optionGroupService.getByIdAsync(groupId))
 const { updateOptionGroup } = useOptionGroup()
@@ -152,46 +168,47 @@ const uiTypeLabel = computed(() => {
     return t ?? '—'
 })
 
-// Inline edit form
-const editForm = reactive<OptionGroupFormModel>(createEmptyOptionGroupForm())
-const snapshot = ref<OptionGroupFormModel | null>(null)
-
-function syncFormFromGroup() {
-    if (!group.data.value) return
-    const g = group.data.value
-    editForm.name = g.name
-    editForm.uiType = g.uiType
-    editForm.description = g.description ?? ''
-    editForm.displayOrder = g.displayOrder
-    editForm.isActive = g.isActive
-    snapshot.value = { ...editForm }
-}
+const TRACKED_FIELDS: ReadonlyArray<keyof OptionGroupFormModel> = [
+    'name', 'uiType', 'description', 'displayOrder', 'isActive',
+] as const
 
 const isDirty = computed(() => {
     if (!snapshot.value) return false
-    return (
-        editForm.name !== snapshot.value.name ||
-        editForm.uiType !== snapshot.value.uiType ||
-        editForm.description !== snapshot.value.description ||
-        editForm.displayOrder !== snapshot.value.displayOrder ||
-        editForm.isActive !== snapshot.value.isActive
-    )
+    return TRACKED_FIELDS.some(f => editForm[f] !== snapshot.value![f])
 })
 
-const formErrors = reactive<Partial<Record<keyof OptionGroupFormModel, string>>>({})
+function syncFormFromEntity() {
+    if (!group.data.value) return
+    Object.assign(editForm, toForm(group.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
+}
 
 function onFormUpdate(field: keyof OptionGroupFormModel, value: unknown) {
     ;(editForm as Record<string, unknown>)[field] = value
-    if (field === 'name' && typeof value === 'string' && value.trim()) {
+    if (field === 'name' && typeof value === 'string' && value.trim())
         delete formErrors.name
-    }
 }
 
-const submitting = ref(false)
-
 function discardChanges() {
-    syncFormFromGroup()
+    syncFormFromEntity()
     delete formErrors.name
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
 }
 
 async function saveChanges() {
@@ -200,20 +217,12 @@ async function saveChanges() {
         return
     }
     delete formErrors.name
-
     submitting.value = true
     try {
-        const payload: UpdateOptionGroupRequest = {
-            Name: editForm.name.trim(),
-            UiType: editForm.uiType,
-            Description: editForm.description || null,
-            DisplayOrder: editForm.displayOrder,
-            IsActive: editForm.isActive,
-        }
-        const ok = await updateOptionGroup(groupId, payload)
+        const ok = await updateOptionGroup(groupId, toPayload(editForm))
         if (ok) {
             await group.execute()
-            syncFormFromGroup()
+            syncFormFromEntity()
         }
     } finally {
         submitting.value = false
@@ -254,8 +263,9 @@ function onOptionAction(key: string, item: OptionViewModel) {
 }
 
 onMounted(async () => {
+    if (isNaN(groupId)) return
     await group.execute()
-    syncFormFromGroup()
+    syncFormFromEntity()
     await fetchOptions()
 })
 </script>

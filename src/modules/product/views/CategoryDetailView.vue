@@ -60,7 +60,7 @@
                 <v-window v-model="activeTab">
                     <v-window-item value="overview">
                         <CategoryOverviewTab
-                            :category="category.data.value"
+                            :entity="category.data.value"
                             :form="editForm"
                             :errors="formErrors"
                             :is-dirty="isDirty"
@@ -68,13 +68,14 @@
                             :parent-options="parentOptions"
                             @update:form="onFormUpdate"
                             @save="saveChanges"
-                            @discard="discardChanges"
+                            @discard="onDiscard"
+                            @back="onBack"
                         />
                     </v-window-item>
 
                     <v-window-item v-if="children.length > 0" value="children">
                         <div class="pa-4">
-                            <v-progress-linear v-if="childrenLoading" indeterminate color="primary" class="mb-3" />
+                            <v-progress-linear :indeterminate="childrenLoading" color="primary" :style="{ opacity: childrenLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
                             <CategoryList
                                 :items="children"
                                 :loading="childrenLoading"
@@ -89,7 +90,7 @@
 
                     <v-window-item value="products">
                         <div class="pa-4">
-                            <v-progress-linear v-if="productsLoading" indeterminate color="primary" class="mb-3" />
+                            <v-progress-linear :indeterminate="productsLoading" color="primary" :style="{ opacity: productsLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
                             <v-list v-if="categoryProducts.length" density="compact">
                                 <v-list-item
                                     v-for="p in categoryProducts"
@@ -133,21 +134,29 @@
                 </v-btn>
             </template>
         </AppEmptyState>
+
+        <!-- Confirm bỏ thay đổi -->
+        <AppConfirmDialog
+            v-model="confirmOpen"
+            title="Bỏ thay đổi?"
+            message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+            confirm-label="Bỏ thay đổi"
+            @confirm="onConfirmUnsaved"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { categoryService } from '../services/category.service'
 import { productService } from '../services/product.service'
 import { useCategory } from '../composables/useCategory'
-import { createEmptyCategoryForm } from '../models/form-models/category.model'
+import { toForm, toPayload, emptyForm } from '../adapters/category.adapter'
 import type { CategoryFormModel } from '../models/form-models/category.model'
-import type { UpdateCategoryRequest } from '../models/dtos/category.dto'
 import type { CategoryViewModel } from '../models/view-models/category.view-model'
 import CategoryList from '../components/CategoryList.vue'
 import CategoryOverviewTab from '../components/CategoryOverviewTab.vue'
@@ -156,83 +165,79 @@ const route = useRoute()
 const router = useRouter()
 const categoryId = Number(route.params['id'])
 const activeTab = ref('overview')
+const submitting = ref(false)
+const editForm = reactive<CategoryFormModel>(emptyForm())
+const snapshot = ref<CategoryFormModel | null>(null)
+const formErrors = reactive<Partial<Record<keyof CategoryFormModel, string>>>({})
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
+
+if (isNaN(categoryId)) void router.replace({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
 
 const category = useAsyncState(() => categoryService.getByIdAsync(categoryId))
 const { updateCategory } = useCategory()
 
-// Inline edit form
-const editForm = reactive<CategoryFormModel>(createEmptyCategoryForm())
-const snapshot = ref<CategoryFormModel | null>(null)
-
-function syncFormFromCategory() {
-    if (!category.data.value) return
-    const c = category.data.value
-    editForm.name = c.name
-    editForm.slug = c.slug ?? ''
-    editForm.description = c.description ?? ''
-    editForm.imageUrl = c.imageUrl ?? ''
-    editForm.parentId = c.parentId
-    editForm.displayOrder = c.displayOrder
-    editForm.isActive = c.isActive
-    snapshot.value = { ...editForm }
-}
+const TRACKED_FIELDS: ReadonlyArray<keyof CategoryFormModel> = [
+    'name', 'slug', 'description', 'imageUrl', 'parentId', 'displayOrder', 'isActive',
+] as const
 
 const isDirty = computed(() => {
     if (!snapshot.value) return false
-    return (
-        editForm.name !== snapshot.value.name ||
-        editForm.slug !== snapshot.value.slug ||
-        editForm.description !== snapshot.value.description ||
-        editForm.parentId !== snapshot.value.parentId ||
-        editForm.displayOrder !== snapshot.value.displayOrder ||
-        editForm.isActive !== snapshot.value.isActive ||
-        editForm.imageUrl !== snapshot.value.imageUrl
-    )
+    return TRACKED_FIELDS.some(f => editForm[f] !== snapshot.value![f])
 })
 
-const formErrors = reactive<Partial<Record<keyof CategoryFormModel, string>>>({})
+function syncFormFromEntity() {
+    if (!category.data.value) return
+    Object.assign(editForm, toForm(category.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
+}
 
 function onFormUpdate(field: keyof CategoryFormModel, value: unknown) {
     ;(editForm as Record<string, unknown>)[field] = value
-    if (field === 'name' && typeof value === 'string' && value.trim()) {
+    if (field === 'name' && typeof value === 'string' && value.trim())
         delete formErrors.name
-    }
 }
 
-// Save / Discard
-const submitting = ref(false)
-
 function discardChanges() {
-    syncFormFromCategory()
-    formErrors.name = undefined
+    syncFormFromEntity()
+    delete formErrors.name
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
 }
 
 async function saveChanges() {
-    formErrors.name = editForm.name?.trim() ? undefined : 'Tên danh mục là bắt buộc'
-    if (formErrors.name) return
-
+    if (!editForm.name?.trim()) {
+        formErrors.name = 'Tên danh mục là bắt buộc'
+        return
+    }
+    delete formErrors.name
     submitting.value = true
     try {
-        const payload: UpdateCategoryRequest = {
-            Name: editForm.name.trim(),
-            Slug: editForm.slug || null,
-            Description: editForm.description || null,
-            ImageUrl: editForm.imageUrl || null,
-            ParentId: editForm.parentId,
-            DisplayOrder: editForm.displayOrder,
-            IsActive: editForm.isActive,
-        }
-        const ok = await updateCategory(categoryId, payload)
+        const ok = await updateCategory(categoryId, toPayload(editForm))
         if (ok) {
             await category.execute()
-            syncFormFromCategory()
+            syncFormFromEntity()
         }
     } finally {
         submitting.value = false
     }
 }
 
-// Parent options (all categories except self)
 const parentOptions = ref<{ id: number; name: string }[]>([])
 
 async function loadParentOptions() {
@@ -242,7 +247,6 @@ async function loadParentOptions() {
         .map((c) => ({ id: c.id, name: c.name }))
 }
 
-// Children
 const children = ref<CategoryViewModel[]>([])
 const childrenLoading = ref(false)
 
@@ -262,7 +266,6 @@ function onChildAction(key: string, item: CategoryViewModel) {
     }
 }
 
-// Category products
 const categoryProducts = ref<{ id: number; name: string; basePrice: number }[]>([])
 const categoryProductTotal = ref(0)
 const productsLoading = ref(false)
@@ -270,16 +273,8 @@ const productsLoading = ref(false)
 async function loadCategoryProducts() {
     productsLoading.value = true
     try {
-        const result = await productService.getPagedAsync({
-            PageNumber: 1,
-            PageSize: 10,
-            CategoryId: categoryId,
-        })
-        categoryProducts.value = result.items.map((p) => ({
-            id: p.id,
-            name: p.name,
-            basePrice: p.basePrice,
-        }))
+        const result = await productService.getPagedAsync({ PageNumber: 1, PageSize: 10, CategoryId: categoryId })
+        categoryProducts.value = result.items.map((p) => ({ id: p.id, name: p.name, basePrice: p.basePrice }))
         categoryProductTotal.value = result.totalCount
     } finally {
         productsLoading.value = false
@@ -287,8 +282,9 @@ async function loadCategoryProducts() {
 }
 
 onMounted(async () => {
+    if (isNaN(categoryId)) return
     await category.execute()
-    syncFormFromCategory()
+    syncFormFromEntity()
     await Promise.all([loadParentOptions(), loadChildren(), loadCategoryProducts()])
 })
 </script>

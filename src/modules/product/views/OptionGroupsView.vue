@@ -7,7 +7,7 @@
             <template #breadcrumb>
                 <AppBreadcrumb
                     :items="[
-                        { title: 'Dashboard', to: '/admin' },
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
                         { title: 'Nhóm option', disabled: true },
                     ]"
@@ -18,16 +18,68 @@
             </v-btn>
         </AppPageHeader>
 
+        <!-- Filter bar -->
+        <v-card rounded="lg" variant="outlined">
+            <v-card-text class="pa-3">
+                <v-row dense align="center">
+                    <v-col cols="12" md="4">
+                        <v-text-field
+                            :model-value="filterKeyword"
+                            label="Tìm kiếm"
+                            prepend-inner-icon="mdi-magnify"
+                            density="compact"
+                            hide-details
+                            clearable
+                            @update:model-value="(v) => { filterKeyword = v }"
+                            @keyup.enter="onSearchClick"
+                        />
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <v-select
+                            :model-value="filterIsActive"
+                            :items="statusOptionsWithAll"
+                            item-value="value"
+                            item-title="label"
+                            label="Trạng thái"
+                            density="compact"
+                            hide-details
+                            @update:model-value="(v) => { filterIsActive = v }"
+                        />
+                    </v-col>
+                    <v-col cols="12" md="4" class="d-flex justify-end ga-2">
+                        <v-btn
+                            v-if="hasActiveFilters"
+                            variant="text"
+                            size="small"
+                            prepend-icon="mdi-filter-remove-outline"
+                            @click="clearFilters"
+                        >
+                            Xóa lọc
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            variant="tonal"
+                            size="small"
+                            prepend-icon="mdi-magnify"
+                            @click="onSearchClick"
+                        >
+                            Tìm kiếm
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+
         <OptionGroupList
-            :items="groupItems"
-            :loading="groupIsLoading"
-            :page-number="groupPage"
-            :page-size="groupPageSize"
-            :total-pages="groupTotalPages"
-            :total-items="groupTotal"
-            @page-change="onGroupPageChange"
-            @page-size-change="onGroupPageSizeChange"
-            @row-action="onGroupRowAction"
+            :items="items"
+            :loading="isLoading"
+            :page-number="page"
+            :page-size="pageSize"
+            :total-pages="totalPages"
+            :total-items="total"
+            @page-change="onPageChange"
+            @page-size-change="onPageSizeChange"
+            @row-action="onRowAction"
         />
 
         <AppDialog v-model="dialogOpen" title="Thêm nhóm option" :hide-actions="true" max-width="700px">
@@ -41,12 +93,12 @@
         </AppDialog>
 
         <AppConfirmDialog
-            v-model="confirmGroupOpen"
+            v-model="confirmOpen"
             title="Xoá nhóm option"
-            :message="`Bạn có chắc muốn xoá nhóm '${confirmGroupItem?.name}'? Hành động này không thể hoàn tác.`"
+            :message="`Bạn có chắc muốn xoá nhóm '${confirmItem?.name}'? Hành động này không thể hoàn tác.`"
             confirm-label="Xác nhận xoá"
             confirm-variant="danger"
-            @confirm="onConfirmGroupDelete"
+            @confirm="onConfirmDelete"
         />
     </div>
 </template>
@@ -63,82 +115,87 @@ import {
 import OptionGroupList from '../components/OptionGroupList.vue'
 import OptionGroupForm from '../components/OptionGroupForm.vue'
 import { useOptionGroup } from '../composables/useOptionGroup'
-import { createEmptyOptionGroupForm } from '../models/form-models/option-group.model'
+import { emptyForm, toCreatePayload } from '../adapters/option-group.adapter'
 import { OPTION_GROUP_ROW_ACTION } from '../constants/option-group-list.constants'
 import { APP_ROUTES } from '@/core/constants/_index'
 import type { OptionGroupViewModel } from '../models/view-models/option-group.view-model'
-import type { CreateOptionGroupRequest } from '../models/dtos/option-group.dto'
+import type { OptionGroupFormModel } from '../models/form-models/option-group.model'
+
+const DEFAULT_PAGE_SIZE = 20
 
 const router = useRouter()
+const { items, total, isLoading, isSubmitting, loadOptionGroups, createOptionGroup, deleteOptionGroup } = useOptionGroup()
 
-const {
-    items: groupItems,
-    total: groupTotal,
-    isLoading: groupIsLoading,
-    isSubmitting,
-    loadOptionGroups,
-    createOptionGroup,
-    deleteOptionGroup,
-} = useOptionGroup()
-
-const groupPage = ref(1)
-const groupPageSize = ref(20)
+const page = ref(1)
+const pageSize = ref(DEFAULT_PAGE_SIZE)
+const filterKeyword = ref<string | null>(null)
+const filterIsActive = ref<boolean | null>(null)
 const dialogOpen = ref(false)
-const formModel = ref(createEmptyOptionGroupForm())
-const confirmGroupOpen = ref(false)
-const confirmGroupItem = ref<OptionGroupViewModel | null>(null)
+const formModel = ref<OptionGroupFormModel>(emptyForm())
+const confirmOpen = ref(false)
+const confirmItem = ref<OptionGroupViewModel | null>(null)
 
-const groupTotalPages = computed(() => Math.max(1, Math.ceil(groupTotal.value / groupPageSize.value)))
+const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
 
-async function fetchGroupData() {
-    await loadOptionGroups({ PageNumber: groupPage.value, PageSize: groupPageSize.value })
+const statusOptionsWithAll = [
+    { label: 'Tất cả', value: null },
+    { label: 'Đang hoạt động', value: true },
+    { label: 'Ngừng hoạt động', value: false },
+]
+
+const hasActiveFilters = computed(() =>
+    !!(filterKeyword.value?.trim()) || filterIsActive.value !== null,
+)
+
+async function fetchData() {
+    await loadOptionGroups({
+        PageNumber: page.value,
+        PageSize: pageSize.value,
+        Keyword: filterKeyword.value || undefined,
+        IsActive: filterIsActive.value,
+    })
 }
 
-function onGroupPageChange(p: number) {
-    groupPage.value = p
-    void fetchGroupData()
-}
+function onPageChange(p: number) { page.value = p; void fetchData() }
 
-function onGroupPageSizeChange(s: number) {
-    groupPageSize.value = s
-    groupPage.value = 1
-    void fetchGroupData()
+function onPageSizeChange(s: number) { pageSize.value = s; page.value = 1; void fetchData() }
+
+function onSearchClick() { page.value = 1; void fetchData() }
+
+function clearFilters() {
+    filterKeyword.value = null
+    filterIsActive.value = null
+    page.value = 1
+    void fetchData()
 }
 
 function openCreateDialog() {
-    formModel.value = createEmptyOptionGroupForm()
+    formModel.value = emptyForm()
     dialogOpen.value = true
 }
 
-async function onFormSubmit(form: typeof formModel.value) {
-    const payload: CreateOptionGroupRequest = {
-        Name: form.name,
-        UiType: form.uiType,
-        Description: form.description || null,
-        DisplayOrder: form.displayOrder,
-        IsActive: form.isActive,
-    }
-    const result = await createOptionGroup(payload)
-    if (result) { dialogOpen.value = false; void fetchGroupData() }
+async function onFormSubmit(form: OptionGroupFormModel) {
+    const result = await createOptionGroup(toCreatePayload(form))
+    if (result) { dialogOpen.value = false; void fetchData() }
 }
 
-function onGroupRowAction(key: string, item: OptionGroupViewModel) {
+function onRowAction(key: string, item: OptionGroupViewModel) {
     if (key === OPTION_GROUP_ROW_ACTION.DETAIL) {
         void router.push({ name: APP_ROUTES.PRODUCT.OPTION_GROUP_DETAIL.NAME, params: { id: item.id } })
     } else if (key === OPTION_GROUP_ROW_ACTION.DELETE) {
-        confirmGroupItem.value = item
-        confirmGroupOpen.value = true
+        confirmItem.value = item
+        confirmOpen.value = true
     }
 }
 
-async function onConfirmGroupDelete() {
-    const item = confirmGroupItem.value
-    confirmGroupOpen.value = false
-    confirmGroupItem.value = null
+async function onConfirmDelete() {
+    const item = confirmItem.value
+    confirmOpen.value = false
+    confirmItem.value = null
     if (!item) return
     const ok = await deleteOptionGroup(item.id)
-    if (ok) void fetchGroupData()
+    if (ok) void fetchData()
 }
 
-onMounted(fetchGroupData)
+onMounted(() => { void fetchData() })
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="pa-4 d-flex flex-column ga-4">
-        <v-progress-linear v-if="isLoading" indeterminate color="primary" />
+        <v-progress-linear :indeterminate="isLoading" color="primary" :style="{ opacity: isLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
         <v-row>
             <!-- Availability column -->
             <v-col cols="12" md="6">

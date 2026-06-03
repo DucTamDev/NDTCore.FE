@@ -35,7 +35,6 @@ export type BrandListEmits = {
 
 export const BRAND_ROW_ACTION = {
     VIEW: 'view',
-    EDIT: 'edit',
     DELETE: 'delete',
 } as const
 
@@ -65,13 +64,6 @@ export const BRAND_LIST_COLUMNS: TableColumn[] = [
 
 export const BRAND_LIST_ROW_ACTIONS: RowAction<BrandViewModel>[] = [
     { key: BRAND_ROW_ACTION.VIEW, label: 'Xem chi tiết', icon: 'mdi-eye-outline' },
-    {
-        key: BRAND_ROW_ACTION.EDIT,
-        label: 'Chỉnh sửa',
-        icon: 'mdi-pencil-outline',
-        color: 'primary',
-        hidden: () => true,
-    },
     { key: BRAND_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

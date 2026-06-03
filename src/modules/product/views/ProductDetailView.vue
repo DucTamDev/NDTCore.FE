@@ -27,7 +27,7 @@
                             <v-icon icon="mdi-package-variant-closed" size="28" color="primary" />
                         </v-sheet>
                         <div>
-                            <div class="text-h6 font-weight-bold">{{ product.data.value.name }}</div>
+                            <div class="text-h6 font-weight-bold text-high-emphasis">{{ product.data.value.name }}</div>
                             <div class="text-body-2 text-medium-emphasis">SKU: {{ product.data.value.sku }}</div>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                 <v-window v-model="activeTab">
                     <v-window-item value="overview">
                         <ProductOverviewTab
-                            :product="product.data.value"
+                            :entity="product.data.value"
                             :form="editForm"
                             :errors="formErrors"
                             :is-dirty="isDirty"
@@ -70,7 +70,8 @@
                             :category-options="categoryOptions"
                             @update:form="onFormUpdate"
                             @save="saveChanges"
-                            @discard="discardChanges"
+                            @discard="onDiscard"
+                            @back="onBack"
                         />
                     </v-window-item>
                     <v-window-item value="tags">
@@ -105,21 +106,29 @@
                 </v-btn>
             </template>
         </AppEmptyState>
+
+        <!-- Confirm bỏ thay đổi -->
+        <AppConfirmDialog
+            v-model="confirmOpen"
+            title="Bỏ thay đổi?"
+            message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+            confirm-label="Bỏ thay đổi"
+            @confirm="onConfirmUnsaved"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { productService } from '../services/product.service'
 import { useProduct } from '../composables/useProduct'
 import { useCategoryStore } from '../stores/category.store'
-import { createEmptyProductForm } from '../models/form-models/product.model'
+import { toForm, toPayload, emptyForm } from '../adapters/product.adapter'
 import type { ProductFormModel } from '../models/form-models/product.model'
-import type { UpdateProductRequest } from '../models/dtos/product.dto'
 import ProductOverviewTab from '../components/ProductOverviewTab.vue'
 import ProductTagsTab from '../components/ProductTagsTab.vue'
 import ProductOptionGroupsTab from '../components/ProductOptionGroupsTab.vue'
@@ -129,12 +138,15 @@ import ProductStoreOverridesTab from '../components/ProductStoreOverridesTab.vue
 const route = useRoute()
 const router = useRouter()
 const productId = Number(route.params['id'])
-
-if (isNaN(productId)) {
-    void router.replace({ name: APP_ROUTES.PRODUCT.PRODUCTS.NAME })
-}
-
 const activeTab = ref('overview')
+const submitting = ref(false)
+const editForm = reactive<ProductFormModel>(emptyForm())
+const snapshot = ref<ProductFormModel | null>(null)
+const formErrors = reactive<Partial<Record<keyof ProductFormModel, string>>>({})
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
+
+if (isNaN(productId)) void router.replace({ name: APP_ROUTES.PRODUCT.PRODUCTS.NAME })
 
 const product = useAsyncState(() => productService.getByIdAsync(productId))
 const { updateProduct } = useProduct()
@@ -142,46 +154,50 @@ const categoryStore = useCategoryStore()
 
 const categoryOptions = computed(() => categoryStore.items.map((c) => ({ id: c.id, name: c.name })))
 
-// ── Edit form & isDirty ───────────────────────────────────────
-const editForm = reactive<ProductFormModel>(createEmptyProductForm())
-const snapshot = ref<ProductFormModel | null>(null)
-const formErrors = reactive<Partial<Record<keyof ProductFormModel, string>>>({})
-const submitting = ref(false)
-
-function syncFormFromProduct() {
-    if (!product.data.value) return
-    const p = product.data.value
-    editForm.categoryId = p.categoryId
-    editForm.sku = p.sku
-    editForm.name = p.name
-    editForm.slug = p.slug ?? ''
-    editForm.description = p.description ?? ''
-    editForm.shortDescription = p.shortDescription ?? ''
-    editForm.basePrice = p.basePrice
-    editForm.costPrice = p.costPrice
-    editForm.isActive = p.isActive
-    editForm.displayOrder = p.displayOrder
-    editForm.isFeatured = p.isFeatured
-    snapshot.value = { ...editForm }
-}
+const TRACKED_FIELDS: ReadonlyArray<keyof ProductFormModel> = [
+    'name', 'slug', 'description', 'shortDescription', 'categoryId',
+    'basePrice', 'costPrice', 'isActive', 'displayOrder', 'isFeatured',
+] as const
 
 const isDirty = computed(() => {
     if (!snapshot.value) return false
-    return (
-        editForm.name !== snapshot.value.name ||
-        editForm.slug !== snapshot.value.slug ||
-        editForm.description !== snapshot.value.description ||
-        editForm.categoryId !== snapshot.value.categoryId ||
-        editForm.shortDescription !== snapshot.value.shortDescription ||
-        editForm.basePrice !== snapshot.value.basePrice ||
-        editForm.costPrice !== snapshot.value.costPrice ||
-        editForm.isActive !== snapshot.value.isActive ||
-        editForm.displayOrder !== snapshot.value.displayOrder ||
-        editForm.isFeatured !== snapshot.value.isFeatured
-    )
+    return TRACKED_FIELDS.some(f => editForm[f] !== snapshot.value![f])
 })
 
-// ── Save / Discard ────────────────────────────────────────────
+function syncFormFromEntity() {
+    if (!product.data.value) return
+    Object.assign(editForm, toForm(product.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
+}
+
+function onFormUpdate(field: keyof ProductFormModel, value: unknown) {
+    ;(editForm as Record<string, unknown>)[field] = value
+    if (field === 'name' && typeof value === 'string' && value.trim())
+        delete formErrors.name
+}
+
+function discardChanges() {
+    syncFormFromEntity()
+    delete formErrors.name
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.PRODUCT.PRODUCTS.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.PRODUCTS.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
+}
+
 async function saveChanges() {
     if (!editForm.name?.trim()) {
         formErrors.name = 'Tên sản phẩm là bắt buộc'
@@ -190,45 +206,20 @@ async function saveChanges() {
     delete formErrors.name
     submitting.value = true
     try {
-        const payload: UpdateProductRequest = {
-            CategoryId: editForm.categoryId,
-            Name: editForm.name.trim(),
-            Slug: editForm.slug || null,
-            Description: editForm.description || null,
-            ShortDescription: editForm.shortDescription || null,
-            BasePrice: editForm.basePrice,
-            CostPrice: editForm.costPrice,
-            IsActive: editForm.isActive,
-            DisplayOrder: editForm.displayOrder,
-            IsFeatured: editForm.isFeatured,
-        }
-        const ok = await updateProduct(productId, payload)
+        const ok = await updateProduct(productId, toPayload(editForm))
         if (ok) {
             await product.execute()
-            syncFormFromProduct()
+            syncFormFromEntity()
         }
     } finally {
         submitting.value = false
     }
 }
 
-function discardChanges() {
-    syncFormFromProduct()
-    delete formErrors.name
-}
-
-function onFormUpdate(field: keyof ProductFormModel, value: unknown) {
-    ;(editForm as Record<string, unknown>)[field] = value
-    if (field === 'name' && typeof value === 'string' && value.trim()) {
-        delete formErrors.name
-    }
-}
-
-// ── Lifecycle ─────────────────────────────────────────────────
 onMounted(async () => {
     if (isNaN(productId)) return
     await categoryStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
     await product.execute()
-    syncFormFromProduct()
+    syncFormFromEntity()
 })
 </script>

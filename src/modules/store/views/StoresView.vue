@@ -23,9 +23,9 @@
 
     <StoreForm
       v-model="isFormDialogOpen"
-      :title="selectedStore ? 'Cập nhật cửa hàng' : 'Tạo cửa hàng'"
-      :form="selectedStore ? storeMapper.toFormModel(selectedStore) : null"
-      :is-edit="!!selectedStore"
+      title="Tạo cửa hàng"
+      :form="null"
+      :is-edit="false"
       :brand-options="brandOptions"
       :franchisee-options="formFranchiseeOptions"
       :submitting="submitting"
@@ -69,14 +69,14 @@ import { franchiseeService } from '@/modules/brand/services/franchisee.service'
 import { useUserStore } from '@/modules/user/stores/user.store'
 
 const router = useRouter()
-const { getPagedStores, createStore, updateStore, deleteStore } = useStore()
+const { getPagedStores, createStore, deleteStore } = useStore()
 const userStore = useUserStore()
 
 // ── Filter options ─────────────────────────────────────────────────────────
 const brandOptions = ref<FilterOption[]>([])
-const allUserFranchiseeOptions = ref<FilterOption[]>([])  // loaded once on mount
-const filterFranchiseeOptions = ref<FilterOption[]>([])   // filter bar — updates per brand selection
-const formFranchiseeOptions = ref<FilterOption[]>([])     // form dialog — per selected brand
+const allUserFranchiseeOptions = ref<FilterOption[]>([])
+const filterFranchiseeOptions = ref<FilterOption[]>([])
+const formFranchiseeOptions = ref<FilterOption[]>([])
 const filterFields = computed(() =>
   buildStoreFilterFields(brandOptions.value, filterFranchiseeOptions.value),
 )
@@ -110,30 +110,22 @@ watch(
   () => listPage.filters.activeFilters.value['brandId'],
   async (brandId) => {
     listPage.filters.setFilter('franchiseeId', null)
-    if (!brandId) {
-      filterFranchiseeOptions.value = allUserFranchiseeOptions.value
-      return
-    }
+    if (!brandId) { filterFranchiseeOptions.value = allUserFranchiseeOptions.value; return }
     const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(Number(brandId))
     filterFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
   },
 )
 
 // ── Form dialog ─────────────────────────────────────────────────────────────
-const selectedStore = ref<StoreViewModel | null>(null)
 const isFormDialogOpen = ref(false)
 const submitting = ref(false)
 
 const openCreateDialog = () => {
-  selectedStore.value = null
   isFormDialogOpen.value = true
 }
 
 const onFormBrandChange = async (brandId: number | null) => {
-  if (!brandId) {
-    formFranchiseeOptions.value = []
-    return
-  }
+  if (!brandId) { formFranchiseeOptions.value = []; return }
   const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
   formFranchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
 }
@@ -141,13 +133,8 @@ const onFormBrandChange = async (brandId: number | null) => {
 const saveStore = async (form: StoreFormModel) => {
   submitting.value = true
   try {
-    if (selectedStore.value) {
-      await updateStore(selectedStore.value.id, storeMapper.formModelToUpdateRequest(form))
-    } else {
-      await createStore(storeMapper.formModelToCreateRequest(form))
-    }
+    await createStore(storeMapper.formModelToCreateRequest(form))
     isFormDialogOpen.value = false
-    selectedStore.value = null
     await listPage.refresh()
   } finally {
     submitting.value = false
@@ -176,9 +163,6 @@ const doDelete = async () => {
 const handleRowAction = (key: string, item: StoreViewModel) => {
   if (key === STORE_ROW_ACTION.VIEW) {
     void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.STORE_DETAIL.NAME, params: { id: item.id } })
-  } else if (key === STORE_ROW_ACTION.EDIT) {
-    selectedStore.value = item
-    isFormDialogOpen.value = true
   } else if (key === STORE_ROW_ACTION.DELETE) {
     storeToDelete.value = item
     isDeleteDialogOpen.value = true

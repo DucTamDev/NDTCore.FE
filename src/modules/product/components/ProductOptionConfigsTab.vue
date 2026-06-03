@@ -7,7 +7,7 @@
             </v-btn>
         </div>
 
-        <v-progress-linear v-if="isLoading" indeterminate color="primary" />
+        <v-progress-linear :indeterminate="isLoading" color="primary" :style="{ opacity: isLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
 
         <v-table v-if="optionConfigs.length" density="compact">
             <thead>

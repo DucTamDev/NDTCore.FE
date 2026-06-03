@@ -60,13 +60,14 @@
         <v-window v-model="activeTab">
           <v-window-item value="overview">
             <FranchiseeOverviewTab
-              :franchisee="franchisee.data.value"
+              :entity="franchisee.data.value"
               :form="editForm"
               :is-dirty="isDirty"
               :submitting="submitting"
               @update:form="onFormUpdate"
               @save="saveChanges"
-              @discard="discardChanges"
+              @discard="onDiscard"
+              @back="onBack"
             />
           </v-window-item>
           <v-window-item value="members">
@@ -94,99 +95,99 @@
         </v-btn>
       </template>
     </AppEmptyState>
+
+    <!-- Confirm bỏ thay đổi -->
+    <AppConfirmDialog
+      v-model="confirmOpen"
+      title="Bỏ thay đổi?"
+      message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+      confirm-label="Bỏ thay đổi"
+      @confirm="onConfirmUnsaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
-import { franchiseeMapper } from '@/modules/brand/mappers/franchisee.mapper'
 import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
+import { toForm, toPayload, emptyForm, TRACKED_FIELDS } from '@/modules/brand/adapters/franchisee.adapter'
 import type { FranchiseeFormModel } from '@/modules/brand/models/form-models/franchisee.model'
 import FranchiseeOverviewTab from '@/modules/brand/components/franchisee/FranchiseeOverviewTab.vue'
 import FranchiseeMemberList from '@/modules/brand/components/franchisee/FranchiseeMemberList.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { getFranchisee, updateFranchisee } = useFranchisee()
 
 const franchiseeId = Number(route.params['id'])
+if (isNaN(franchiseeId)) void router.replace({ name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME })
+
 const activeTab = ref('overview')
+const submitting = ref(false)
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
 const franchisee = useAsyncState(() => getFranchisee(franchiseeId))
 
-// ── Inline edit form ──────────────────────────────────────
-const editForm = reactive<FranchiseeFormModel>({
-  brandId: null,
-  name: '',
-  legalName: null,
-  taxCode: null,
-  bankAccount: null,
-  bankName: null,
-  joinedDate: null,
-  terminatedDate: null,
-  isActive: true,
-})
-
+const editForm = reactive<FranchiseeFormModel>(emptyForm())
 const snapshot = ref<FranchiseeFormModel | null>(null)
 
 function syncFormFromFranchisee() {
-  if (!franchisee.data.value) return
-  const mapped = franchiseeMapper.toFormModel(franchisee.data.value)
-  if (!mapped) return
-  Object.assign(editForm, mapped)
-  snapshot.value = { ...editForm }
+    if (!franchisee.data.value) return
+    Object.assign(editForm, toForm(franchisee.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
 }
 
-onMounted(async () => {
-  await franchisee.execute()
-  syncFormFromFranchisee()
-})
-
 const isDirty = computed(() => {
-  if (!snapshot.value) return false
-  return (
-    editForm.name !== snapshot.value.name ||
-    editForm.legalName !== snapshot.value.legalName ||
-    editForm.taxCode !== snapshot.value.taxCode ||
-    editForm.bankAccount !== snapshot.value.bankAccount ||
-    editForm.bankName !== snapshot.value.bankName ||
-    editForm.joinedDate !== snapshot.value.joinedDate ||
-    editForm.terminatedDate !== snapshot.value.terminatedDate ||
-    editForm.isActive !== snapshot.value.isActive
-  )
+    if (!snapshot.value) return false
+    return TRACKED_FIELDS.some((f) => editForm[f] !== snapshot.value![f])
 })
 
 function onFormUpdate(field: keyof FranchiseeFormModel, value: unknown) {
-  ;(editForm as Record<string, unknown>)[field] = value
+    ;(editForm as Record<string, unknown>)[field] = value
 }
 
-// ── Save / Discard ───────────────────────────────────────
-const submitting = ref(false)
-
 function discardChanges() {
-  syncFormFromFranchisee()
+    syncFormFromFranchisee()
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
 }
 
 async function saveChanges() {
-  submitting.value = true
-  try {
-    const updated = await updateFranchisee(
-      franchiseeId,
-      franchiseeMapper.formModelToUpdateRequest(editForm),
-    )
-    if (updated) {
-      franchisee.data.value = {
-        ...updated,
-        createdAt: franchisee.data.value?.createdAt,
-        createdBy: franchisee.data.value?.createdBy,
-      }
-      syncFormFromFranchisee()
+    submitting.value = true
+    try {
+        const ok = await updateFranchisee(franchiseeId, toPayload(editForm))
+        if (ok) {
+            await franchisee.execute()
+            syncFormFromFranchisee()
+        }
+    } finally {
+        submitting.value = false
     }
-  } finally {
-    submitting.value = false
-  }
 }
+
+onMounted(async () => {
+    if (isNaN(franchiseeId)) return
+    await franchisee.execute()
+    syncFormFromFranchisee()
+})
 </script>

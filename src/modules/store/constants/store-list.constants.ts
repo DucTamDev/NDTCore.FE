@@ -35,7 +35,6 @@ export type StoreListEmits = {
 
 export const STORE_ROW_ACTION = {
     VIEW: 'view',
-    EDIT: 'edit',
     DELETE: 'delete',
 } as const
 
@@ -83,7 +82,6 @@ export const STORE_LIST_COLUMNS: TableColumn[] = [
 
 export const STORE_LIST_ROW_ACTIONS: RowAction<StoreViewModel>[] = [
     { key: STORE_ROW_ACTION.VIEW, label: 'Xem chi tiết', icon: 'mdi-eye-outline' },
-    { key: STORE_ROW_ACTION.EDIT, label: 'Chỉnh sửa', icon: 'mdi-pencil-outline', color: 'primary' },
     { key: STORE_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

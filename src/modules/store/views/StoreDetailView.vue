@@ -51,7 +51,7 @@
         <v-window v-model="activeTab">
           <v-window-item value="overview">
             <StoreOverviewTab
-              :store="store.data.value"
+              :entity="store.data.value"
               :form="editForm"
               :is-dirty="isDirty"
               :submitting="submitting"
@@ -60,7 +60,8 @@
               @update:form="onFormUpdate"
               @brand-change="onBrandChange"
               @save="saveChanges"
-              @discard="discardChanges"
+              @discard="onDiscard"
+              @back="onBack"
             />
           </v-window-item>
         </v-window>
@@ -79,18 +80,27 @@
         </v-btn>
       </template>
     </AppEmptyState>
+
+    <!-- Confirm bỏ thay đổi -->
+    <AppConfirmDialog
+      v-model="confirmOpen"
+      title="Bỏ thay đổi?"
+      message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+      confirm-label="Bỏ thay đổi"
+      @confirm="onConfirmUnsaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import type { FilterOption } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
-import { storeMapper } from '@/modules/store/mappers/store.mapper'
 import { useStore } from '@/modules/store/composables/useStore'
+import { toForm, toPayload, emptyForm, TRACKED_FIELDS } from '@/modules/store/adapters/store.adapter'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
 import StoreOverviewTab from '@/modules/store/components/StoreOverviewTab.vue'
 import { brandService } from '@/modules/brand/services/brand.service'
@@ -98,119 +108,96 @@ import { franchiseeService } from '@/modules/brand/services/franchisee.service'
 import { useUserStore } from '@/modules/user/stores/user.store'
 
 const route = useRoute()
+const router = useRouter()
 const { getStore, updateStore } = useStore()
 const userStore = useUserStore()
 
 const storeId = Number(route.params['id'])
+if (isNaN(storeId)) void router.replace({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
+
 const activeTab = ref('overview')
+const submitting = ref(false)
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
 const brandOptions = ref<FilterOption[]>([])
 const franchiseeOptions = ref<FilterOption[]>([])
 
 const store = useAsyncState(() => getStore(storeId))
 
-const editForm = reactive<StoreFormModel>({
-  brandId: null,
-  franchiseeId: null,
-  name: '',
-  code: '',
-  slug: null,
-  logoUrl: null,
-  isActive: true,
-  isAcceptingOrders: true,
-  phone: null,
-  email: null,
-  address: null,
-  city: null,
-  ward: null,
-  district: null,
-  province: null,
-  country: null,
-  latitude: null,
-  longitude: null,
-  openTime: null,
-  closeTime: null,
-  timeZone: null,
-})
-
+const editForm = reactive<StoreFormModel>(emptyForm())
 const snapshot = ref<StoreFormModel | null>(null)
 
 function syncFormFromStore() {
-  if (!store.data.value) return
-  const mapped = storeMapper.toFormModel(store.data.value)
-  if (!mapped) return
-  Object.assign(editForm, mapped)
-  snapshot.value = { ...editForm }
+    if (!store.data.value) return
+    Object.assign(editForm, toForm(store.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
 }
-
-async function loadBrandOptions() {
-  await userStore.fetchProfile()
-  const userId = userStore.profile?.Id
-  if (!userId) return
-  const brands = await brandService.getBrandsByUserIdAsync(userId)
-  brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
-}
-
-async function loadFranchiseeOptions(brandId: number | null) {
-  if (!brandId) {
-    franchiseeOptions.value = []
-    return
-  }
-  const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
-  franchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
-}
-
-async function onBrandChange(brandId: number | null) {
-  await loadFranchiseeOptions(brandId)
-}
-
-onMounted(async () => {
-  await Promise.all([store.execute(), loadBrandOptions()])
-  syncFormFromStore()
-  await loadFranchiseeOptions(editForm.brandId)
-})
 
 const isDirty = computed(() => {
-  if (!snapshot.value) return false
-  return (
-    editForm.brandId !== snapshot.value.brandId ||
-    editForm.franchiseeId !== snapshot.value.franchiseeId ||
-    editForm.name !== snapshot.value.name ||
-    editForm.slug !== snapshot.value.slug ||
-    editForm.isActive !== snapshot.value.isActive ||
-    editForm.isAcceptingOrders !== snapshot.value.isAcceptingOrders ||
-    editForm.phone !== snapshot.value.phone ||
-    editForm.email !== snapshot.value.email ||
-    editForm.address !== snapshot.value.address ||
-    editForm.province !== snapshot.value.province ||
-    editForm.district !== snapshot.value.district ||
-    editForm.ward !== snapshot.value.ward ||
-    editForm.openTime !== snapshot.value.openTime ||
-    editForm.closeTime !== snapshot.value.closeTime ||
-    editForm.timeZone !== snapshot.value.timeZone
-  )
+    if (!snapshot.value) return false
+    return TRACKED_FIELDS.some((f) => editForm[f] !== snapshot.value![f])
 })
 
 function onFormUpdate(field: keyof StoreFormModel, value: unknown) {
-  ;(editForm as Record<string, unknown>)[field] = value
+    ;(editForm as Record<string, unknown>)[field] = value
 }
 
-const submitting = ref(false)
-
 function discardChanges() {
-  syncFormFromStore()
+    syncFormFromStore()
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
+}
+
+async function loadBrandOptions() {
+    await userStore.fetchProfile()
+    const userId = userStore.profile?.Id
+    if (!userId) return
+    const brands = await brandService.getBrandsByUserIdAsync(userId)
+    brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
+}
+
+async function loadFranchiseeOptions(brandId: number | null) {
+    if (!brandId) { franchiseeOptions.value = []; return }
+    const franchisees = await franchiseeService.getFranchiseesByBrandIdAsync(brandId)
+    franchiseeOptions.value = franchisees.map((f) => ({ label: f.Name, value: f.Id }))
+}
+
+async function onBrandChange(brandId: number | null) {
+    await loadFranchiseeOptions(brandId)
 }
 
 async function saveChanges() {
-  submitting.value = true
-  try {
-    const updated = await updateStore(storeId, storeMapper.formModelToUpdateRequest(editForm))
-    if (updated) {
-      store.data.value = updated
-      syncFormFromStore()
+    if (!editForm.brandId) return
+    submitting.value = true
+    try {
+        await updateStore(storeId, toPayload(editForm))
+        await store.execute()
+        syncFormFromStore()
+    } finally {
+        submitting.value = false
     }
-  } finally {
-    submitting.value = false
-  }
 }
+
+onMounted(async () => {
+    if (isNaN(storeId)) return
+    await Promise.all([store.execute(), loadBrandOptions()])
+    syncFormFromStore()
+    await loadFranchiseeOptions(editForm.brandId)
+})
 </script>

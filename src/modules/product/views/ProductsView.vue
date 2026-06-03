@@ -7,7 +7,7 @@
             <template #breadcrumb>
                 <AppBreadcrumb
                     :items="[
-                        { title: 'Dashboard', to: '/admin' },
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm', disabled: true },
                     ]"
                 />
@@ -20,36 +20,62 @@
         <!-- Filter bar -->
         <v-card rounded="lg" variant="outlined">
             <v-card-text class="pa-3">
-                <v-row dense>
-                    <v-col cols="12" md="4">
+                <v-row dense align="center">
+                    <v-col cols="12" md="3">
                         <v-text-field
-                            v-model="filterKeyword"
+                            :model-value="filterKeyword"
                             label="Tìm kiếm tên sản phẩm"
                             prepend-inner-icon="mdi-magnify"
-                            clearable density="compact" hide-details
-                            @update:model-value="onFilterChange"
-                            @keyup.enter="onFilterChange"
+                            density="compact"
+                            hide-details
+                            clearable
+                            @update:model-value="(v) => { filterKeyword = v }"
+                            @keyup.enter="onSearchClick"
                         />
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                         <v-autocomplete
-                            v-model="filterCategoryId"
-                            :items="categoryOptions"
-                            item-value="id" item-title="name"
+                            :model-value="filterCategoryId"
+                            :items="categoryOptionsWithAll"
+                            item-value="id"
+                            item-title="name"
                             label="Danh mục"
-                            clearable density="compact" hide-details
-                            @update:model-value="onFilterChange"
+                            density="compact"
+                            hide-details
+                            @update:model-value="(v) => { filterCategoryId = v }"
                         />
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                         <v-select
-                            v-model="filterIsActive"
-                            :items="statusOptions"
-                            item-value="value" item-title="label"
+                            :model-value="filterIsActive"
+                            :items="statusOptionsWithAll"
+                            item-value="value"
+                            item-title="label"
                             label="Trạng thái"
-                            clearable density="compact" hide-details
-                            @update:model-value="onFilterChange"
+                            density="compact"
+                            hide-details
+                            @update:model-value="(v) => { filterIsActive = v }"
                         />
+                    </v-col>
+                    <v-col cols="12" md="3" class="d-flex justify-end ga-2">
+                        <v-btn
+                            v-if="hasActiveFilters"
+                            variant="text"
+                            size="small"
+                            prepend-icon="mdi-filter-remove-outline"
+                            @click="clearFilters"
+                        >
+                            Xóa lọc
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            variant="tonal"
+                            size="small"
+                            prepend-icon="mdi-magnify"
+                            @click="onSearchClick"
+                        >
+                            Tìm kiếm
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -102,37 +128,48 @@ import ProductList from '../components/ProductList.vue'
 import ProductForm from '../components/ProductForm.vue'
 import { useProduct } from '../composables/useProduct'
 import { useCategoryStore } from '../stores/category.store'
-import { createEmptyProductForm } from '../models/form-models/product.model'
+import { emptyForm, toCreatePayload } from '../adapters/product.adapter'
 import { PRODUCT_ROW_ACTION } from '../constants/product-list.constants'
 import { APP_ROUTES } from '@/core/constants/_index'
 import type { ProductViewModel } from '../models/view-models/product.view-model'
-import type { CreateProductRequest } from '../models/dtos/product.dto'
+import type { ProductFormModel } from '../models/form-models/product.model'
+
+const DEFAULT_PAGE_SIZE = 20
 
 const router = useRouter()
-const { items, total, isLoading, isSubmitting, loadProducts, createProduct, deleteProduct } =
-    useProduct()
-
+const { items, total, isLoading, isSubmitting, loadProducts, createProduct, deleteProduct } = useProduct()
 const categoryStore = useCategoryStore()
 
 const page = ref(1)
-const pageSize = ref(20)
+const pageSize = ref(DEFAULT_PAGE_SIZE)
 const filterKeyword = ref<string | null>(null)
 const filterCategoryId = ref<number | null>(null)
 const filterIsActive = ref<boolean | null>(null)
 const dialogOpen = ref(false)
-const formModel = ref(createEmptyProductForm())
+const formModel = ref<ProductFormModel>(emptyForm())
 const confirmOpen = ref(false)
 const confirmItem = ref<ProductViewModel | null>(null)
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
-const categoryOptions = computed(() => categoryStore.items.map((c) => ({ id: c.id, name: c.name })))
 
-const statusOptions = [
+const categoryOptionsWithAll = computed((): { id: number | null; name: string }[] => [
+    { id: null, name: 'Tất cả' },
+    ...categoryStore.items.map((c) => ({ id: c.id, name: c.name })),
+])
+
+const categoryOptions = computed(() =>
+    categoryStore.items.map((c) => ({ id: c.id, name: c.name })),
+)
+
+const statusOptionsWithAll = [
+    { label: 'Tất cả', value: null },
     { label: 'Đang bán', value: true },
     { label: 'Ngừng bán', value: false },
 ]
 
-function onFilterChange() { page.value = 1; void fetchData() }
+const hasActiveFilters = computed(() =>
+    !!(filterKeyword.value?.trim()) || filterCategoryId.value !== null || filterIsActive.value !== null,
+)
 
 async function fetchData() {
     await loadProducts({
@@ -144,20 +181,28 @@ async function fetchData() {
     })
 }
 
-function onPageChange(p: number) {
-    page.value = p
-    void fetchData()
-}
+function onPageChange(p: number) { page.value = p; void fetchData() }
 
-function onPageSizeChange(s: number) {
-    pageSize.value = s
+function onPageSizeChange(s: number) { pageSize.value = s; page.value = 1; void fetchData() }
+
+function onSearchClick() { page.value = 1; void fetchData() }
+
+function clearFilters() {
+    filterKeyword.value = null
+    filterCategoryId.value = null
+    filterIsActive.value = null
     page.value = 1
     void fetchData()
 }
 
 function openCreateDialog() {
-    formModel.value = createEmptyProductForm()
+    formModel.value = emptyForm()
     dialogOpen.value = true
+}
+
+async function onFormSubmit(form: ProductFormModel) {
+    const result = await createProduct(toCreatePayload(form))
+    if (result) { dialogOpen.value = false; void fetchData() }
 }
 
 function onRowAction(key: string, item: ProductViewModel) {
@@ -176,24 +221,6 @@ async function onConfirmDelete() {
     if (!item) return
     const ok = await deleteProduct(item.id)
     if (ok) void fetchData()
-}
-
-async function onFormSubmit(form: typeof formModel.value) {
-    const payload: CreateProductRequest = {
-        CategoryId: form.categoryId,
-        Sku: form.sku,
-        Name: form.name,
-        Slug: form.slug || null,
-        Description: form.description || null,
-        ShortDescription: form.shortDescription || null,
-        BasePrice: form.basePrice,
-        CostPrice: form.costPrice,
-        IsActive: form.isActive,
-        DisplayOrder: form.displayOrder,
-        IsFeatured: form.isFeatured,
-    }
-    const result = await createProduct(payload)
-    if (result) { dialogOpen.value = false; void fetchData() }
 }
 
 onMounted(async () => {

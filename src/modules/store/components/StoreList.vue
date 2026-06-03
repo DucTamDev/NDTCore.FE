@@ -7,20 +7,12 @@
       <template #breadcrumb>
         <AppBreadcrumb
           :items="[
-            { title: 'Dashboard', to: '/admin' },
+            { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
             { title: 'Cửa hàng', disabled: true },
           ]"
         />
       </template>
 
-      <!-- <v-btn
-        variant="outlined"
-        prepend-icon="mdi-refresh"
-        :loading="loading"
-        @click="emit(STORE_LIST_EMIT.REFRESH)"
-      >
-        Tải lại
-      </v-btn> -->
       <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(STORE_LIST_EMIT.CREATE)">
         Tạo cửa hàng
       </v-btn>
@@ -123,6 +115,7 @@ import {
   AppStatusChip,
   AppEmptyState,
 } from '@/components/ui'
+import { APP_ROUTES } from '@/core/constants/_index'
 import {
   STORE_LIST_EMIT,
   STORE_ROW_ACTION,

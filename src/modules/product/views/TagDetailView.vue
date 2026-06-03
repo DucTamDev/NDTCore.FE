@@ -64,20 +64,20 @@
                 <v-window v-model="activeTab">
                     <v-window-item value="overview">
                         <TagOverviewTab
-                            :tag="tag.data.value"
+                            :entity="tag.data.value"
                             :form="editForm"
                             :errors="formErrors"
                             :is-dirty="isDirty"
                             :submitting="submitting"
                             @update:form="onFormUpdate"
                             @save="saveChanges"
-                            @discard="discardChanges"
+                            @discard="onDiscard"
+                            @back="onBack"
                         />
                     </v-window-item>
 
                     <v-window-item value="products">
                         <div class="pa-4">
-                            <!-- TODO: requires TagId filter in ProductFilterDto -->
                             <AppEmptyState
                                 icon="mdi-package-variant-closed-remove"
                                 title="Chưa có dữ liệu"
@@ -105,92 +105,101 @@
                 </v-btn>
             </template>
         </AppEmptyState>
+
+        <!-- Confirm bỏ thay đổi -->
+        <AppConfirmDialog
+            v-model="confirmOpen"
+            title="Bỏ thay đổi?"
+            message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+            confirm-label="Bỏ thay đổi"
+            @confirm="onConfirmUnsaved"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { tagService } from '../services/tag.service'
 import { useTag } from '../composables/useTag'
-import { createEmptyTagForm } from '../models/form-models/tag.model'
+import { toForm, toPayload, emptyForm } from '../adapters/tag.adapter'
 import type { TagFormModel } from '../models/form-models/tag.model'
-import type { UpdateTagRequest } from '../models/dtos/tag.dto'
 import TagOverviewTab from '../components/TagOverviewTab.vue'
 
 const route = useRoute()
+const router = useRouter()
 const tagId = Number(route.params['id'])
 const activeTab = ref('overview')
+const submitting = ref(false)
+const editForm = reactive<TagFormModel>(emptyForm())
+const snapshot = ref<TagFormModel | null>(null)
+const formErrors = reactive<Partial<Record<keyof TagFormModel, string>>>({})
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
+
+if (isNaN(tagId)) void router.replace({ name: APP_ROUTES.PRODUCT.TAGS.NAME })
 
 const tag = useAsyncState(() => tagService.getByIdAsync(tagId))
 const { updateTag } = useTag()
 
-// Inline edit form
-const editForm = reactive<TagFormModel>(createEmptyTagForm())
-const snapshot = ref<TagFormModel | null>(null)
-
-function syncFormFromTag() {
-    if (!tag.data.value) return
-    const t = tag.data.value
-    editForm.name = t.name
-    editForm.textColor = t.textColor ?? ''
-    editForm.colorHex = t.colorHex ?? ''
-    editForm.iconUrl = t.iconUrl ?? ''
-    editForm.displayOrder = t.displayOrder
-    editForm.isActive = t.isActive
-    snapshot.value = { ...editForm }
-}
+const TRACKED_FIELDS: ReadonlyArray<keyof TagFormModel> = [
+    'name', 'textColor', 'colorHex', 'iconUrl', 'displayOrder', 'isActive',
+] as const
 
 const isDirty = computed(() => {
     if (!snapshot.value) return false
-    return (
-        editForm.name !== snapshot.value.name ||
-        editForm.textColor !== snapshot.value.textColor ||
-        editForm.colorHex !== snapshot.value.colorHex ||
-        editForm.iconUrl !== snapshot.value.iconUrl ||
-        editForm.displayOrder !== snapshot.value.displayOrder ||
-        editForm.isActive !== snapshot.value.isActive
-    )
+    return TRACKED_FIELDS.some(f => editForm[f] !== snapshot.value![f])
 })
 
-const formErrors = reactive<Partial<Record<keyof TagFormModel, string>>>({})
+function syncFormFromEntity() {
+    if (!tag.data.value) return
+    Object.assign(editForm, toForm(tag.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
+}
 
 function onFormUpdate(field: keyof TagFormModel, value: unknown) {
     ;(editForm as Record<string, unknown>)[field] = value
-    if (field === 'name' && typeof value === 'string' && value.trim()) {
+    if (field === 'name' && typeof value === 'string' && value.trim())
         delete formErrors.name
-    }
 }
 
-// Save / Discard
-const submitting = ref(false)
-
 function discardChanges() {
-    syncFormFromTag()
+    syncFormFromEntity()
     delete formErrors.name
 }
 
-async function saveChanges() {
-    formErrors.name = editForm.name?.trim() ? undefined : 'Tên nhãn là bắt buộc'
-    if (formErrors.name) return
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.PRODUCT.TAGS.NAME })
+}
 
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.TAGS.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
+}
+
+async function saveChanges() {
+    if (!editForm.name?.trim()) {
+        formErrors.name = 'Tên nhãn là bắt buộc'
+        return
+    }
+    delete formErrors.name
     submitting.value = true
     try {
-        const payload: UpdateTagRequest = {
-            Name: editForm.name.trim(),
-            TextColor: editForm.textColor || null,
-            ColorHex: editForm.colorHex || null,
-            IconUrl: editForm.iconUrl || null,
-            DisplayOrder: editForm.displayOrder,
-            IsActive: editForm.isActive,
-        }
-        const ok = await updateTag(tagId, payload)
+        const ok = await updateTag(tagId, toPayload(editForm))
         if (ok) {
             await tag.execute()
-            syncFormFromTag()
+            syncFormFromEntity()
         }
     } finally {
         submitting.value = false
@@ -198,7 +207,8 @@ async function saveChanges() {
 }
 
 onMounted(async () => {
+    if (isNaN(tagId)) return
     await tag.execute()
-    syncFormFromTag()
+    syncFormFromEntity()
 })
 </script>

@@ -7,20 +7,12 @@
       <template #breadcrumb>
         <AppBreadcrumb
           :items="[
-            { title: 'Dashboard', to: '/admin' },
+            { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
             { title: 'Thương hiệu', disabled: true },
           ]"
         />
       </template>
 
-      <!-- <v-btn
-        variant="outlined"
-        prepend-icon="mdi-refresh"
-        :loading="loading"
-        @click="emit(BRAND_LIST_EMIT.REFRESH)"
-      >
-        Tải lại
-      </v-btn> -->
       <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(BRAND_LIST_EMIT.CREATE)">
         Tạo thương hiệu
       </v-btn>
@@ -127,6 +119,7 @@ import {
   AppStatusChip,
   AppEmptyState,
 } from '@/components/ui'
+import { APP_ROUTES } from '@/core/constants/_index'
 import {
   BRAND_LIST_EMIT,
   BRAND_ROW_ACTION,

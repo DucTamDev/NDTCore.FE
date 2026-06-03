@@ -28,9 +28,9 @@
                             <v-icon icon="mdi-checkbox-marked-outline" size="28" color="primary" />
                         </v-sheet>
                         <div>
-                            <div class="text-h6 font-weight-bold">{{ option.data.value.name }}</div>
+                            <div class="text-h6 font-weight-bold text-high-emphasis">{{ option.data.value.name }}</div>
                             <div class="text-body-2 text-medium-emphasis">
-                                Giá: {{ option.data.value.defaultPrice?.toLocaleString() ?? '0' }}
+                                Giá: {{ option.data.value.defaultPrice?.toLocaleString() ?? '0' }} ₫
                             </div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                 <v-window v-model="activeTab">
                     <v-window-item value="overview">
                         <OptionOverviewTab
-                            :option="option.data.value"
+                            :entity="option.data.value"
                             :form="editForm"
                             :errors="formErrors"
                             :is-dirty="isDirty"
@@ -61,7 +61,8 @@
                             :group-options="groupOptions"
                             @update:form="onFormUpdate"
                             @save="saveChanges"
-                            @discard="discardChanges"
+                            @discard="onDiscard"
+                            @back="onBack"
                         />
                     </v-window-item>
                     <v-window-item value="stores">
@@ -88,87 +89,95 @@
                 </v-btn>
             </template>
         </AppEmptyState>
+
+        <!-- Confirm bỏ thay đổi -->
+        <AppConfirmDialog
+            v-model="confirmOpen"
+            title="Bỏ thay đổi?"
+            message="Bạn có thay đổi chưa được lưu. Nếu tiếp tục, các thay đổi sẽ bị mất."
+            confirm-label="Bỏ thay đổi"
+            @confirm="onConfirmUnsaved"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { AppBreadcrumb, AppEmptyState } from '@/components/ui'
+import { AppBreadcrumb, AppEmptyState, AppConfirmDialog } from '@/components/ui'
 import { useAsyncState } from '@/composables/useAsyncState'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { optionService } from '../services/option.service'
 import { useOption } from '../composables/useOption'
 import { useOptionGroupStore } from '../stores/option-group.store'
-import { createEmptyOptionForm } from '../models/form-models/option.model'
+import { toForm, toPayload, emptyForm } from '../adapters/option.adapter'
 import OptionOverviewTab from '../components/OptionOverviewTab.vue'
 import OptionStoreOverridesTab from '../components/OptionStoreOverridesTab.vue'
 import type { OptionFormModel } from '../models/form-models/option.model'
-import type { UpdateOptionRequest } from '../models/dtos/option.dto'
-
-// composables
 
 const route = useRoute()
 const router = useRouter()
 const { updateOption } = useOption()
 const groupStore = useOptionGroupStore()
 
-// refs / reactive
-
 const optionId = Number(route.params['id'])
 const activeTab = ref('overview')
 const submitting = ref(false)
-const editForm = reactive<OptionFormModel>(createEmptyOptionForm())
+const editForm = reactive<OptionFormModel>(emptyForm())
 const snapshot = ref<OptionFormModel | null>(null)
 const formErrors = reactive<Partial<Record<keyof OptionFormModel, string>>>({})
+const confirmOpen = ref(false)
+const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
-// NaN guard
 if (isNaN(optionId)) void router.replace({ name: APP_ROUTES.PRODUCT.OPTIONS.NAME })
 
-// async state (useAsyncState executes lazily; onMounted guards execution)
 const option = useAsyncState(() => optionService.getByIdAsync(optionId))
-
-// computed
 
 const groupOptions = computed(() =>
     groupStore.items.map((g) => ({ id: g.id, name: g.name })),
 )
 
+const TRACKED_FIELDS: ReadonlyArray<keyof OptionFormModel> = [
+    'name', 'defaultPrice', 'displayOrder', 'isActive',
+] as const
+
 const isDirty = computed(() => {
     if (!snapshot.value) return false
-    return (
-        editForm.name !== snapshot.value.name ||
-        editForm.defaultPrice !== snapshot.value.defaultPrice ||
-        editForm.displayOrder !== snapshot.value.displayOrder ||
-        editForm.isActive !== snapshot.value.isActive
-    )
+    return TRACKED_FIELDS.some(f => editForm[f] !== snapshot.value![f])
 })
 
-// methods
-
-function syncFormFromOption() {
+function syncFormFromEntity() {
     if (!option.data.value) return
-    const o = option.data.value
-    editForm.groupId = o.groupId
-    editForm.name = o.name
-    editForm.defaultPrice = o.defaultPrice
-    editForm.description = o.description ?? ''
-    editForm.imageUrl = o.imageUrl ?? ''
-    editForm.displayOrder = o.displayOrder
-    editForm.isActive = o.isActive
-    snapshot.value = { ...editForm }
+    Object.assign(editForm, toForm(option.data.value))
+    snapshot.value = structuredClone(toRaw(editForm))
 }
 
 function onFormUpdate(field: keyof OptionFormModel, value: unknown) {
     ;(editForm as Record<string, unknown>)[field] = value
-    if (field === 'name' && typeof value === 'string' && value.trim()) {
+    if (field === 'name' && typeof value === 'string' && value.trim())
         delete formErrors.name
-    }
 }
 
 function discardChanges() {
-    syncFormFromOption()
+    syncFormFromEntity()
     delete formErrors.name
+}
+
+function onBack() {
+    if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
+    else void router.push({ name: APP_ROUTES.PRODUCT.OPTIONS.NAME })
+}
+
+function onDiscard() {
+    if (isDirty.value) { pendingNavAction.value = 'discard'; confirmOpen.value = true }
+    else discardChanges()
+}
+
+function onConfirmUnsaved() {
+    confirmOpen.value = false
+    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.OPTIONS.NAME })
+    else if (pendingNavAction.value === 'discard') discardChanges()
+    pendingNavAction.value = null
 }
 
 async function saveChanges() {
@@ -179,30 +188,20 @@ async function saveChanges() {
     delete formErrors.name
     submitting.value = true
     try {
-        const payload: UpdateOptionRequest = {
-            Name: editForm.name.trim(),
-            DefaultPrice: editForm.defaultPrice,
-            Description: editForm.description || null,
-            ImageUrl: editForm.imageUrl || null,
-            DisplayOrder: editForm.displayOrder,
-            IsActive: editForm.isActive,
-        }
-        const ok = await updateOption(optionId, payload)
+        const ok = await updateOption(optionId, toPayload(editForm))
         if (ok) {
             await option.execute()
-            syncFormFromOption()
+            syncFormFromEntity()
         }
     } finally {
         submitting.value = false
     }
 }
 
-// lifecycle
-
 onMounted(async () => {
     if (isNaN(optionId)) return
     await option.execute()
-    syncFormFromOption()
+    syncFormFromEntity()
     await groupStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
 })
 </script>

@@ -23,9 +23,9 @@
 
     <FranchiseeForm
       v-model="isFormDialogOpen"
-      :title="selectedFranchisee ? 'Cập nhật nhà nhượng quyền' : 'Tạo nhà nhượng quyền'"
-      :form="selectedFranchisee ? franchiseeMapper.toFormModel(selectedFranchisee) : null"
-      :is-edit="!!selectedFranchisee"
+      title="Tạo nhà nhượng quyền"
+      :form="null"
+      :is-edit="false"
       :brand-options="brandOptions"
       :submitting="submitting"
       @submit="saveFranchisee"
@@ -57,6 +57,7 @@ import type { ListPageParams } from '@/components/ui/composables'
 import { APP_ROUTES, DEFAULT_PAGINATION } from '@/core/constants/_index'
 import { franchiseeMapper } from '@/modules/brand/mappers/franchisee.mapper'
 import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
+import { useBrand } from '@/modules/brand/composables/useBrand'
 import {
   buildFranchiseeFilterFields,
   FRANCHISEE_ROW_ACTION,
@@ -65,12 +66,10 @@ import type { FranchiseeFormModel } from '@/modules/brand/models/form-models/fra
 import type { FranchiseeViewModel } from '@/modules/brand/models/view-models/franchisee.view-model'
 import FranchiseeList from '@/modules/brand/components/franchisee/FranchiseeList.vue'
 import FranchiseeForm from '@/modules/brand/components/franchisee/FranchiseeForm.vue'
-import { brandService } from '@/modules/brand/services/brand.service'
-import { useUserStore } from '@/modules/user/stores/user.store'
 
 const router = useRouter()
-const { getPagedFranchisees, createFranchisee, updateFranchisee, deleteFranchisee } = useFranchisee()
-const userStore = useUserStore()
+const { getPagedFranchisees, createFranchisee, deleteFranchisee } = useFranchisee()
+const { getPagedBrands } = useBrand()
 
 // ── Filter options ──────────────────────────────────────────────────────────
 const brandOptions = ref<FilterOption[]>([])
@@ -100,25 +99,18 @@ const listPage = useListPage<FranchiseeViewModel>({
 const viewItems = computed<FranchiseeViewModel[]>(() => listPage.items.value ?? [])
 
 // ── Form dialog ─────────────────────────────────────────────────────────────
-const selectedFranchisee = ref<FranchiseeViewModel | null>(null)
 const isFormDialogOpen = ref(false)
 const submitting = ref(false)
 
 const openCreateDialog = () => {
-  selectedFranchisee.value = null
   isFormDialogOpen.value = true
 }
 
 const saveFranchisee = async (form: FranchiseeFormModel) => {
   submitting.value = true
   try {
-    if (selectedFranchisee.value) {
-      await updateFranchisee(selectedFranchisee.value.id, franchiseeMapper.formModelToUpdateRequest(form))
-    } else {
-      await createFranchisee(franchiseeMapper.formModelToCreateRequest(form))
-    }
+    await createFranchisee(franchiseeMapper.formModelToCreateRequest(form))
     isFormDialogOpen.value = false
-    selectedFranchisee.value = null
     await listPage.refresh()
   } finally {
     submitting.value = false
@@ -150,9 +142,6 @@ const handleRowAction = (key: string, item: FranchiseeViewModel) => {
       name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEE_DETAIL.NAME,
       params: { id: item.id },
     })
-  } else if (key === FRANCHISEE_ROW_ACTION.EDIT) {
-    selectedFranchisee.value = item
-    isFormDialogOpen.value = true
   } else if (key === FRANCHISEE_ROW_ACTION.DELETE) {
     franchiseeToDelete.value = item
     isDeleteDialogOpen.value = true
@@ -160,12 +149,8 @@ const handleRowAction = (key: string, item: FranchiseeViewModel) => {
 }
 
 onMounted(async () => {
-  await userStore.fetchProfile()
-  const userId = userStore.profile?.Id
-  if (userId) {
-    const brands = await brandService.getBrandsByUserIdAsync(userId)
-    brandOptions.value = brands.map((b) => ({ label: b.name, value: b.id }))
-  }
+  const result = await getPagedBrands({ PageNumber: 1, PageSize: 200 })
+  brandOptions.value = result.items.map((b) => ({ label: b.name, value: b.id }))
   await listPage.refresh()
 })
 </script>

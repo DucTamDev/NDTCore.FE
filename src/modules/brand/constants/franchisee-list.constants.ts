@@ -36,7 +36,6 @@ export type FranchiseeListEmits = {
 
 export const FRANCHISEE_ROW_ACTION = {
     VIEW: 'view',
-    EDIT: 'edit',
     DELETE: 'delete',
 } as const
 
@@ -74,7 +73,6 @@ export const FRANCHISEE_LIST_COLUMNS: TableColumn[] = [
 
 export const FRANCHISEE_LIST_ROW_ACTIONS: RowAction<FranchiseeViewModel>[] = [
     { key: FRANCHISEE_ROW_ACTION.VIEW, label: 'Xem chi tiết', icon: 'mdi-eye-outline' },
-    { key: FRANCHISEE_ROW_ACTION.EDIT, label: 'Chỉnh sửa', icon: 'mdi-pencil-outline', color: 'primary' },
     { key: FRANCHISEE_ROW_ACTION.DELETE, label: 'Xóa', icon: 'mdi-delete-outline', color: 'error' },
 ]
 

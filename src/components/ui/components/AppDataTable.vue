@@ -81,7 +81,12 @@ const sortIcon = (key: string): string => {
 
 <template>
   <div>
-    <v-progress-linear v-if="loading" indeterminate color="primary" height="2" />
+    <v-progress-linear
+      :indeterminate="loading"
+      color="primary"
+      height="2"
+      :style="{ opacity: loading ? 1 : 0, transition: 'opacity 0.15s ease' }"
+    />
     <div style="overflow-x: auto; width: 100%">
       <v-table hover>
         <thead>

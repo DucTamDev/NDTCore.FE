@@ -7,7 +7,7 @@
       <template #breadcrumb>
         <AppBreadcrumb
           :items="[
-            { title: 'Dashboard', to: '/admin' },
+            { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
             { title: 'Nhà nhượng quyền', disabled: true },
           ]"
         />
@@ -128,6 +128,7 @@ import {
   AppStatusChip,
   AppEmptyState,
 } from '@/components/ui'
+import { APP_ROUTES } from '@/core/constants/_index'
 import {
   FRANCHISEE_LIST_EMIT,
   FRANCHISEE_ROW_ACTION,
