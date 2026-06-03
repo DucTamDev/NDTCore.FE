@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div>
         <!-- Toolbar -->
         <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
@@ -208,9 +208,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { AppAuditHistory } from '@/components/ui'
-import { formatProductDate } from '../utils/product.utils'
-import type { CategoryViewModel } from '../models/view-models/category.view-model'
-import type { CategoryFormModel } from '../models/form-models/category.model'
+import { formatProductDate } from '../../utils/product.utils'
+import type { CategoryViewModel } from '../../models/view-models/category.view-model'
+import type { CategoryFormModel } from '../../models/form-models/category.model'
 
 const props = defineProps<{
     entity: CategoryViewModel

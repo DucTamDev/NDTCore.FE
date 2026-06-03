@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-card rounded="lg">
         <AppDataTable
             :items="items"
@@ -75,8 +75,8 @@ import {
     TAG_ROW_ACTIONS,
     TAG_STATUS_CONFIG,
     type TagListEmits,
-} from '../constants/tag-list.constants'
-import type { TagViewModel } from '../models/view-models/tag.view-model'
+} from '../../constants/tag-list.constants'
+import type { TagViewModel } from '../../models/view-models/tag.view-model'
 
 defineProps<{
     items: TagViewModel[]

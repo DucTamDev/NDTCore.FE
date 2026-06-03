@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12" md="6">
@@ -79,7 +79,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
-import type { TagFormModel } from '../models/form-models/tag.model'
+import type { TagFormModel } from '../../models/form-models/tag.model'
 
 interface Props {
     modelValue: TagFormModel

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-card rounded="lg">
         <AppDataTable
             :items="items"
@@ -83,8 +83,8 @@ import {
     PRODUCT_ROW_ACTIONS,
     PRODUCT_STATUS_CONFIG,
     type ProductListEmits,
-} from '../constants/product-list.constants'
-import type { ProductViewModel } from '../models/view-models/product.view-model'
+} from '../../constants/product-list.constants'
+import type { ProductViewModel } from '../../models/view-models/product.view-model'
 
 defineProps<{
     items: ProductViewModel[]

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-card rounded="lg">
         <AppDataTable
             :items="items"
@@ -72,8 +72,8 @@ import {
     CATEGORY_ROW_ACTIONS,
     CATEGORY_STATUS_CONFIG,
     type CategoryListEmits,
-} from '../constants/category-list.constants'
-import type { CategoryViewModel } from '../models/view-models/category.view-model'
+} from '../../constants/category-list.constants'
+import type { CategoryViewModel } from '../../models/view-models/category.view-model'
 
 defineProps<{
     items: CategoryViewModel[]

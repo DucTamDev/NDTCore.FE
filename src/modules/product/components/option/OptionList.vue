@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-card rounded="lg">
         <AppDataTable
             :items="items"
@@ -64,8 +64,8 @@ import {
     OPTION_ROW_ACTIONS,
     OPTION_STATUS_CONFIG,
     type OptionListEmits,
-} from '../constants/option-list.constants'
-import type { OptionViewModel } from '../models/view-models/option.view-model'
+} from '../../constants/option-list.constants'
+import type { OptionViewModel } from '../../models/view-models/option.view-model'
 
 defineProps<{
     items: OptionViewModel[]

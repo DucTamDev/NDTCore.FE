@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12" md="6">
@@ -97,7 +97,7 @@
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
 import { AppCurrencyField } from '@/components/ui'
-import type { ProductFormModel } from '../models/form-models/product.model'
+import type { ProductFormModel } from '../../models/form-models/product.model'
 
 interface CategoryOption {
     id: number

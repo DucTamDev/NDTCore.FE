@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col v-if="!isEditMode" cols="12">
@@ -65,7 +65,7 @@
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
 import { AppCurrencyField } from '@/components/ui'
-import type { OptionFormModel } from '../models/form-models/option.model'
+import type { OptionFormModel } from '../../models/form-models/option.model'
 
 interface Props {
     modelValue: OptionFormModel

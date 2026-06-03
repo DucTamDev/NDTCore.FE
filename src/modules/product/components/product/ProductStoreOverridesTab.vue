@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="pa-4 d-flex flex-column ga-4">
         <v-progress-linear :indeterminate="isLoading" color="primary" :style="{ opacity: isLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
         <v-row>
@@ -130,7 +130,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { AppCurrencyField, AppConfirmDialog } from '@/components/ui'
-import { useProductStoreOverrides } from '../composables/useStoreOverrides'
+import { useProductStoreOverrides } from '../../composables/useStoreOverrides'
 
 const props = defineProps<{ productId: number }>()
 

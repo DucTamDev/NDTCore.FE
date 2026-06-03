@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div>
         <!-- Toolbar -->
         <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
@@ -232,9 +232,9 @@
 
 <script setup lang="ts">
 import { AppAuditHistory } from '@/components/ui'
-import { formatProductDate } from '../utils/product.utils'
-import type { TagViewModel } from '../models/view-models/tag.view-model'
-import type { TagFormModel } from '../models/form-models/tag.model'
+import { formatProductDate } from '../../utils/product.utils'
+import type { TagViewModel } from '../../models/view-models/tag.view-model'
+import type { TagFormModel } from '../../models/form-models/tag.model'
 
 const props = defineProps<{
     entity: TagViewModel

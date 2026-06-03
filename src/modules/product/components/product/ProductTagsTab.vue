@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex align-center justify-space-between">
             <span class="text-subtitle-2 text-medium-emphasis">Tags đang gán</span>
@@ -62,8 +62,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { AppDialog, AppConfirmDialog } from '@/components/ui'
-import { useProductRelations } from '../composables/useProductRelations'
-import { useTagStore } from '../stores/tag.store'
+import { useProductRelations } from '../../composables/useProductRelations'
+import { useTagStore } from '../../stores/tag.store'
 
 const props = defineProps<{ productId: number }>()
 

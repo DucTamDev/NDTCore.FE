@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex align-center justify-space-between">
             <span class="text-subtitle-2 text-medium-emphasis">Nhóm option đã gán</span>
@@ -128,10 +128,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { AppDialog, AppConfirmDialog } from '@/components/ui'
-import { useProductRelations } from '../composables/useProductRelations'
-import { useOptionGroupStore } from '../stores/option-group.store'
+import { useProductRelations } from '../../composables/useProductRelations'
+import { useOptionGroupStore } from '../../stores/option-group.store'
 import { useToastNotification } from '@/composables/useToastNotification'
-import type { ProductOptionGroupDto } from '../models/dtos/product-relations.dto'
+import type { ProductOptionGroupDto } from '../../models/dtos/product-relations.dto'
 
 const props = defineProps<{ productId: number }>()
 

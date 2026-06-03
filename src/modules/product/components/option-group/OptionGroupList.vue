@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-card rounded="lg">
         <AppDataTable
             :items="items"
@@ -69,8 +69,8 @@ import {
     OPTION_GROUP_STATUS_CONFIG,
     UI_TYPE_LABELS,
     type OptionGroupListEmits,
-} from '../constants/option-group-list.constants'
-import type { OptionGroupViewModel } from '../models/view-models/option-group.view-model'
+} from '../../constants/option-group-list.constants'
+import type { OptionGroupViewModel } from '../../models/view-models/option-group.view-model'
 
 defineProps<{
     items: OptionGroupViewModel[]

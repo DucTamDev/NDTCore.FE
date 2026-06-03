@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12" md="8">
@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
-import type { OptionGroupFormModel } from '../models/form-models/option-group.model'
+import type { OptionGroupFormModel } from '../../models/form-models/option-group.model'
 
 interface Props {
     modelValue: OptionGroupFormModel

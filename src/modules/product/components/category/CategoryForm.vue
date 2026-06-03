@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12" md="8">
@@ -61,8 +61,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
-import type { CategoryFormModel } from '../models/form-models/category.model'
-import type { CategoryViewModel } from '../models/view-models/category.view-model'
+import type { CategoryFormModel } from '../../models/form-models/category.model'
+import type { CategoryViewModel } from '../../models/view-models/category.view-model'
 
 interface Props {
     modelValue: CategoryFormModel

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div>
         <!-- Toolbar -->
         <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
@@ -214,9 +214,9 @@
 
 <script setup lang="ts">
 import { AppAuditHistory } from '@/components/ui'
-import { formatProductDate } from '../utils/product.utils'
-import type { OptionGroupViewModel } from '../models/view-models/option-group.view-model'
-import type { OptionGroupFormModel } from '../models/form-models/option-group.model'
+import { formatProductDate } from '../../utils/product.utils'
+import type { OptionGroupViewModel } from '../../models/view-models/option-group.view-model'
+import type { OptionGroupFormModel } from '../../models/form-models/option-group.model'
 
 const props = defineProps<{
     entity: OptionGroupViewModel

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex align-center justify-space-between">
             <span class="text-subtitle-2 text-medium-emphasis">Cấu hình option</span>
@@ -105,9 +105,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { AppDialog, AppConfirmDialog, AppCurrencyField } from '@/components/ui'
-import { useProductRelations } from '../composables/useProductRelations'
-import { useOptionStore } from '../stores/option.store'
-import type { ProductOptionConfigDto } from '../models/dtos/product-relations.dto'
+import { useProductRelations } from '../../composables/useProductRelations'
+import { useOptionStore } from '../../stores/option.store'
+import type { ProductOptionConfigDto } from '../../models/dtos/product-relations.dto'
 
 const props = defineProps<{ productId: number }>()
 
