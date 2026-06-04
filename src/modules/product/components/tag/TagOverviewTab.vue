@@ -81,16 +81,7 @@
                                 @update:model-value="emit('update:form', 'name', $event)"
                             />
 
-                            <div class="d-flex align-center ga-2">
-                                <v-sheet
-                                    v-if="props.form.colorHex"
-                                    :style="{ backgroundColor: props.form.colorHex }"
-                                    width="20"
-                                    height="20"
-                                    rounded="sm"
-                                    border
-                                    class="flex-shrink-0"
-                                />
+                            <div class="d-flex ga-2 align-start">
                                 <v-text-field
                                     :model-value="props.form.colorHex"
                                     label="Màu nền (ColorHex)"
@@ -100,21 +91,17 @@
                                     hint="Định dạng #RRGGBB"
                                     persistent-hint
                                     clearable
+                                    persistent-clear
                                     prepend-inner-icon="mdi-palette-outline"
                                     @update:model-value="emit('update:form', 'colorHex', $event ?? '')"
                                 />
+                                <div
+                                    class="color-swatch"
+                                    :style="props.form.colorHex ? { backgroundColor: props.form.colorHex } : {}"
+                                />
                             </div>
 
-                            <div class="d-flex align-center ga-2">
-                                <v-sheet
-                                    v-if="props.form.textColor"
-                                    :style="{ backgroundColor: props.form.textColor }"
-                                    width="20"
-                                    height="20"
-                                    rounded="sm"
-                                    border
-                                    class="flex-shrink-0"
-                                />
+                            <div class="d-flex ga-2 align-start">
                                 <v-text-field
                                     :model-value="props.form.textColor"
                                     label="Màu chữ (TextColor)"
@@ -124,8 +111,13 @@
                                     hint="Định dạng #RRGGBB"
                                     persistent-hint
                                     clearable
+                                    persistent-clear
                                     prepend-inner-icon="mdi-format-color-text"
                                     @update:model-value="emit('update:form', 'textColor', $event ?? '')"
+                                />
+                                <div
+                                    class="color-swatch"
+                                    :style="props.form.textColor ? { backgroundColor: props.form.textColor } : {}"
                                 />
                             </div>
 
@@ -259,5 +251,24 @@ const emit = defineEmits<{
 }
 .info-card--dirty {
     border-color: rgb(var(--v-theme-primary));
+}
+
+.color-swatch {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    /* checkerboard — visible khi chưa có màu hoặc màu có alpha */
+    background-image:
+        linear-gradient(45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+    /* contrast boundary: white inner ring + dark outer ring */
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.7),
+        0 0 0 2px rgba(0, 0, 0, 0.15);
 }
 </style>
