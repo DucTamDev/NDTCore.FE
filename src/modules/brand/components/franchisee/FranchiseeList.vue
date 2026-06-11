@@ -13,14 +13,6 @@
         />
       </template>
 
-      <v-btn
-        variant="outlined"
-        prepend-icon="mdi-refresh"
-        :loading="loading"
-        @click="emit(FRANCHISEE_LIST_EMIT.REFRESH)"
-      >
-        Tải lại
-      </v-btn>
       <v-btn color="primary" prepend-icon="mdi-plus" @click="emit(FRANCHISEE_LIST_EMIT.CREATE)">
         Tạo nhà NQ
       </v-btn>
