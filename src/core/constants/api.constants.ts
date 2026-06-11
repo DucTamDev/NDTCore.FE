@@ -51,7 +51,12 @@ export const API_ENDPOINTS = {
         },
     },
     ORDER: {
-        ORDER_API: {},
+        POS_API: {
+            GET_STORE_STATUS: (storeId: number) => `/pos/store/${storeId}/status`,
+            GET_CATALOG: (storeId: number) => `/pos/store/${storeId}/catalog`,
+            CREATE_ORDER: '/pos/orders',
+            GET_ORDER_HISTORY: (storeId: number) => `/pos/store/${storeId}/orders`,
+        },
     },
     PRODUCT: {
         CATEGORY_API: {
@@ -131,6 +136,10 @@ export const API_ENDPOINTS = {
                 `/admin/store-overrides/options/${optionId}/stores/${storeId}/price`,
             REMOVE_OPTION_PRICE: (optionId: number, storeId: number) =>
                 `/admin/store-overrides/options/${optionId}/stores/${storeId}/price`,
+            GET_PRODUCT_PAGED: (productId: number) =>
+                `/admin/store-overrides/products/${productId}/paged`,
+            GET_OPTION_PAGED: (optionId: number) =>
+                `/admin/store-overrides/options/${optionId}/paged`,
         },
     },
 } as const
