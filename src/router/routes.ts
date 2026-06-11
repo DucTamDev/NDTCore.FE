@@ -204,9 +204,10 @@ export const routes: RouteRecordRaw[] = [
                 meta: { title: 'Thành viên cửa hàng', requiresAuth: true },
             },
             {
-                path: 'sales',
-                name: 'admin:sales',
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                path: APP_ROUTES.ADMIN.CHILDREN.SALES.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.SALES.NAME,
+                component: () => import('@/modules/pos/views/SalesView.vue'),
+                meta: { title: 'Bán hàng', requiresAuth: true },
             },
             {
                 path: 'orders',
@@ -227,6 +228,19 @@ export const routes: RouteRecordRaw[] = [
                 path: 'reports/top-products',
                 name: 'admin:reports-top-products',
                 component: () => import('@/components/common/ComingSoonView.vue'),
+            },
+        ],
+    },
+    {
+        path: APP_ROUTES.POS.POS.PATH,
+        component: () => import('@/layouts/PosLayout.vue'),
+        meta: { requiresAuth: true },
+        children: [
+            {
+                path: '',
+                name: APP_ROUTES.POS.POS.NAME,
+                component: () => import('@/modules/pos/views/PosView.vue'),
+                meta: { title: 'Bán hàng', requiresAuth: true },
             },
         ],
     },
