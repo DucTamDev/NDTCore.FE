@@ -6,6 +6,7 @@ import type {
     OptionStoreOverviewDto,
     UpsertOptionStoreAvailabilityRequest,
     UpsertOptionStorePriceRequest,
+    StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
 
 class StoreOverridesService {
@@ -73,6 +74,34 @@ class StoreOverridesService {
     async removeOptionPriceAsync(optionId: number, storeId: number): Promise<boolean> {
         await storeOverridesApi.removeOptionPriceAsync(optionId, storeId)
         return true
+    }
+
+    async getProductPagedAsync(
+        productId: number,
+        params: { PageNumber: number; PageSize: number },
+    ): Promise<{ items: StoreOverrideItemDto[]; pageNumber: number; pageSize: number; totalPages: number; totalCount: number }> {
+        const r = await storeOverridesApi.getProductPagedAsync(productId, params)
+        return {
+            items:      (r.Data ?? []) as StoreOverrideItemDto[],
+            pageNumber: r.PageNumber,
+            pageSize:   r.PageSize,
+            totalPages: r.TotalPages,
+            totalCount: r.TotalCount,
+        }
+    }
+
+    async getOptionPagedAsync(
+        optionId: number,
+        params: { PageNumber: number; PageSize: number },
+    ): Promise<{ items: StoreOverrideItemDto[]; pageNumber: number; pageSize: number; totalPages: number; totalCount: number }> {
+        const r = await storeOverridesApi.getOptionPagedAsync(optionId, params)
+        return {
+            items:      (r.Data ?? []) as StoreOverrideItemDto[],
+            pageNumber: r.PageNumber,
+            pageSize:   r.PageSize,
+            totalPages: r.TotalPages,
+            totalCount: r.TotalCount,
+        }
     }
 }
 

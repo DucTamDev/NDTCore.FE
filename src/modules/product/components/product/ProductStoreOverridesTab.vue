@@ -1,180 +1,222 @@
-﻿<template>
+<template>
     <div class="pa-4 d-flex flex-column ga-4">
-        <v-progress-linear :indeterminate="isLoading" color="primary" :style="{ opacity: isLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
-        <v-row>
-            <!-- Availability column -->
-            <v-col cols="12" md="6">
-                <v-card variant="outlined" rounded="lg">
-                    <v-card-title class="text-subtitle-2 pa-3">Khả dụng theo cửa hàng</v-card-title>
-                    <v-divider />
-                    <v-card-text>
-                        <v-table v-if="availability.length" density="compact">
-                            <thead>
-                                <tr>
-                                    <th>Store ID</th>
-                                    <th class="text-center">Khả dụng</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="a in availability" :key="a.StoreId">
-                                    <td>{{ a.StoreId }}</td>
-                                    <td class="text-center">
-                                        <v-icon
-                                            :color="a.IsAvailable ? 'success' : 'error'"
-                                            :icon="a.IsAvailable ? 'mdi-check-circle' : 'mdi-close-circle'"
-                                        />
-                                    </td>
-                                    <td class="text-end">
-                                        <v-btn
-                                            size="x-small"
-                                            icon="mdi-delete-outline"
-                                            variant="text"
-                                            color="error"
-                                            @click="() => { confirmAvailStoreId = a.StoreId; confirmAvailOpen = true }"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </v-table>
-                        <v-alert v-else-if="!isLoading" type="info" variant="tonal" density="compact" class="mb-2">
-                            Chưa có cài đặt.
-                        </v-alert>
-                        <div class="d-flex ga-2 mt-2 align-center flex-wrap">
-                            <v-text-field
-                                v-model.number="newStoreId"
-                                label="Store ID"
-                                type="number"
-                                density="compact"
-                                hide-details
-                                style="max-width: 120px"
-                            />
-                            <v-switch v-model="newIsAvailable" label="Khả dụng" color="primary" base-color="grey" hide-details />
-                            <v-btn color="primary" size="small" :loading="isSubmitting" @click="onUpsertAvailability">
-                                Lưu
-                            </v-btn>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
+        <div class="d-flex justify-end">
+            <v-btn color="primary" size="small" prepend-icon="mdi-plus" @click="openAdd">
+                Thêm cửa hàng
+            </v-btn>
+        </div>
 
-            <!-- Price column -->
-            <v-col cols="12" md="6">
-                <v-card variant="outlined" rounded="lg">
-                    <v-card-title class="text-subtitle-2 pa-3">Giá theo cửa hàng</v-card-title>
-                    <v-divider />
-                    <v-card-text>
-                        <v-table v-if="prices.length" density="compact">
-                            <thead>
-                                <tr>
-                                    <th>Store ID</th>
-                                    <th class="text-end">Giá</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="p in prices" :key="p.StoreId">
-                                    <td>{{ p.StoreId }}</td>
-                                    <td class="text-end">{{ p.Price.toLocaleString('vi-VN') }} ₫</td>
-                                    <td class="text-end">
-                                        <v-btn
-                                            size="x-small"
-                                            icon="mdi-delete-outline"
-                                            variant="text"
-                                            color="error"
-                                            @click="() => { confirmPriceStoreId = p.StoreId; confirmPriceOpen = true }"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </v-table>
-                        <v-alert v-else-if="!isLoading" type="info" variant="tonal" density="compact" class="mb-2">
-                            Chưa có giá riêng.
-                        </v-alert>
-                        <div class="d-flex ga-2 mt-2 align-center flex-wrap">
-                            <v-text-field
-                                v-model.number="priceStoreId"
-                                label="Store ID"
-                                type="number"
-                                density="compact"
-                                hide-details
-                                style="max-width: 120px"
-                            />
-                            <AppCurrencyField v-model="priceValue" label="Giá" style="max-width: 160px" />
-                            <v-btn color="primary" size="small" :loading="isSubmitting" @click="onUpsertPrice">
-                                Lưu
-                            </v-btn>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <v-card variant="outlined" rounded="lg">
+            <AppDataTable
+                :items="(items as Record<string, unknown>[])"
+                :columns="STORE_OVERRIDE_LIST_COLUMNS"
+                :loading="isLoading"
+                item-key="StoreId"
+            >
+                <template #[`item.IsAvailable`]="{ item }">
+                    <template v-if="item['IsAvailable'] != null">
+                        <v-icon
+                            :color="item['IsAvailable'] ? 'success' : 'error'"
+                            :icon="item['IsAvailable'] ? 'mdi-check-circle' : 'mdi-close-circle'"
+                        />
+                    </template>
+                    <span v-else class="text-medium-emphasis text-caption">—</span>
+                </template>
+
+                <template #[`item.Price`]="{ item }">
+                    <span v-if="item['Price'] != null">
+                        {{ Number(item['Price']).toLocaleString('vi-VN') }} ₫
+                    </span>
+                    <span v-else class="text-medium-emphasis text-caption">—</span>
+                </template>
+
+                <template #[`item.actions`]="{ item }">
+                    <AppRowActions
+                        :actions="STORE_OVERRIDE_ROW_ACTIONS"
+                        :item="item"
+                        @action="(key) => onRowAction(key, item)"
+                    />
+                </template>
+
+                <template #empty>
+                    <AppEmptyState
+                        icon="mdi-store-off-outline"
+                        title="Chưa có override cửa hàng"
+                        description="Nhấn 'Thêm cửa hàng' để cấu hình override cho cửa hàng."
+                    />
+                </template>
+            </AppDataTable>
+
+            <v-divider />
+
+            <AppPagination
+                :page-number="pageNumber"
+                :page-size="pageSize"
+                :total-pages="totalPages"
+                :total-items="totalItems"
+                @update:page-number="onPageChange"
+                @update:page-size="onPageSizeChange"
+            />
+        </v-card>
+
+        <!-- Add / Edit dialog -->
+        <AppDialog
+            v-model="dialogOpen"
+            :title="editingRow ? 'Chỉnh sửa cửa hàng' : 'Thêm cửa hàng'"
+            size="sm"
+            :loading="isSubmitting"
+            confirm-label="Lưu"
+            @confirm="onSave"
+        >
+            <div class="d-flex flex-column ga-4 pt-1">
+                <v-autocomplete
+                    v-model="form.storeId"
+                    :items="storeOptions"
+                    item-value="id"
+                    item-title="label"
+                    label="Cửa hàng"
+                    :disabled="!!editingRow"
+                    :loading="storeStore.listLoading"
+                    :rules="[(v: number | null) => !!v || 'Vui lòng chọn cửa hàng']"
+                    density="compact"
+                    variant="outlined"
+                    no-data-text="Không tìm thấy cửa hàng"
+                    clearable
+                />
+                <v-switch
+                    v-model="form.isAvailable"
+                    label="Khả dụng"
+                    color="primary"
+                    hide-details
+                    inset
+                />
+                <AppCurrencyField
+                    v-model="form.price"
+                    label="Giá override (để trống nếu không cần)"
+                    :nullable="true"
+                />
+            </div>
+        </AppDialog>
 
         <AppConfirmDialog
-            v-model="confirmAvailOpen"
-            title="Xoá cài đặt khả dụng"
-            :message="`Xoá cài đặt khả dụng cho Store ID ${confirmAvailStoreId}?`"
+            v-model="confirmOpen"
+            title="Xóa override"
+            :message="`Xóa tất cả override cho Store ID ${confirmStoreId}?`"
+            confirm-label="Xóa"
             confirm-variant="danger"
-            @confirm="onRemoveAvailability"
-        />
-        <AppConfirmDialog
-            v-model="confirmPriceOpen"
-            title="Xoá giá override"
-            :message="`Xoá giá riêng cho Store ID ${confirmPriceStoreId}?`"
-            confirm-variant="danger"
-            @confirm="onRemovePrice"
+            @confirm="onConfirmDelete"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { AppCurrencyField, AppConfirmDialog } from '@/components/ui'
-import { useProductStoreOverrides } from '../../composables/useStoreOverrides'
+import { ref, reactive, computed, onMounted } from 'vue'
+import {
+    AppDataTable, AppPagination, AppRowActions,
+    AppDialog, AppConfirmDialog, AppCurrencyField, AppEmptyState,
+} from '@/components/ui'
+import {
+    STORE_OVERRIDE_LIST_COLUMNS,
+    STORE_OVERRIDE_ROW_ACTION,
+    STORE_OVERRIDE_ROW_ACTIONS,
+} from '../../constants/store-overrides.constants'
+import { useProductStoreOverridesPaged } from '../../composables/useStoreOverrides'
+import { useStoreStore } from '@/modules/store/stores/store.store'
+import type { StoreOverrideItemDto } from '../../models/dtos/store-overrides.dto'
 
 const props = defineProps<{ productId: number }>()
 
 const {
-    isLoading,
-    isSubmitting,
-    availability,
-    prices,
-    loadOverview,
-    upsertAvailability,
-    removeAvailability,
-    upsertPrice,
-    removePrice,
-} = useProductStoreOverrides(props.productId)
+    isLoading, isSubmitting, items,
+    pageNumber, pageSize, totalPages, totalItems,
+    loadPaged, upsertAvailability, upsertPrice, removePrice, removeStoreRow,
+} = useProductStoreOverridesPaged(props.productId)
 
-const newStoreId = ref(0)
-const newIsAvailable = ref(true)
-const priceStoreId = ref(0)
-const priceValue = ref<number>(0)
+const storeStore = useStoreStore()
 
-const confirmAvailOpen = ref(false)
-const confirmAvailStoreId = ref(0)
-const confirmPriceOpen = ref(false)
-const confirmPriceStoreId = ref(0)
+const storeOptions = computed(() => {
+    const assignedIds = new Set(items.value.map((s) => s.StoreId))
+    return storeStore.stores
+        .filter((s) => !assignedIds.has(s.id) || s.id === editingRow.value?.StoreId)
+        .map((s) => ({ id: s.id, label: s.name }))
+})
 
-async function onUpsertAvailability() {
-    const ok = await upsertAvailability(newStoreId.value, newIsAvailable.value)
-    if (ok) { newStoreId.value = 0; await loadOverview() }
+const dialogOpen     = ref(false)
+const confirmOpen    = ref(false)
+const confirmStoreId = ref(0)
+const editingRow     = ref<StoreOverrideItemDto | null>(null)
+const originalPrice  = ref<number | null>(null)
+
+const form = reactive({
+    storeId:     null as number | null,
+    isAvailable: true,
+    price:       null as number | null,
+})
+
+function openAdd() {
+    editingRow.value    = null
+    originalPrice.value = null
+    Object.assign(form, { storeId: null, isAvailable: true, price: null })
+    dialogOpen.value = true
 }
 
-async function onRemoveAvailability() {
-    const ok = await removeAvailability(confirmAvailStoreId.value)
-    if (ok) await loadOverview()
+function openEdit(row: StoreOverrideItemDto) {
+    editingRow.value    = row
+    originalPrice.value = row.Price
+    Object.assign(form, {
+        storeId:     row.StoreId,
+        isAvailable: row.IsAvailable ?? true,
+        price:       row.Price,
+    })
+    dialogOpen.value = true
 }
 
-async function onUpsertPrice() {
-    const ok = await upsertPrice(priceStoreId.value, priceValue.value)
-    if (ok) { priceStoreId.value = 0; priceValue.value = 0; await loadOverview() }
+function onRowAction(key: string, row: Record<string, unknown>) {
+    const storeRow = row as unknown as StoreOverrideItemDto
+    if (key === STORE_OVERRIDE_ROW_ACTION.EDIT)   openEdit(storeRow)
+    if (key === STORE_OVERRIDE_ROW_ACTION.DELETE) {
+        confirmStoreId.value = storeRow.StoreId
+        confirmOpen.value    = true
+    }
 }
 
-async function onRemovePrice() {
-    const ok = await removePrice(confirmPriceStoreId.value)
-    if (ok) await loadOverview()
+async function onSave() {
+    const { storeId, isAvailable, price } = form
+    if (!storeId) return
+
+    const okAvail = await upsertAvailability(storeId, isAvailable)
+    if (!okAvail) return
+
+    if (price != null) {
+        await upsertPrice(storeId, price)
+    } else if (editingRow.value && originalPrice.value != null) {
+        try {
+            await removePrice(storeId)
+        } catch { /* ignore 404 */ }
+    }
+
+    dialogOpen.value = false
+    await loadPaged()
 }
 
-onMounted(loadOverview)
+async function onConfirmDelete() {
+    await removeStoreRow(confirmStoreId.value)
+    await loadPaged()
+}
+
+async function onPageChange(page: number) {
+    pageNumber.value = page
+    await loadPaged()
+}
+
+async function onPageSizeChange(size: number) {
+    pageSize.value   = size
+    pageNumber.value = 1
+    await loadPaged()
+}
+
+onMounted(async () => {
+    await storeStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
+    await loadPaged()
+})
 </script>

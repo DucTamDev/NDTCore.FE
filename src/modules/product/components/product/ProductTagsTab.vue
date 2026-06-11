@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex align-center justify-space-between">
             <span class="text-subtitle-2 text-medium-emphasis">Tags đang gán</span>
@@ -7,25 +7,44 @@
             </v-btn>
         </div>
 
-        <v-progress-linear :indeterminate="isLoading" color="primary" :style="{ opacity: isLoading ? 1 : 0, transition: 'opacity 0.15s ease' }" />
-
-        <v-chip-group v-if="tags.length">
-            <v-chip
-                v-for="t in tags"
-                :key="t.TagId"
-                closable
-                :disabled="isSubmitting"
-                @click:close="() => { confirmTagId = t.TagId; confirmTagOpen = true }"
+        <v-card variant="outlined" rounded="lg">
+            <AppDataTable
+                :items="(tags as Record<string, unknown>[])"
+                :columns="TAG_ASSIGNED_COLUMNS"
+                :loading="isLoading"
+                item-key="TagId"
             >
-                {{ t.TagName }}
-            </v-chip>
-        </v-chip-group>
-        <v-alert v-else-if="!isLoading" type="info" variant="tonal" density="compact">
-            Chưa có tag nào được gán.
-        </v-alert>
+                <template #[`item.actions`]="{ item }">
+                    <div class="d-flex justify-end" @click.stop>
+                        <v-tooltip text="Gỡ tag" location="top">
+                            <template #activator="{ props: tp }">
+                                <v-btn
+                                    v-bind="tp"
+                                    icon="mdi-tag-off-outline"
+                                    color="error"
+                                    size="small"
+                                    variant="text"
+                                    :disabled="isSubmitting"
+                                    @click="openConfirm(Number(item['TagId']))"
+                                />
+                            </template>
+                        </v-tooltip>
+                    </div>
+                </template>
 
-        <AppDialog v-model="showAssign" title="Gán tag" :hide-actions="true" max-width="500px">
-            <div class="pa-2 d-flex flex-column ga-3">
+                <template #empty>
+                    <AppEmptyState
+                        icon="mdi-tag-off-outline"
+                        title="Chưa có tag nào được gán"
+                        description="Nhấn 'Gán tag' để thêm tag cho sản phẩm."
+                    />
+                </template>
+            </AppDataTable>
+        </v-card>
+
+        <!-- Assign dialog -->
+        <AppDialog v-model="showAssign" title="Gán tag" :hide-actions="true" size="sm">
+            <div class="d-flex flex-column ga-3">
                 <v-autocomplete
                     v-model="selectedTagId"
                     :items="availableTags"
@@ -49,7 +68,7 @@
         </AppDialog>
 
         <AppConfirmDialog
-            v-model="confirmTagOpen"
+            v-model="confirmOpen"
             title="Gỡ tag"
             message="Bạn có chắc muốn gỡ tag này khỏi sản phẩm?"
             confirm-label="Xác nhận gỡ"
@@ -61,47 +80,65 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { AppDialog, AppConfirmDialog } from '@/components/ui'
+import type { TableColumn } from '@/components/ui'
+import { AppDialog, AppConfirmDialog, AppDataTable, AppEmptyState } from '@/components/ui'
 import { useProductRelations } from '../../composables/useProductRelations'
 import { useTagStore } from '../../stores/tag.store'
 
 const props = defineProps<{ productId: number }>()
 
-const { isLoading, isSubmitting, tags, loadTags, assignTag, removeTag } = useProductRelations(props.productId)
-const tagStore = useTagStore()
+const TAG_ASSIGNED_COLUMNS: TableColumn[] = [
+    { key: 'TagId',   title: 'ID',       width: '70px' },
+    { key: 'TagName', title: 'Tên tag',  minWidth: '150px' },
+    { key: 'actions', title: '',         width: '70px', align: 'end' },
+]
+
+const { isLoading, isSubmitting, tags, loadTags, assignTag, removeTag } =
+    useProductRelations(props.productId)
+
+const tagStore      = useTagStore()
 const availableTags = ref<{ id: number; name: string }[]>([])
-const showAssign = ref(false)
+const showAssign    = ref(false)
 const selectedTagId = ref<number | null>(null)
-const confirmTagOpen = ref(false)
-const confirmTagId = ref<number | null>(null)
+const confirmOpen   = ref(false)
+const confirmTagId  = ref<number | null>(null)
+
+function openConfirm(tagId: number) {
+    confirmTagId.value = tagId
+    confirmOpen.value  = true
+}
+
+function refreshAvailable() {
+    const assignedIds = new Set(tags.value.map((t) => t.TagId))
+    availableTags.value = tagStore.items
+        .filter((t) => !assignedIds.has(t.id))
+        .map((t) => ({ id: t.id, name: t.name }))
+}
 
 async function onAssign() {
     if (!selectedTagId.value) return
     const ok = await assignTag({ TagId: selectedTagId.value })
     if (ok) {
-        showAssign.value = false
+        showAssign.value    = false
         selectedTagId.value = null
         await loadTags()
-        const assignedIds = new Set(tags.value.map((t) => t.TagId))
-        availableTags.value = tagStore.items
-            .filter((t) => !assignedIds.has(t.id))
-            .map((t) => ({ id: t.id, name: t.name }))
+        refreshAvailable()
     }
 }
 
 async function onConfirmRemove() {
     if (confirmTagId.value == null) return
     const ok = await removeTag(confirmTagId.value)
-    if (ok) await loadTags()
+    if (ok) {
+        await loadTags()
+        refreshAvailable()
+    }
     confirmTagId.value = null
 }
 
 onMounted(async () => {
     await tagStore.fetchPaged({ PageNumber: 1, PageSize: 200 })
     await loadTags()
-    const assignedIds = new Set(tags.value.map((t) => t.TagId))
-    availableTags.value = tagStore.items
-        .filter((t) => !assignedIds.has(t.id))
-        .map((t) => ({ id: t.id, name: t.name }))
+    refreshAvailable()
 })
 </script>

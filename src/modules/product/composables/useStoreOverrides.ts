@@ -6,6 +6,7 @@ import type {
     UpsertProductStorePriceRequest,
     UpsertOptionStoreAvailabilityRequest,
     UpsertOptionStorePriceRequest,
+    StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
 
 export function useProductStoreOverrides(productId: number) {
@@ -156,4 +157,104 @@ export function useOptionStoreOverrides(optionId: number) {
     }
 
     return { isLoading, isSubmitting, availability, prices, loadOverview, upsertAvailability, removeAvailability, upsertPrice, removePrice }
+}
+
+export function useProductStoreOverridesPaged(productId: number) {
+    const toast = useToastNotification()
+    const isLoading    = ref(false)
+    const isSubmitting = ref(false)
+    const items        = ref<StoreOverrideItemDto[]>([])
+    const pageNumber   = ref(1)
+    const pageSize     = ref(20)
+    const totalPages   = ref(0)
+    const totalItems   = ref(0)
+
+    async function loadPaged() {
+        isLoading.value = true
+        try {
+            const result = await storeOverridesService.getProductPagedAsync(productId, {
+                PageNumber: pageNumber.value,
+                PageSize:   pageSize.value,
+            })
+            items.value      = result.items
+            pageNumber.value = result.pageNumber
+            pageSize.value   = result.pageSize
+            totalPages.value = result.totalPages
+            totalItems.value = result.totalCount
+        } catch {
+            toast.error('Không thể tải danh sách cửa hàng.')
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    const { upsertAvailability, removeAvailability, upsertPrice, removePrice } =
+        useProductStoreOverrides(productId)
+
+    async function removeStoreRow(storeId: number): Promise<boolean> {
+        const ok = await removeAvailability(storeId)
+        try {
+            await storeOverridesService.removeProductPriceAsync(productId, storeId)
+        } catch {
+            // price record may not exist — ignore 404
+        }
+        return ok
+    }
+
+    return {
+        isLoading, isSubmitting, items,
+        pageNumber, pageSize, totalPages, totalItems,
+        loadPaged, upsertAvailability, removeAvailability,
+        upsertPrice, removePrice, removeStoreRow,
+    }
+}
+
+export function useOptionStoreOverridesPaged(optionId: number) {
+    const toast = useToastNotification()
+    const isLoading    = ref(false)
+    const isSubmitting = ref(false)
+    const items        = ref<StoreOverrideItemDto[]>([])
+    const pageNumber   = ref(1)
+    const pageSize     = ref(20)
+    const totalPages   = ref(0)
+    const totalItems   = ref(0)
+
+    async function loadPaged() {
+        isLoading.value = true
+        try {
+            const result = await storeOverridesService.getOptionPagedAsync(optionId, {
+                PageNumber: pageNumber.value,
+                PageSize:   pageSize.value,
+            })
+            items.value      = result.items
+            pageNumber.value = result.pageNumber
+            pageSize.value   = result.pageSize
+            totalPages.value = result.totalPages
+            totalItems.value = result.totalCount
+        } catch {
+            toast.error('Không thể tải danh sách cửa hàng.')
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    const { upsertAvailability, removeAvailability, upsertPrice, removePrice } =
+        useOptionStoreOverrides(optionId)
+
+    async function removeStoreRow(storeId: number): Promise<boolean> {
+        const ok = await removeAvailability(storeId)
+        try {
+            await storeOverridesService.removeOptionPriceAsync(optionId, storeId)
+        } catch {
+            // price record may not exist — ignore 404
+        }
+        return ok
+    }
+
+    return {
+        isLoading, isSubmitting, items,
+        pageNumber, pageSize, totalPages, totalItems,
+        loadPaged, upsertAvailability, removeAvailability,
+        upsertPrice, removePrice, removeStoreRow,
+    }
 }

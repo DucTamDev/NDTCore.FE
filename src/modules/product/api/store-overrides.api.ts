@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from '@/core/constants/api.constants'
-import type { ApiResponse } from '@/core/models/common.dto'
+import type { ApiResponse, PagedApiResponse } from '@/core/models/common.dto'
 import { productClient } from '@/core/api/clients/product.client'
 import type {
     ProductStoreOverviewDto,
@@ -8,6 +8,7 @@ import type {
     OptionStoreOverviewDto,
     UpsertOptionStoreAvailabilityRequest,
     UpsertOptionStorePriceRequest,
+    StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
 
 const EP = API_ENDPOINTS.PRODUCT.STORE_OVERRIDE_API
@@ -58,5 +59,17 @@ export const storeOverridesApi = {
     },
     removeOptionPriceAsync(optionId: number, storeId: number): Promise<ApiResponse<unknown>> {
         return productClient.delete(EP.REMOVE_OPTION_PRICE(optionId, storeId))
+    },
+    getProductPagedAsync(
+        productId: number,
+        params: { PageNumber: number; PageSize: number },
+    ): Promise<PagedApiResponse<StoreOverrideItemDto>> {
+        return productClient.get(EP.GET_PRODUCT_PAGED(productId), params)
+    },
+    getOptionPagedAsync(
+        optionId: number,
+        params: { PageNumber: number; PageSize: number },
+    ): Promise<PagedApiResponse<StoreOverrideItemDto>> {
+        return productClient.get(EP.GET_OPTION_PAGED(optionId), params)
     },
 }

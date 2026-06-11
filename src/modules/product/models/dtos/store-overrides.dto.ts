@@ -51,3 +51,9 @@ export interface OptionStoreOverviewDto {
     Availability: { StoreId: number; IsAvailable: boolean }[]
     Prices: { StoreId: number; Price: number }[]
 }
+
+export interface StoreOverrideItemDto {
+    StoreId: number
+    IsAvailable: boolean | null
+    Price: number | null
+}
