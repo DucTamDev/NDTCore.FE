@@ -26,7 +26,7 @@ Vue 3 (Composition API) + TypeScript + Vite. UI: **Vuetify 3** (Material Design 
 
 ### Source Structure
 
-```
+```text
 src/
   core/               # Framework-agnostic plumbing — all shared infrastructure
     api/
@@ -60,12 +60,62 @@ src/
   data/               # Static data, image lists, home content types
 ```
 
+### Module Architecture (`src/modules/`)
+
+Mỗi business module trong `src/modules/` là đơn vị độc lập, tự đóng gói:
+
+```text
+modules/<module>/
+├── api/            # HTTP calls — không chứa logic
+├── components/     # UI components (form, list, detail tabs)
+├── composables/    # Business logic, local state
+├── constants/      # Emit keys, column defs, static config
+├── contracts/      # Shared interfaces giữa layers
+├── enums/          # Domain enums (đồng bộ với backend)
+├── mappers/        # DTO ↔ ViewModel ↔ FormModel
+├── models/
+│   ├── dtos/           # API shape (PascalCase)
+│   ├── form-models/    # v-model state (camelCase)
+│   └── view-models/    # Formatted display data (camelCase)
+├── routes/         # Module routes
+├── stores/         # Pinia — shared/cached state
+├── utils/          # Helper functions
+├── validators/     # Validation rules
+└── views/          # Page-level components
+```
+
+**Data flow:**
+
+- Read: `API → DTO → Mapper → ViewModel → Component`
+- Write: `Component → FormModel → Mapper → DTO → API`
+
+**Modules:**
+
+| Module | Sub-folders |
+| --- | --- |
+| `auth` | api, components, composables, constants, models/ (dtos, form-models), services, stores, validations, views |
+| `brand` | adapters, api, components, composables, constants, contracts, enums, mappers, models/ (dtos, form-models, view-models), routes, services, stores, types, utils, validators, views |
+| `dashboard` | components, views |
+| `home` | components, composables, seeds, views |
+| `order` | *(in progress)* |
+| `pos` | api, components, models/ (dtos, types), services, stores, views |
+| `product` | adapters, api, components, composables, constants, mappers, models/ (dtos, form-models, view-models), services, stores, utils, views |
+| `store` | adapters, api, components, composables, constants, contracts, mappers, models/ (dtos, form-models, view-models), services, stores, utils, views |
+| `user` | api, components, composables, constants, contracts, enums, models/ (dtos, form-models), services, stores, views |
+
+**Rules:**
+
+- Không gọi API trực tiếp trong component — gọi qua composable
+- Không dùng DTO trực tiếp trong form/template — map sang FormModel trước
+- Mapper là điểm duy nhất được phép convert shape dữ liệu giữa layers
+- App* components — dùng UI components từ `components/ui/` (AppDataTable, AppDialog…)
+
 ### Type Organization
 
 All shared types live in `src/core/types/` and are re-exported through a barrel at `@/core/types`:
 
 | File | Types |
-|---|---|
+| --- | --- |
 | `dialog.types.ts` | `ConfirmDialogOptions`, `ConfirmDialogState` |
 | `loading.types.ts` | `LoadingState` |
 | `data-table.types.ts` | `DataTableHeader` |
@@ -80,6 +130,7 @@ API contracts (request/response shapes matching backend PascalCase) go in `src/c
 ### HTTP / API Client
 
 `src/core/api/clients/api.client.ts` — base `ApiClient` class wrapping Axios. Handles:
+
 - Auth header injection from `tokenStorageService`
 - Automatic silent token refresh on 401 (queues concurrent requests during refresh)
 - Exponential-backoff retry on 5xx (up to 3 retries, configurable via `HTTP_CONFIG`)
@@ -105,6 +156,7 @@ Each API domain gets its own subclass. Currently only `src/core/api/clients/iden
 Located entirely in `src/plugins/vuetify/`. Four named Vuetify themes: `light`, `dark`, `soli-light`, `soli-dark`. Each theme is built from typed **design tokens** in `src/plugins/vuetify/tokens/` (color, spacing, typography, radius, shadow, z-index, breakpoint, transition).
 
 `ThemeProvider.vue` (`src/components/layout/`) is the root provider; it orchestrates five composables:
+
 - `useThemeState` — reactive theme ref + `setTheme` / `toggleTheme`
 - `useThemeStorage` — persist/restore theme to `localStorage` (key: `app_theme`)
 - `useThemeDOM` — applies resolved theme as a `data-theme` attribute on `<html>`
@@ -126,7 +178,7 @@ All route names and paths are defined in `src/core/constants/app-routes.constant
 ### Key Composables
 
 | Composable | Purpose |
-|---|---|
+| --- | --- |
 | `useAuth` | Thin wrapper over `authStore`; exposes `login`, `logout`, `canAny` (permission check) |
 | `useAsyncState` | Generic `{data, loading, error, execute}` wrapper for async functions |
 | `useLoading` | Module-scoped loading counter (separate from `ui.store` global loading) |
@@ -151,8 +203,22 @@ Paged responses use `PagedApiResponse<T>` which extends this with `PageNumber`, 
 Copy `.env.development` for local dev. Key vars:
 
 | Variable | Purpose |
-|---|---|
+| --- | --- |
 | `VITE_APP_NAME` | App title |
 | `VITE_API_BASE_URL` | Default `ApiClient` base URL |
 | `VITE_IDENTITY_API_URL` | `IdentityClient` base URL |
 | `VITE_API_TIMEOUT` | Request timeout ms (default 30 000) |
+
+---
+
+## Claude Configuration (`.claude/`)
+
+```text
+.claude/
+├── settings.json          # npm/npx/vite permissions
+├── settings.local.json    # Local overrides (gitignored)
+├── rules/
+│   └── convention.md      # Scoped: **/*.vue, **/*.ts — FE conventions (25 sections)
+└── skills/
+    └── fe-check/          # /fe-check — TypeScript type check via vue-tsc
+```

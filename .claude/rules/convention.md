@@ -1,19 +1,26 @@
+---
+description: Frontend conventions for Vue 3 + TypeScript — apply when working with .vue or .ts files
+paths:
+  - "**/*.vue"
+  - "**/*.ts"
+---
+
 # Frontend Convention — Vue 3 + TypeScript
 
 ## 1. Tech Stack
 
 | Category | Technology |
 |---|---|
-| Framework | Vue 3 |
-| Language | TypeScript |
-| State Management | Pinia |
-| Routing | Vue Router |
-| HTTP Client | Axios |
-| Validation | Zod |
-| Form | VeeValidate |
-| Linting | ESLint |
+| Framework | Vue 3 (Composition API) |
+| Language | TypeScript strict |
+| UI Library | Vuetify 3 (Material Design 3) |
+| Utility CSS | TailwindCSS 4 |
+| State Management | Pinia 3 |
+| Routing | Vue Router 4 |
+| HTTP Client | Axios (qua `ApiClient` base class) |
+| Linting | oxlint + ESLint |
 | Formatting | Prettier |
-| Build Tool | Vite |
+| Build Tool | Vite 7 |
 
 ---
 
