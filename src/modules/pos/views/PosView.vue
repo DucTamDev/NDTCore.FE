@@ -12,6 +12,7 @@
         :store-id="storeId"
         style="flex: 35; min-width: 320px; overflow: hidden;"
         @open-history="historyOpen = true"
+        @edit-product="openPickerByProductId"
       />
     </div>
 
@@ -53,6 +54,11 @@ const historyOpen      = ref(false)
 function openOptionPicker(product: PosProductDto): void {
     pickedProduct.value    = product
     optionPickerOpen.value = true
+}
+
+function openPickerByProductId(productId: number): void {
+    const product = catalogStore.products.find((p) => p.Id === productId)
+    if (product) openOptionPicker(product)
 }
 
 function onAddToCart(item: PosCartItem): void {

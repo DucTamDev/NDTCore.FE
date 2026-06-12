@@ -200,6 +200,7 @@ const selectedOptions = computed<PosCartOption[]>(() => {
                     optionId:      opt.Id,
                     optionName:    opt.Name,
                     groupId:       group.GroupId,
+                    groupName:     group.GroupName,
                     resolvedPrice: opt.ResolvedPrice,
                 })
             }
@@ -244,6 +245,7 @@ function confirm(): void {
         uid:             crypto.randomUUID(),
         productId:       props.product.Id,
         productName:     props.product.Name,
+        imageUrl:        props.product.ImageUrl,
         resolvedPrice:   props.product.ResolvedPrice,
         quantity:        quantity.value,
         note:            note.value,

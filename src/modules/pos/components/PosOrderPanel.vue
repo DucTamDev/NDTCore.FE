@@ -54,7 +54,7 @@
     <div v-else class="overflow-y-auto flex-grow-1 px-3">
       <template v-for="(item, idx) in cartStore.items" :key="item.uid">
         <v-divider v-if="idx > 0" class="my-1" />
-        <PosOrderItem :item="item" />
+        <PosOrderItem :item="item" @edit="handleEditItem" />
       </template>
     </div>
 
@@ -148,7 +148,7 @@ import { posService } from '../services/pos.service'
 import PosOrderItem from './PosOrderItem.vue'
 
 const props = defineProps<{ storeId: number }>()
-const emit  = defineEmits<{ openHistory: [] }>()
+const emit  = defineEmits<{ openHistory: []; editProduct: [productId: number] }>()
 
 const cartStore  = usePosCartStore()
 const shiftStore = usePosShiftStore()
@@ -180,6 +180,13 @@ function runConfirmed(): void {
     confirmDialog.value = false
     pendingAction.value?.()
     pendingAction.value = null
+}
+
+function handleEditItem(uid: string): void {
+    const item = cartStore.items.find((i) => i.uid === uid)
+    if (!item) return
+    cartStore.removeItem(uid)
+    emit('editProduct', item.productId)
 }
 
 function confirmClear(): void {
