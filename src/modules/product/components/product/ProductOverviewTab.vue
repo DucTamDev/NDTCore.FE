@@ -159,15 +159,15 @@
 
               <div class="pa-4 d-flex flex-column ga-4">
                 <v-text-field
-                  :model-value="props.form.basePrice"
+                  :model-value="props.form.regularPrice"
                   label="Giá gốc *"
                   type="number"
                   variant="outlined"
                   color="primary"
                   density="comfortable"
                   prepend-inner-icon="mdi-currency-usd"
-                  :error-messages="props.errors.basePrice ? [props.errors.basePrice] : []"
-                  @update:model-value="(v) => emit('update:form', 'basePrice', toNumber(v))"
+                  :error-messages="props.errors.regularPrice ? [props.errors.regularPrice] : []"
+                  @update:model-value="(v) => emit('update:form', 'regularPrice', toNumber(v))"
                 />
 
                 <v-text-field

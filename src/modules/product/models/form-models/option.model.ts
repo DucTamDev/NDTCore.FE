@@ -1,7 +1,7 @@
 export interface OptionFormModel {
     groupId: number | null
     name: string
-    defaultPrice: number
+    price: number
     description: string
     imageUrl: string
     displayOrder: number
@@ -12,7 +12,7 @@ export function createEmptyOptionForm(groupId?: number): OptionFormModel {
     return {
         groupId: groupId ?? null,
         name: '',
-        defaultPrice: 0,
+        price: 0,
         description: '',
         imageUrl: '',
         displayOrder: 0,

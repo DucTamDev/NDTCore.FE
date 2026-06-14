@@ -15,8 +15,8 @@
                 <span class="text-caption text-medium-emphasis">{{ item.categoryName ?? '—' }}</span>
             </template>
 
-            <template #[`item.basePrice`]="{ item }">
-                <span class="font-weight-medium">{{ formatCurrency(item.basePrice) }}</span>
+            <template #[`item.regularPrice`]="{ item }">
+                <span class="font-weight-medium">{{ formatCurrency(item.regularPrice) }}</span>
             </template>
 
             <template #[`item.isActive`]="{ item }">

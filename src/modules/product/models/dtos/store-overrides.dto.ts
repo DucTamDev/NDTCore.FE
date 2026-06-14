@@ -12,12 +12,12 @@ export interface UpsertProductStoreRequest {
 export interface ProductStorePriceDto {
     StoreId: number
     ProductId: number
-    Price: number
+    OverridePrice: number
 }
 
 export interface UpsertProductStorePriceRequest {
     StoreId: number
-    Price: number
+    OverridePrice: number
 }
 
 export interface OptionStoreAvailabilityDto {
@@ -34,26 +34,26 @@ export interface UpsertOptionStoreAvailabilityRequest {
 export interface OptionStorePriceDto {
     StoreId: number
     OptionId: number
-    Price: number
+    OverridePrice: number
 }
 
 export interface UpsertOptionStorePriceRequest {
     StoreId: number
-    Price: number
+    OverridePrice: number
 }
 
 export interface ProductStoreOverviewDto {
     Availability: { StoreId: number; IsAvailable: boolean }[]
-    Prices: { StoreId: number; Price: number }[]
+    Prices: { StoreId: number; OverridePrice: number }[]
 }
 
 export interface OptionStoreOverviewDto {
     Availability: { StoreId: number; IsAvailable: boolean }[]
-    Prices: { StoreId: number; Price: number }[]
+    Prices: { StoreId: number; OverridePrice: number }[]
 }
 
 export interface StoreOverrideItemDto {
     StoreId: number
     IsAvailable: boolean | null
-    Price: number | null
+    OverridePrice: number | null
 }

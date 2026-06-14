@@ -14,7 +14,7 @@ export function useProductStoreOverrides(productId: number) {
     const isLoading = ref(false)
     const isSubmitting = ref(false)
     const availability = ref<{ StoreId: number; IsAvailable: boolean }[]>([])
-    const prices = ref<{ StoreId: number; Price: number }[]>([])
+    const prices = ref<{ StoreId: number; OverridePrice: number }[]>([])
 
     async function loadOverview() {
         isLoading.value = true
@@ -58,7 +58,7 @@ export function useProductStoreOverrides(productId: number) {
     async function upsertPrice(storeId: number, price: number): Promise<boolean> {
         isSubmitting.value = true
         try {
-            const payload: UpsertProductStorePriceRequest = { StoreId: storeId, Price: price }
+            const payload: UpsertProductStorePriceRequest = { StoreId: storeId, OverridePrice: price }
             await storeOverridesService.upsertProductPriceAsync(productId, storeId, payload)
             toast.success('Cập nhật giá thành công.')
             return true
@@ -89,7 +89,7 @@ export function useOptionStoreOverrides(optionId: number) {
     const isLoading = ref(false)
     const isSubmitting = ref(false)
     const availability = ref<{ StoreId: number; IsAvailable: boolean }[]>([])
-    const prices = ref<{ StoreId: number; Price: number }[]>([])
+    const prices = ref<{ StoreId: number; OverridePrice: number }[]>([])
 
     async function loadOverview() {
         isLoading.value = true
@@ -133,7 +133,7 @@ export function useOptionStoreOverrides(optionId: number) {
     async function upsertPrice(storeId: number, price: number): Promise<boolean> {
         isSubmitting.value = true
         try {
-            const payload: UpsertOptionStorePriceRequest = { StoreId: storeId, Price: price }
+            const payload: UpsertOptionStorePriceRequest = { StoreId: storeId, OverridePrice: price }
             await storeOverridesService.upsertOptionPriceAsync(optionId, storeId, payload)
             toast.success('Cập nhật giá thành công.')
             return true

@@ -96,7 +96,7 @@
                                     v-for="p in categoryProducts"
                                     :key="p.id"
                                     :title="p.name"
-                                    :subtitle="`${p.basePrice.toLocaleString('vi-VN')} ₫`"
+                                    :subtitle="`${p.regularPrice.toLocaleString('vi-VN')} ₫`"
                                     :to="{ name: APP_ROUTES.PRODUCT.PRODUCT_DETAIL.NAME, params: { id: p.id } }"
                                 />
                             </v-list>
@@ -266,7 +266,7 @@ function onChildAction(key: string, item: CategoryViewModel) {
     }
 }
 
-const categoryProducts = ref<{ id: number; name: string; basePrice: number }[]>([])
+const categoryProducts = ref<{ id: number; name: string; regularPrice: number }[]>([])
 const categoryProductTotal = ref(0)
 const productsLoading = ref(false)
 
@@ -274,7 +274,7 @@ async function loadCategoryProducts() {
     productsLoading.value = true
     try {
         const result = await productService.getPagedAsync({ PageNumber: 1, PageSize: 10, CategoryId: categoryId })
-        categoryProducts.value = result.items.map((p) => ({ id: p.id, name: p.name, basePrice: p.basePrice }))
+        categoryProducts.value = result.items.map((p) => ({ id: p.id, name: p.name, regularPrice: p.regularPrice }))
         categoryProductTotal.value = result.totalCount
     } finally {
         productsLoading.value = false

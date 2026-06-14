@@ -30,7 +30,7 @@
                         <div>
                             <div class="text-h6 font-weight-bold text-high-emphasis">{{ option.data.value.name }}</div>
                             <div class="text-body-2 text-medium-emphasis">
-                                Giá: {{ option.data.value.defaultPrice?.toLocaleString() ?? '0' }} ₫
+                                Giá: {{ option.data.value.price?.toLocaleString() ?? '0' }} ₫
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@ const groupOptions = computed(() =>
 )
 
 const TRACKED_FIELDS: ReadonlyArray<keyof OptionFormModel> = [
-    'name', 'defaultPrice', 'displayOrder', 'isActive',
+    'name', 'price', 'displayOrder', 'isActive',
 ] as const
 
 const isDirty = computed(() => {

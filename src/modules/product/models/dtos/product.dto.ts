@@ -8,7 +8,7 @@ export interface ProductDto {
     Slug: string | null
     Description: string | null
     ShortDescription: string | null
-    BasePrice: number
+    RegularPrice: number
     CostPrice: number | null
     IsActive: boolean
     DisplayOrder: number
@@ -35,7 +35,7 @@ export interface CreateProductRequest {
     Slug?: string | null
     Description?: string | null
     ShortDescription?: string | null
-    BasePrice: number
+    RegularPrice: number
     CostPrice?: number | null
     IsActive: boolean
     DisplayOrder: number
@@ -46,7 +46,7 @@ export interface CreateProductResponse {
     Id: number
     Sku: string
     Name: string
-    BasePrice: number
+    RegularPrice: number
     IsActive: boolean
     CreatedAt: string | null
 }
@@ -57,7 +57,7 @@ export interface UpdateProductRequest {
     Slug?: string | null
     Description?: string | null
     ShortDescription?: string | null
-    BasePrice: number
+    RegularPrice: number
     CostPrice?: number | null
     IsActive: boolean
     DisplayOrder: number
@@ -67,7 +67,7 @@ export interface UpdateProductRequest {
 export interface UpdateProductResponse {
     Id: number
     Name: string
-    BasePrice: number
+    RegularPrice: number
     IsActive: boolean
     UpdatedAt: string | null
 }

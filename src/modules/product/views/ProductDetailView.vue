@@ -156,7 +156,7 @@ const categoryOptions = computed(() => categoryStore.parentItems.map((c) => ({ i
 
 const TRACKED_FIELDS: ReadonlyArray<keyof ProductFormModel> = [
     'name', 'slug', 'description', 'shortDescription', 'categoryId',
-    'basePrice', 'costPrice', 'isActive', 'displayOrder', 'isFeatured',
+    'regularPrice', 'costPrice', 'isActive', 'displayOrder', 'isFeatured',
 ] as const
 
 const isDirty = computed(() => {

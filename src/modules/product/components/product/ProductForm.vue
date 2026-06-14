@@ -48,7 +48,7 @@
             </v-col>
             <v-col cols="12" md="6">
                 <AppCurrencyField
-                    v-model="form.basePrice"
+                    v-model="form.regularPrice"
                     label="Giá gốc *"
                     :required="true"
                 />

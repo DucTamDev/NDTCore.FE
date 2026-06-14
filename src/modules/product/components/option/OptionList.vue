@@ -7,9 +7,9 @@
             item-key="id"
             @row-click="(item) => emit(OPTION_LIST_EMIT.ROW_ACTION, OPTION_ROW_ACTION.DETAIL, item)"
         >
-            <template #[`item.defaultPrice`]="{ item }">
+            <template #[`item.price`]="{ item }">
                 <span class="text-body-2">
-                    {{ item.defaultPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) ?? '0 ₫' }}
+                    {{ item.price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) ?? '0 ₫' }}
                 </span>
             </template>
 

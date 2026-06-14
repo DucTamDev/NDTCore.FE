@@ -6,7 +6,7 @@ const toViewModel = (dto: OptionDto): OptionViewModel => ({
     tenantId: dto.TenantId,
     groupId: dto.GroupId,
     name: dto.Name,
-    defaultPrice: dto.DefaultPrice,
+    price: dto.Price,
     description: dto.Description,
     imageUrl: dto.ImageUrl,
     displayOrder: dto.DisplayOrder,
@@ -24,7 +24,7 @@ const createResponseToViewModel = (dto: CreateOptionResponse): OptionViewModel =
     tenantId: '',
     groupId: dto.GroupId,
     name: dto.Name,
-    defaultPrice: dto.DefaultPrice,
+    price: dto.Price,
     description: null,
     imageUrl: null,
     displayOrder: 0,
@@ -38,7 +38,7 @@ const createResponseToViewModel = (dto: CreateOptionResponse): OptionViewModel =
 const updateResponseToViewModel = (dto: UpdateOptionResponse): Partial<OptionViewModel> => ({
     id: dto.Id,
     name: dto.Name,
-    defaultPrice: dto.DefaultPrice,
+    price: dto.Price,
     isActive: dto.IsActive,
     updatedAt: dto.UpdatedAt,
 })

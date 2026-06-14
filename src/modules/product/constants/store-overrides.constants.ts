@@ -8,7 +8,7 @@ export const STORE_OVERRIDE_ROW_ACTION = {
 export const STORE_OVERRIDE_LIST_COLUMNS: TableColumn[] = [
     { key: 'StoreId',     title: 'Store ID',     width: '100px' },
     { key: 'IsAvailable', title: 'Khả dụng',     width: '120px', align: 'center' },
-    { key: 'Price',       title: 'Giá override',  width: '150px', align: 'end', hideBelow: 'sm' },
+    { key: 'OverridePrice', title: 'Giá override',  width: '150px', align: 'end', hideBelow: 'sm' },
     { key: 'actions',     title: '',             width: '90px',  align: 'end' },
 ]
 

@@ -5,7 +5,7 @@ export interface ProductFormModel {
     slug: string
     description: string
     shortDescription: string
-    basePrice: number
+    regularPrice: number
     costPrice: number | null
     isActive: boolean
     displayOrder: number
@@ -20,7 +20,7 @@ export function createEmptyProductForm(): ProductFormModel {
         slug: '',
         description: '',
         shortDescription: '',
-        basePrice: 0,
+        regularPrice: 0,
         costPrice: null,
         isActive: true,
         displayOrder: 0,

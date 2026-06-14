@@ -87,14 +87,14 @@
                                 readonly
                             />
                             <v-text-field
-                                :model-value="props.form.defaultPrice"
+                                :model-value="props.form.price"
                                 label="Giá mặc định"
                                 type="number"
                                 prepend-inner-icon="mdi-currency-usd"
                                 density="comfortable"
                                 variant="outlined"
                                 color="primary"
-                                @update:model-value="(v) => { const n = Number(v); if (!isNaN(n)) emit('update:form', 'defaultPrice', n) }"
+                                @update:model-value="(v) => { const n = Number(v); if (!isNaN(n)) emit('update:form', 'price', n) }"
                             />
                         </div>
                     </v-card>

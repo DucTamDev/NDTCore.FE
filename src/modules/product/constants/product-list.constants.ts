@@ -23,7 +23,7 @@ export const PRODUCT_LIST_COLUMNS: TableColumn[] = [
     { key: 'sku', title: 'SKU', width: '120px' },
     { key: 'name', title: 'Tên sản phẩm', minWidth: '180px' },
     { key: 'categoryName', title: 'Danh mục', minWidth: '140px', hideBelow: 'md' },
-    { key: 'basePrice', title: 'Giá', width: '130px', align: 'end', hideBelow: 'sm' },
+    { key: 'regularPrice', title: 'Giá', width: '130px', align: 'end', hideBelow: 'sm' },
     { key: 'isActive', title: 'Trạng thái', width: '130px', align: 'center' },
     { key: 'isFeatured', title: 'Nổi bật', width: '100px', align: 'center', hideBelow: 'lg' },
     { key: 'actions', title: '', width: '100px', align: 'end' },

@@ -21,7 +21,7 @@ export const OPTION_ROW_ACTION = {
 export const OPTION_LIST_COLUMNS: TableColumn[] = [
     { key: 'id', title: 'ID', width: '70px' },
     { key: 'name', title: 'Tên option', minWidth: '160px' },
-    { key: 'defaultPrice', title: 'Giá mặc định', width: '140px', align: 'end' },
+    { key: 'price', title: 'Giá mặc định', width: '140px', align: 'end' },
     { key: 'displayOrder', title: 'Thứ tự', width: '90px', align: 'center', hideBelow: 'lg' },
     { key: 'isActive', title: 'Trạng thái', width: '130px', align: 'center' },
     { key: 'actions', title: '', width: '100px', align: 'end' },

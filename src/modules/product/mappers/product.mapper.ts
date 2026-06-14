@@ -11,7 +11,7 @@ const toViewModel = (dto: ProductDto): ProductViewModel => ({
     slug: dto.Slug,
     description: dto.Description,
     shortDescription: dto.ShortDescription,
-    basePrice: dto.BasePrice,
+    regularPrice: dto.RegularPrice,
     costPrice: dto.CostPrice,
     isActive: dto.IsActive,
     displayOrder: dto.DisplayOrder,
@@ -34,7 +34,7 @@ const createResponseToViewModel = (dto: CreateProductResponse): ProductViewModel
     slug: null,
     description: null,
     shortDescription: null,
-    basePrice: dto.BasePrice,
+    regularPrice: dto.RegularPrice,
     costPrice: null,
     isActive: dto.IsActive,
     displayOrder: 0,
@@ -48,7 +48,7 @@ const createResponseToViewModel = (dto: CreateProductResponse): ProductViewModel
 const updateResponseToViewModel = (dto: UpdateProductResponse): Partial<ProductViewModel> => ({
     id: dto.Id,
     name: dto.Name,
-    basePrice: dto.BasePrice,
+    regularPrice: dto.RegularPrice,
     isActive: dto.IsActive,
     updatedAt: dto.UpdatedAt,
 })

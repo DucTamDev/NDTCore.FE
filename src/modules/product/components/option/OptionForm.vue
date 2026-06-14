@@ -20,7 +20,7 @@
             </v-col>
             <v-col cols="12" md="4">
                 <AppCurrencyField
-                    v-model="form.defaultPrice"
+                    v-model="form.price"
                     label="Giá mặc định"
                 />
             </v-col>

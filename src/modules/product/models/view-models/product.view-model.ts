@@ -8,7 +8,7 @@ export interface ProductViewModel extends Record<string, unknown> {
     slug: string | null
     description: string | null
     shortDescription: string | null
-    basePrice: number
+    regularPrice: number
     costPrice: number | null
     isActive: boolean
     displayOrder: number

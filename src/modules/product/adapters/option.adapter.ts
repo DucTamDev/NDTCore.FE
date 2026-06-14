@@ -6,7 +6,7 @@ export function toForm(entity: OptionViewModel): OptionFormModel {
     return {
         groupId: entity.groupId,
         name: entity.name,
-        defaultPrice: entity.defaultPrice,
+        price: entity.price,
         description: entity.description ?? '',
         imageUrl: entity.imageUrl ?? '',
         displayOrder: entity.displayOrder,
@@ -18,7 +18,7 @@ export function toCreatePayload(form: OptionFormModel & { groupId: number }): Cr
     return {
         GroupId: form.groupId,
         Name: form.name,
-        DefaultPrice: form.defaultPrice,
+        Price: form.price,
         Description: form.description || null,
         ImageUrl: form.imageUrl || null,
         DisplayOrder: form.displayOrder,
@@ -29,7 +29,7 @@ export function toCreatePayload(form: OptionFormModel & { groupId: number }): Cr
 export function toPayload(form: OptionFormModel): UpdateOptionRequest {
     return {
         Name: form.name.trim(),
-        DefaultPrice: form.defaultPrice,
+        Price: form.price,
         Description: form.description || null,
         ImageUrl: form.imageUrl || null,
         DisplayOrder: form.displayOrder,
@@ -41,7 +41,7 @@ export function emptyForm(): OptionFormModel {
     return {
         groupId: null,
         name: '',
-        defaultPrice: 0,
+        price: 0,
         description: '',
         imageUrl: '',
         displayOrder: 0,

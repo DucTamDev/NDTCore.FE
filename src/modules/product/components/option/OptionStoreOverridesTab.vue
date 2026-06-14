@@ -23,9 +23,9 @@
                     <span v-else class="text-medium-emphasis text-caption">—</span>
                 </template>
 
-                <template #[`item.Price`]="{ item }">
-                    <span v-if="item['Price'] != null">
-                        {{ Number(item['Price']).toLocaleString('vi-VN') }} ₫
+                <template #[`item.OverridePrice`]="{ item }">
+                    <span v-if="item['OverridePrice'] != null">
+                        {{ Number(item['OverridePrice']).toLocaleString('vi-VN') }} ₫
                     </span>
                     <span v-else class="text-medium-emphasis text-caption">—</span>
                 </template>
@@ -162,11 +162,11 @@ function openAdd() {
 
 function openEdit(row: StoreOverrideItemDto) {
     editingRow.value    = row
-    originalPrice.value = row.Price
+    originalPrice.value = row.OverridePrice
     Object.assign(form, {
         storeId:     row.StoreId,
         isAvailable: row.IsAvailable ?? true,
-        price:       row.Price,
+        price:       row.OverridePrice,
     })
     dialogOpen.value = true
 }

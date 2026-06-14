@@ -3,7 +3,7 @@ export interface OptionDto {
     TenantId: string
     GroupId: number
     Name: string
-    DefaultPrice: number
+    Price: number
     Description: string | null
     ImageUrl: string | null
     DisplayOrder: number
@@ -25,7 +25,7 @@ export interface OptionFilterDto {
 export interface CreateOptionRequest {
     GroupId: number
     Name: string
-    DefaultPrice: number
+    Price: number
     Description?: string | null
     ImageUrl?: string | null
     DisplayOrder: number
@@ -36,14 +36,14 @@ export interface CreateOptionResponse {
     Id: number
     GroupId: number
     Name: string
-    DefaultPrice: number
+    Price: number
     IsActive: boolean
     CreatedAt: string | null
 }
 
 export interface UpdateOptionRequest {
     Name: string
-    DefaultPrice: number
+    Price: number
     Description?: string | null
     ImageUrl?: string | null
     DisplayOrder: number
@@ -53,7 +53,7 @@ export interface UpdateOptionRequest {
 export interface UpdateOptionResponse {
     Id: number
     Name: string
-    DefaultPrice: number
+    Price: number
     IsActive: boolean
     UpdatedAt: string | null
 }

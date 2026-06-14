@@ -3,7 +3,7 @@ export interface OptionViewModel extends Record<string, unknown> {
     tenantId: string
     groupId: number
     name: string
-    defaultPrice: number
+    price: number
     description: string | null
     imageUrl: string | null
     displayOrder: number
