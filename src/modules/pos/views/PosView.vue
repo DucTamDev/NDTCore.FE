@@ -2,18 +2,50 @@
   <div class="pos-root d-flex flex-column" style="height: 100dvh; overflow: hidden;">
     <PosHeader @open-history="historyOpen = true" />
 
-    <div class="pos-body d-flex flex-row flex-grow-1 overflow-hidden">
+    <div class="pos-body d-flex flex-grow-1 overflow-hidden">
       <PosMenuPanel
-        style="flex: 65; min-width: 0; overflow: hidden;"
+        class="pos-panel pos-menu-panel"
+        :class="{ 'panel-hidden': activeTab !== 'menu' }"
         @pick="openOptionPicker"
       />
-      <v-divider vertical />
+      <v-divider class="d-none d-md-block" vertical />
       <PosOrderPanel
         :store-id="storeId"
-        style="flex: 35; min-width: 320px; overflow: hidden;"
+        class="pos-panel pos-order-panel"
+        :class="{ 'panel-hidden': activeTab !== 'order' }"
         @open-history="historyOpen = true"
         @edit-product="openPickerByProductId"
       />
+    </div>
+
+    <!-- Mobile bottom tab bar -->
+    <div class="mobile-tab-bar d-flex d-md-none">
+      <button
+        class="mobile-tab"
+        :class="{ active: activeTab === 'menu' }"
+        @click="activeTab = 'menu'"
+      >
+        <v-icon size="22">mdi-food-variant</v-icon>
+        <span>Menu</span>
+      </button>
+      <button
+        class="mobile-tab"
+        :class="{ active: activeTab === 'order' }"
+        @click="activeTab = 'order'"
+      >
+        <div class="tab-icon-wrap">
+          <v-badge
+            v-if="cartStore.itemCount > 0"
+            :content="String(cartStore.itemCount)"
+            color="error"
+            floating
+          >
+            <v-icon size="22">mdi-cart-outline</v-icon>
+          </v-badge>
+          <v-icon v-else size="22">mdi-cart-outline</v-icon>
+        </div>
+        <span>Giỏ hàng</span>
+      </button>
     </div>
 
     <PosOptionPicker
@@ -50,6 +82,7 @@ const cartStore    = usePosCartStore()
 const optionPickerOpen = ref(false)
 const pickedProduct    = ref<PosProductDto | null>(null)
 const historyOpen      = ref(false)
+const activeTab        = ref<'menu' | 'order'>('menu')
 
 function openOptionPicker(product: PosProductDto): void {
     pickedProduct.value    = product
@@ -73,3 +106,73 @@ onMounted(async () => {
     ])
 })
 </script>
+
+<style scoped>
+/* Desktop: side-by-side panels */
+.pos-body {
+    flex-direction: row;
+}
+
+.pos-panel {
+    overflow: hidden;
+}
+
+.pos-menu-panel {
+    flex: 65;
+    min-width: 0;
+}
+
+.pos-order-panel {
+    flex: 35;
+    min-width: 320px;
+}
+
+/* Mobile: stacked panels, one visible at a time */
+@media (max-width: 959px) {
+    .pos-body {
+        flex-direction: column;
+    }
+
+    .pos-menu-panel,
+    .pos-order-panel {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .panel-hidden {
+        display: none !important;
+    }
+}
+
+/* Mobile bottom tab bar */
+.mobile-tab-bar {
+    height: 56px;
+    flex-shrink: 0;
+    border-top: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+    background: rgb(var(--v-theme-surface));
+}
+
+.mobile-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: rgba(var(--v-theme-on-surface), 0.6);
+    transition: color 0.15s;
+}
+
+.mobile-tab.active {
+    color: rgb(var(--v-theme-primary));
+}
+
+.tab-icon-wrap {
+    position: relative;
+    line-height: 1;
+}
+</style>

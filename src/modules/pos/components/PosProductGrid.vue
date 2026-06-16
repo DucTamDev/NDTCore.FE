@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-y-auto flex-grow-1 pa-3">
     <v-row v-if="catalogStore.isLoading" dense>
-      <v-col v-for="n in 8" :key="n" cols="6" sm="4" md="3">
+      <v-col v-for="n in 8" :key="n" cols="6" sm="4">
         <v-skeleton-loader type="card" height="180" />
       </v-col>
     </v-row>
@@ -20,7 +20,6 @@
         :key="product.Id"
         cols="6"
         sm="4"
-        md="3"
       >
         <PosProductCard :product="product" @pick="$emit('pick', product)" />
       </v-col>
