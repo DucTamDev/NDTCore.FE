@@ -25,19 +25,6 @@
                 />
             </template>
 
-            <template #[`item.isFeatured`]="{ item }">
-                <v-chip
-                    v-if="item.isFeatured"
-                    color="warning"
-                    size="small"
-                    variant="tonal"
-                    prepend-icon="mdi-star"
-                >
-                    Nổi bật
-                </v-chip>
-                <span v-else class="text-medium-emphasis text-caption">—</span>
-            </template>
-
             <template #[`item.actions`]="{ item }">
                 <AppRowActions
                     :actions="PRODUCT_ROW_ACTIONS"

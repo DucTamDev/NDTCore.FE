@@ -12,7 +12,6 @@ export interface ProductViewModel extends Record<string, unknown> {
     costPrice: number | null
     isActive: boolean
     displayOrder: number
-    isFeatured: boolean
     createdAt: string | null
     updatedAt: string | null
     createdBy: string | null

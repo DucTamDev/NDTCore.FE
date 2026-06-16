@@ -13,7 +13,11 @@
                     <AppBreadcrumb
                         :items="[
                             { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
-                            { title: 'Danh mục', to: { name: APP_ROUTES.PRODUCT.CATEGORIES.NAME } },
+                            { title: 'Danh mục' },
+                            {
+                                title: category.data.value.parentId === null ? 'Nhóm danh mục' : 'Danh mục sản phẩm',
+                                to: { name: category.data.value.parentId === null ? APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME : APP_ROUTES.PRODUCT.CATEGORIES.NAME },
+                            },
                             { title: category.data.value.name, disabled: true },
                         ]"
                     />
@@ -128,7 +132,7 @@
                 <v-btn
                     color="primary"
                     prepend-icon="mdi-arrow-left"
-                    :to="{ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME }"
+                    :to="{ name: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME }"
                 >
                     Quay lại danh sách
                 </v-btn>
@@ -172,7 +176,7 @@ const formErrors = reactive<Partial<Record<keyof CategoryFormModel, string>>>({}
 const confirmOpen = ref(false)
 const pendingNavAction = ref<'back' | 'discard' | null>(null)
 
-if (isNaN(categoryId)) void router.replace({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
+if (isNaN(categoryId)) void router.replace({ name: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME })
 
 const category = useAsyncState(() => categoryService.getByIdAsync(categoryId))
 const { updateCategory } = useCategory()
@@ -203,9 +207,15 @@ function discardChanges() {
     delete formErrors.name
 }
 
+function backRouteName() {
+    return category.data.value?.parentId === null
+        ? APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME
+        : APP_ROUTES.PRODUCT.CATEGORIES.NAME
+}
+
 function onBack() {
     if (isDirty.value) { pendingNavAction.value = 'back'; confirmOpen.value = true }
-    else void router.push({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
+    else void router.push({ name: backRouteName() })
 }
 
 function onDiscard() {
@@ -215,7 +225,7 @@ function onDiscard() {
 
 function onConfirmUnsaved() {
     confirmOpen.value = false
-    if (pendingNavAction.value === 'back') void router.push({ name: APP_ROUTES.PRODUCT.CATEGORIES.NAME })
+    if (pendingNavAction.value === 'back') void router.push({ name: backRouteName() })
     else if (pendingNavAction.value === 'discard') discardChanges()
     pendingNavAction.value = null
 }

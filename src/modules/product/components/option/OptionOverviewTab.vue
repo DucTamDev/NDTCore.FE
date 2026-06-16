@@ -86,15 +86,15 @@
                                 color="primary"
                                 readonly
                             />
-                            <v-text-field
+                            <v-number-input
                                 :model-value="props.form.price"
+                                control-variant="stacked"
                                 label="Giá mặc định"
-                                type="number"
-                                prepend-inner-icon="mdi-currency-usd"
+                                :min="0"
                                 density="comfortable"
                                 variant="outlined"
                                 color="primary"
-                                @update:model-value="(v) => { const n = Number(v); if (!isNaN(n)) emit('update:form', 'price', n) }"
+                                @update:model-value="(v) => emit('update:form', 'price', v ?? 0)"
                             />
                         </div>
                     </v-card>
@@ -123,14 +123,15 @@
                         </v-list-item>
                         <v-divider />
                         <div class="pa-4 d-flex flex-column ga-4">
-                            <v-text-field
+                            <v-number-input
                                 :model-value="props.form.displayOrder"
+                                control-variant="stacked"
                                 label="Thứ tự hiển thị"
-                                type="number"
+                                :min="0"
                                 density="comfortable"
                                 variant="outlined"
                                 color="primary"
-                                @update:model-value="(v) => { const n = Number(v); if (!isNaN(n)) emit('update:form', 'displayOrder', n) }"
+                                @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
                             />
                             <div>
                                 <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>

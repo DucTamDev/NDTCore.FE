@@ -9,7 +9,8 @@
                     :items="[
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
-                        { title: 'Danh mục', disabled: true },
+                        { title: 'Danh mục' },
+                        { title: 'Danh mục sản phẩm', disabled: true },
                     ]"
                 />
             </template>

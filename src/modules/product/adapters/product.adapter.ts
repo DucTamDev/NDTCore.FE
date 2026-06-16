@@ -14,7 +14,6 @@ export function toForm(entity: ProductViewModel): ProductFormModel {
         costPrice: entity.costPrice,
         isActive: entity.isActive,
         displayOrder: entity.displayOrder,
-        isFeatured: entity.isFeatured,
     }
 }
 
@@ -29,7 +28,6 @@ export function toPayload(form: ProductFormModel): UpdateProductRequest {
         CostPrice: form.costPrice,
         IsActive: form.isActive,
         DisplayOrder: form.displayOrder,
-        IsFeatured: form.isFeatured,
     }
 }
 
@@ -45,7 +43,6 @@ export function toCreatePayload(form: ProductFormModel): CreateProductRequest {
         CostPrice: form.costPrice,
         IsActive: form.isActive,
         DisplayOrder: form.displayOrder,
-        IsFeatured: form.isFeatured,
     }
 }
 
@@ -61,6 +58,5 @@ export function emptyForm(): ProductFormModel {
         costPrice: null,
         isActive: true,
         displayOrder: 0,
-        isFeatured: false,
     }
 }

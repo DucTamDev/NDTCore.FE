@@ -1,17 +1,21 @@
-﻿<template>
+<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
-            <v-col cols="12" md="6">
-                <v-select
-                    v-model="form.categoryId"
-                    :items="categoryOptions"
-                    item-title="name"
-                    item-value="id"
-                    label="Danh mục"
-                    clearable
+            <!-- Section 1: Tên -->
+            <v-col cols="12">
+                <v-text-field
+                    v-model="form.name"
+                    label="Tên sản phẩm *"
+                    :rules="[rules.required, rules.maxLength(300)]"
+                    variant="solo-filled"
+                    flat
+                    @input="autoSlug"
                 />
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12"><v-divider class="my-4" /></v-col>
+
+            <!-- Section 2: Định danh -->
+            <v-col cols="6">
                 <v-text-field
                     v-model="form.sku"
                     label="SKU *"
@@ -19,68 +23,101 @@
                     :readonly="isEditMode"
                     :hint="isEditMode ? 'SKU không thể thay đổi sau khi tạo' : ''"
                     persistent-hint
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="3">
-                <v-text-field
-                    v-model.number="form.displayOrder"
-                    label="Thứ tự hiển thị"
-                    type="number"
-                    min="0"
+            <v-col cols="6">
+                <v-select
+                    v-model="form.categoryId"
+                    :items="categoryOptions"
+                    item-title="name"
+                    item-value="id"
+                    label="Danh mục"
+                    clearable
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="8">
-                <v-text-field
-                    v-model="form.name"
-                    label="Tên sản phẩm *"
-                    :rules="[rules.required, rules.maxLength(300)]"
-                    @input="autoSlug"
-                />
-            </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="6">
                 <v-text-field
                     v-model="form.slug"
                     label="Slug"
                     :rules="[slugRule]"
                     hint="viết thường, dấu gạch ngang"
                     persistent-hint
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="6">
+                <v-number-input
+                    v-model.number="form.displayOrder"
+                    control-variant="stacked"
+                    label="Thứ tự hiển thị"
+                    :min="0"
+                    variant="solo-filled"
+                    density="comfortable"
+                    flat
+                />
+            </v-col>
+            <v-col cols="12"><v-divider class="my-4" /></v-col>
+
+            <!-- Section 3: Giá -->
+            <v-col cols="6">
                 <AppCurrencyField
                     v-model="form.regularPrice"
-                    label="Giá gốc *"
+                    label="Giá bán *"
                     :required="true"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="6">
                 <AppCurrencyField
                     v-model="form.costPrice"
                     label="Giá vốn"
                     :nullable="true"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
+            <v-col cols="12"><v-divider class="my-4" /></v-col>
+
+            <!-- Section 4: Trạng thái -->
+            <v-col cols="12">
+                <v-switch
+                    v-model="form.isActive"
+                    label="Hiển thị"
+                    color="primary"
+                    base-color="grey"
+                    hide-details
+                />
+            </v-col>
+            <v-col cols="12"><v-divider class="my-4" /></v-col>
+
+            <!-- Section 5: Mô tả -->
             <v-col cols="12">
                 <v-textarea
                     v-model="form.shortDescription"
                     label="Mô tả ngắn"
                     rows="2"
+                    no-resize
                     :rules="[rules.maxLength(500)]"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
             <v-col cols="12">
                 <v-textarea
                     v-model="form.description"
                     label="Mô tả chi tiết"
-                    rows="4"
+                    rows="3"
+                    no-resize
                     :rules="[rules.maxLength(2000)]"
+                    variant="solo-filled"
+                    flat
                 />
-            </v-col>
-            <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
-            </v-col>
-            <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isFeatured" label="Sản phẩm nổi bật" color="warning" base-color="grey" />
             </v-col>
         </v-row>
 
@@ -150,3 +187,4 @@ async function onSubmit() {
     if (valid) emit('submit', form.value)
 }
 </script>
+

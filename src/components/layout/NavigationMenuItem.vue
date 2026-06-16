@@ -17,12 +17,11 @@
       <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title" />
     </template>
 
-    <v-list-item
+    <NavigationMenuItem
       v-for="child in item.children.filter(hasAccess)"
       :key="child.title"
-      :to="child.to ? { name: child.to } : undefined"
-      :title="child.title"
-      color="primary"
+      :item="child"
+      :has-access="hasAccess"
     />
   </v-list-group>
 </template>

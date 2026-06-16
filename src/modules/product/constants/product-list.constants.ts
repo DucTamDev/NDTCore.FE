@@ -25,7 +25,6 @@ export const PRODUCT_LIST_COLUMNS: TableColumn[] = [
     { key: 'categoryName', title: 'Danh mục', minWidth: '140px', hideBelow: 'md' },
     { key: 'regularPrice', title: 'Giá', width: '130px', align: 'end', hideBelow: 'sm' },
     { key: 'isActive', title: 'Trạng thái', width: '130px', align: 'center' },
-    { key: 'isFeatured', title: 'Nổi bật', width: '100px', align: 'center', hideBelow: 'lg' },
     { key: 'actions', title: '', width: '100px', align: 'end' },
 ]
 

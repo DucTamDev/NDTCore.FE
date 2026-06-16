@@ -12,7 +12,6 @@ export interface ProductDto {
     CostPrice: number | null
     IsActive: boolean
     DisplayOrder: number
-    IsFeatured: boolean
     CreatedAt: string | null
     UpdatedAt: string | null
     CreatedBy: string | null
@@ -25,7 +24,6 @@ export interface ProductFilterDto {
     Keyword?: string | null
     CategoryId?: number | null
     IsActive?: boolean | null
-    IsFeatured?: boolean | null
 }
 
 export interface CreateProductRequest {
@@ -39,7 +37,6 @@ export interface CreateProductRequest {
     CostPrice?: number | null
     IsActive: boolean
     DisplayOrder: number
-    IsFeatured: boolean
 }
 
 export interface CreateProductResponse {
@@ -61,7 +58,6 @@ export interface UpdateProductRequest {
     CostPrice?: number | null
     IsActive: boolean
     DisplayOrder: number
-    IsFeatured: boolean
 }
 
 export interface UpdateProductResponse {

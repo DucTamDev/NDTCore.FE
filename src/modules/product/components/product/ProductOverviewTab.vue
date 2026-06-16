@@ -158,28 +158,27 @@
               <v-divider />
 
               <div class="pa-4 d-flex flex-column ga-4">
-                <v-text-field
+                <v-number-input
                   :model-value="props.form.regularPrice"
+                  control-variant="stacked"
                   label="Giá gốc *"
-                  type="number"
+                  :min="0"
                   variant="outlined"
                   color="primary"
                   density="comfortable"
-                  prepend-inner-icon="mdi-currency-usd"
                   :error-messages="props.errors.regularPrice ? [props.errors.regularPrice] : []"
-                  @update:model-value="(v) => emit('update:form', 'regularPrice', toNumber(v))"
+                  @update:model-value="(v) => emit('update:form', 'regularPrice', v ?? 0)"
                 />
 
-                <v-text-field
-                  :model-value="props.form.costPrice"
+                <v-number-input
+                  :model-value="props.form.costPrice ?? undefined"
+                  control-variant="stacked"
                   label="Giá vốn"
-                  type="number"
+                  :min="0"
                   variant="outlined"
                   color="primary"
                   density="comfortable"
-                  prepend-inner-icon="mdi-currency-usd"
-                  clearable
-                  @update:model-value="(v) => emit('update:form', 'costPrice', toNullableNumber(v))"
+                  @update:model-value="(v) => emit('update:form', 'costPrice', v ?? null)"
                 />
               </div>
             </v-card>
@@ -238,27 +237,15 @@
                   </v-btn-toggle>
                 </div>
 
-                <div class="d-flex align-center justify-space-between">
-                  <span class="text-body-2">Nổi bật</span>
-                  <v-switch
-                    :model-value="props.form.isFeatured"
-                    color="primary"
-                    base-color="grey"
-                    density="compact"
-                    hide-details
-                    @update:model-value="emit('update:form', 'isFeatured', !!$event)"
-                  />
-                </div>
-
-                <v-text-field
+                <v-number-input
                   :model-value="props.form.displayOrder"
+                  control-variant="stacked"
                   label="Thứ tự"
-                  type="number"
+                  :min="0"
                   variant="outlined"
                   color="primary"
                   density="comfortable"
-                  prepend-inner-icon="mdi-sort-numeric-ascending"
-                  @update:model-value="(v) => emit('update:form', 'displayOrder', toNumber(v))"
+                  @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
                 />
               </div>
             </v-card>

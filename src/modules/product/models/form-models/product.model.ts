@@ -9,7 +9,6 @@ export interface ProductFormModel {
     costPrice: number | null
     isActive: boolean
     displayOrder: number
-    isFeatured: boolean
 }
 
 export function createEmptyProductForm(): ProductFormModel {
@@ -24,6 +23,5 @@ export function createEmptyProductForm(): ProductFormModel {
         costPrice: null,
         isActive: true,
         displayOrder: 0,
-        isFeatured: false,
     }
 }

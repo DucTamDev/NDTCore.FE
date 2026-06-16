@@ -94,7 +94,7 @@
             @row-action="onRowAction"
         />
 
-        <AppDialog v-model="dialogOpen" title="Thêm sản phẩm" :hide-actions="true" max-width="800px">
+        <AppDialog v-model="dialogOpen" title="Thêm sản phẩm" :hide-actions="true" max-width="1000px" height="700px" >
             <ProductForm
                 v-model="formModel"
                 :is-submitting="isSubmitting"

@@ -55,7 +55,16 @@ export const menuConfig: MenuEntry[] = [
                     {
                         title: 'Danh mục',
                         icon: 'mdi-format-list-bulleted-type',
-                        to: APP_ROUTES.PRODUCT.CATEGORIES.NAME,
+                        children: [
+                            {
+                                title: 'Nhóm danh mục',
+                                to: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME,
+                            },
+                            {
+                                title: 'Danh mục sản phẩm',
+                                to: APP_ROUTES.PRODUCT.CATEGORIES.NAME,
+                            },
+                        ],
                     },
                     {
                         title: 'Nhãn',
@@ -63,14 +72,18 @@ export const menuConfig: MenuEntry[] = [
                         to: APP_ROUTES.PRODUCT.TAGS.NAME,
                     },
                     {
-                        title: 'Nhóm option',
+                        title: 'Tùy chọn',
                         icon: 'mdi-tune-variant',
-                        to: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
-                    },
-                    {
-                        title: 'Options',
-                        icon: 'mdi-checkbox-multiple-marked-outline',
-                        to: APP_ROUTES.PRODUCT.OPTIONS.NAME,
+                        children: [
+                            {
+                                title: 'Nhóm tùy chọn',
+                                to: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
+                            },
+                            {
+                                title: 'Danh sách tùy chọn',
+                                to: APP_ROUTES.PRODUCT.OPTIONS.NAME,
+                            },
+                        ],
                     },
                 ],
             },

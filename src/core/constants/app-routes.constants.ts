@@ -83,6 +83,10 @@ export const APP_ROUTES = {
             NAME: 'admin:product-detail',
             PATH: 'products/:id',
         },
+        CATEGORY_GROUPS: {
+            NAME: 'admin:product-category-groups',
+            PATH: 'product/category-groups',
+        },
         CATEGORIES: {
             NAME: 'admin:product-categories',
             PATH: 'product/categories',

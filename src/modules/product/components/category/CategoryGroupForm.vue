@@ -1,10 +1,10 @@
-﻿<template>
+<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12">
                 <v-text-field
                     v-model="form.name"
-                    label="Tên danh mục *"
+                    label="Tên nhóm danh mục *"
                     :rules="[rules.required, rules.maxLength(200)]"
                     variant="solo-filled"
                     flat
@@ -22,19 +22,7 @@
                     flat
                 />
             </v-col>
-            <v-col cols="12" md="6">
-                <v-select
-                    v-model="form.parentId"
-                    :items="parentOptions.filter((p) => p.id !== editId)"
-                    item-title="name"
-                    item-value="id"
-                    label="Nhóm danh mục *"
-                    :rules="[(v: number | null) => v !== null || 'Vui lòng chọn nhóm danh mục']"
-                    variant="solo-filled"
-                    flat
-                />
-            </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="6">
                 <v-number-input
                     v-model.number="form.displayOrder"
                     control-variant="stacked"
@@ -43,10 +31,16 @@
                     variant="solo-filled"
                     density="comfortable"
                     flat
-                />
+                ></v-number-input>
             </v-col>
-            <v-col cols="12" md="3" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" hide-details />
+            <v-col cols="6" class="d-flex align-center">
+                <v-switch
+                    v-model="form.isActive"
+                    label="Hiển thị"
+                    color="primary"
+                    base-color="grey"
+                    hide-details
+                />
             </v-col>
             <v-col cols="12">
                 <v-textarea
@@ -74,12 +68,10 @@
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
 import type { CategoryFormModel } from '../../models/form-models/category.model'
-import type { CategoryViewModel } from '../../models/view-models/category.view-model'
 
 interface Props {
     modelValue: CategoryFormModel
     isSubmitting: boolean
-    parentOptions: Pick<CategoryViewModel, 'id' | 'name'>[]
     editId?: number | null
 }
 
@@ -119,7 +111,10 @@ function autoSlug() {
 
 async function onSubmit() {
     const { valid } = await formRef.value?.validate()
-    if (valid) emit('submit', form.value)
+    if (valid) emit('submit', { ...form.value, parentId: null })
 }
 </script>
 
+<style scoped>
+
+</style>

@@ -67,15 +67,15 @@
                 />
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model.number="assignForm.MinSelect" label="Min select" type="number" min="0" />
+                        <v-number-input v-model.number="assignForm.MinSelect" control-variant="stacked" label="Min select" :min="0" />
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model.number="assignForm.MaxSelect" label="Max select" type="number" min="0" />
+                        <v-number-input v-model.number="assignForm.MaxSelect" control-variant="stacked" label="Max select" :min="0" />
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model.number="assignForm.DisplayOrder" label="Thứ tự" type="number" min="0" />
+                        <v-number-input v-model.number="assignForm.DisplayOrder" control-variant="stacked" label="Thứ tự" :min="0" />
                     </v-col>
                     <v-col cols="6" class="d-flex align-center">
                         <v-switch v-model="assignForm.IsRequired" label="Bắt buộc" color="primary" base-color="grey" />
@@ -102,15 +102,15 @@
             <div class="pa-2 d-flex flex-column ga-3">
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model.number="editForm.MinSelect" label="Min select" type="number" min="0" />
+                        <v-number-input v-model.number="editForm.MinSelect" control-variant="stacked" label="Min select" :min="0" />
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model.number="editForm.MaxSelect" label="Max select" type="number" min="0" />
+                        <v-number-input v-model.number="editForm.MaxSelect" control-variant="stacked" label="Max select" :min="0" />
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model.number="editForm.DisplayOrder" label="Thứ tự" type="number" min="0" />
+                        <v-number-input v-model.number="editForm.DisplayOrder" control-variant="stacked" label="Thứ tự" :min="0" />
                     </v-col>
                     <v-col cols="6" class="d-flex align-center">
                         <v-switch v-model="editForm.IsRequired" label="Bắt buộc" color="primary" base-color="grey" />

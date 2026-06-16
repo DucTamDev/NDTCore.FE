@@ -95,6 +95,12 @@ export const routes: RouteRecordRaw[] = [
                 meta: { title: 'Sản phẩm', requiresAuth: true },
             },
             {
+                path: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.PATH,
+                name: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME,
+                component: () => import('@/modules/product/views/CategoryGroupsView.vue'),
+                meta: { title: 'Nhóm danh mục', requiresAuth: true },
+            },
+            {
                 path: APP_ROUTES.PRODUCT.CATEGORIES.PATH,
                 name: APP_ROUTES.PRODUCT.CATEGORIES.NAME,
                 component: () => import('@/modules/product/views/CategoriesView.vue'),

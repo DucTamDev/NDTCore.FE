@@ -3,7 +3,11 @@ import App from './App.vue'
 import { registerPlugins } from './plugins'
 
 import 'vuetify/styles'
+import '@fontsource/plus-jakarta-sans/400.css'
+import '@fontsource/plus-jakarta-sans/500.css'
+import '@fontsource/plus-jakarta-sans/600.css'
 import '@/assets/styles/main.scss'
+
 import { API_EVENT, apiEvents } from './core/events/api.events'
 import { router } from './router'
 import { APP_ROUTES } from './core/constants/app-routes.constants'

@@ -152,15 +152,15 @@
                         <v-divider />
 
                         <div class="pa-4 d-flex flex-column ga-4">
-                            <v-text-field
+                            <v-number-input
                                 :model-value="props.form.displayOrder"
+                                control-variant="stacked"
                                 label="Thứ tự hiển thị"
+                                :min="0"
                                 variant="outlined"
                                 color="primary"
                                 density="comfortable"
-                                prepend-inner-icon="mdi-sort-numeric-ascending"
-                                type="number"
-                                @update:model-value="(v) => { const n = Number(v); if (!isNaN(n)) emit('update:form', 'displayOrder', n) }"
+                                @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
                             />
 
                             <div>
