@@ -20,9 +20,8 @@
             item-title="label"
             item-value="value"
             label="Thương hiệu *"
-            variant="outlined"
-            density="comfortable"
-            color="primary"
+            variant="solo-filled"
+            flat
             @update:model-value="onBrandChange($event)"
           />
         </v-col>
@@ -33,9 +32,8 @@
             item-title="label"
             item-value="value"
             label="Nhà nhượng quyền"
-            variant="outlined"
-            density="comfortable"
-            color="primary"
+            variant="solo-filled"
+            flat
             clearable
             @update:model-value="update('franchiseeId', $event)"
           />
@@ -44,9 +42,8 @@
           <v-text-field
             :model-value="localForm.name"
             label="Tên cửa hàng *"
-            variant="outlined"
-            density="comfortable"
-            color="primary"
+            variant="solo-filled"
+            flat
             @update:model-value="update('name', $event)"
           />
         </v-col>
@@ -54,9 +51,8 @@
           <v-text-field
             :model-value="localForm.code"
             label="Mã cửa hàng *"
-            variant="outlined"
-            density="comfortable"
-            color="primary"
+            variant="solo-filled"
+            flat
             @update:model-value="update('code', $event)"
           />
         </v-col>
@@ -64,9 +60,8 @@
           <v-text-field
             :model-value="localForm.slug"
             label="Slug"
-            variant="outlined"
-            density="comfortable"
-            color="primary"
+            variant="solo-filled"
+            flat
             @update:model-value="update('slug', $event)"
           />
         </v-col>
@@ -97,10 +92,10 @@
       <div class="text-subtitle-2 font-weight-semibold mb-3">Liên hệ</div>
       <v-row dense>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.phone" label="Số điện thoại" variant="outlined" density="comfortable" color="primary" @update:model-value="update('phone', $event)" />
+          <v-text-field :model-value="localForm.phone" label="Số điện thoại" variant="solo-filled" flat @update:model-value="update('phone', $event)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.email" label="Email" variant="outlined" density="comfortable" color="primary" @update:model-value="update('email', $event)" />
+          <v-text-field :model-value="localForm.email" label="Email" variant="solo-filled" flat @update:model-value="update('email', $event)" />
         </v-col>
       </v-row>
 
@@ -109,19 +104,19 @@
       <div class="text-subtitle-2 font-weight-semibold mb-3">Địa chỉ</div>
       <v-row dense>
         <v-col cols="12">
-          <v-text-field :model-value="localForm.address" label="Địa chỉ" variant="outlined" density="comfortable" color="primary" @update:model-value="update('address', $event)" />
+          <v-text-field :model-value="localForm.address" label="Địa chỉ" variant="solo-filled" flat @update:model-value="update('address', $event)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.province" label="Tỉnh/Thành" variant="outlined" density="comfortable" color="primary" @update:model-value="update('province', $event)" />
+          <v-text-field :model-value="localForm.province" label="Tỉnh/Thành" variant="solo-filled" flat @update:model-value="update('province', $event)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.district" label="Quận/Huyện" variant="outlined" density="comfortable" color="primary" @update:model-value="update('district', $event)" />
+          <v-text-field :model-value="localForm.district" label="Quận/Huyện" variant="solo-filled" flat @update:model-value="update('district', $event)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.ward" label="Phường/Xã" variant="outlined" density="comfortable" color="primary" @update:model-value="update('ward', $event)" />
+          <v-text-field :model-value="localForm.ward" label="Phường/Xã" variant="solo-filled" flat @update:model-value="update('ward', $event)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.country" label="Quốc gia" variant="outlined" density="comfortable" color="primary" @update:model-value="update('country', $event)" />
+          <v-text-field :model-value="localForm.country" label="Quốc gia" variant="solo-filled" flat @update:model-value="update('country', $event)" />
         </v-col>
       </v-row>
 
@@ -130,13 +125,13 @@
       <div class="text-subtitle-2 font-weight-semibold mb-3">Vận hành</div>
       <v-row dense>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.openTime" label="Giờ mở cửa" type="time" variant="outlined" density="comfortable" color="primary" clearable @update:model-value="update('openTime', $event || null)" />
+          <v-text-field :model-value="localForm.openTime" label="Giờ mở cửa" type="time" variant="solo-filled" flat clearable @update:model-value="update('openTime', $event || null)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.closeTime" label="Giờ đóng cửa" type="time" variant="outlined" density="comfortable" color="primary" clearable @update:model-value="update('closeTime', $event || null)" />
+          <v-text-field :model-value="localForm.closeTime" label="Giờ đóng cửa" type="time" variant="solo-filled" flat clearable @update:model-value="update('closeTime', $event || null)" />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field :model-value="localForm.timeZone" label="Múi giờ" variant="outlined" density="comfortable" color="primary" placeholder="Asia/Ho_Chi_Minh" @update:model-value="update('timeZone', $event)" />
+          <v-text-field :model-value="localForm.timeZone" label="Múi giờ" variant="solo-filled" flat placeholder="Asia/Ho_Chi_Minh" @update:model-value="update('timeZone', $event)" />
         </v-col>
       </v-row>
     </v-form>

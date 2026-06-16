@@ -1,19 +1,23 @@
 ﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="12">
                 <v-text-field
                     v-model="form.name"
                     label="Tên nhãn *"
                     :rules="[rules.required, rules.maxLength(100)]"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12">
                 <v-text-field
                     v-model="form.colorHex"
                     label="Màu nền (Hex)"
                     placeholder="#FF6B35"
                     :rules="[hexRule]"
+                    variant="solo-filled"
+                    flat
                 >
                     <template #append-inner>
                         <div
@@ -24,12 +28,14 @@
                     </template>
                 </v-text-field>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12">
                 <v-text-field
                     v-model="form.textColor"
                     label="Màu chữ (Hex)"
                     placeholder="#FFFFFF"
                     :rules="[hexRule]"
+                    variant="solo-filled"
+                    flat
                 >
                     <template #append-inner>
                         <div
@@ -39,6 +45,20 @@
                         />
                     </template>
                 </v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-number-input
+                    v-model.number="form.displayOrder"
+                    control-variant="stacked"
+                    label="Thứ tự"
+                    :min="0"
+                    variant="solo-filled"
+                    density="comfortable"
+                    flat
+                />
+            </v-col>
+            <v-col cols="12" md="6" class="d-flex align-center">
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" hide-details />
             </v-col>
             <v-col cols="12">
                 <div class="d-flex align-center ga-3 mt-1">
@@ -53,17 +73,6 @@
                         {{ form.name || 'Tên nhãn' }}
                     </v-chip>
                 </div>
-            </v-col>
-            <v-col cols="12" md="3">
-                <v-text-field
-                    v-model.number="form.displayOrder"
-                    label="Thứ tự"
-                    type="number"
-                    min="0"
-                />
-            </v-col>
-            <v-col cols="12" md="3" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 

@@ -1,41 +1,51 @@
 ﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
-            <v-col cols="12" md="8">
+            <v-col cols="12">
                 <v-text-field
                     v-model="form.name"
                     label="Tên nhóm option *"
                     :rules="[rules.required, rules.maxLength(200)]"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
                 <v-select
                     v-model="form.uiType"
                     :items="uiTypeOptions"
                     item-title="label"
                     item-value="value"
-                    label="Kiểu UI *"
+                    label="Kiểu lựa chọn *"
                     :rules="[rules.required]"
+                    variant="solo-filled"
+                    flat
                 />
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-number-input
+                    v-model.number="form.displayOrder"
+                    control-variant="stacked"
+                    label="Thứ tự hiển thị"
+                    :min="0"
+                    variant="solo-filled"
+                    density="comfortable"
+                    flat
+                />
+            </v-col>
+            <v-col cols="12" class="d-flex align-center">
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" hide-details />
             </v-col>
             <v-col cols="12">
                 <v-textarea
                     v-model="form.description"
                     label="Mô tả"
                     rows="3"
+                    no-resize
                     :rules="[rules.maxLength(1000)]"
+                    variant="solo-filled"
+                    flat
                 />
-            </v-col>
-            <v-col cols="12" md="6">
-                <v-text-field
-                    v-model.number="form.displayOrder"
-                    label="Thứ tự hiển thị"
-                    type="number"
-                    min="0"
-                />
-            </v-col>
-            <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 

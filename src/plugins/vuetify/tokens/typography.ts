@@ -1,10 +1,10 @@
 import type { TypographyTokens } from '../types';
 
 const fontFamily = {
-  sans:    '"Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif',
-  serif:   '"Playfair Display", "Georgia", ui-serif, serif',
-  mono:    '"JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace',
-  display: '"Sora", "Inter Variable", ui-sans-serif, sans-serif',
+  sans: '"Plus Jakarta Sans", "Inter Variable", Inter, ui-sans-serif, system-ui, sans-serif',
+  heading: '"Plus Jakarta Sans", "Sora", ui-sans-serif, system-ui, sans-serif',
+  serif: '"Playfair Display", Georgia, ui-serif, serif',
+  mono: '"JetBrains Mono", "Fira Code", monospace',
 } as const;
 
 const fontSize = {

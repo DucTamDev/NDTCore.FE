@@ -8,6 +8,8 @@ const props = defineProps<{
   nullable?: boolean
   disabled?: boolean
   hint?: string
+  variant?: 'outlined' | 'filled' | 'solo' | 'solo-filled' | 'solo-inverted' | 'plain' | 'underlined'
+  flat?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -50,6 +52,8 @@ const rules = computed(() => {
     :rules="rules"
     :disabled="disabled"
     :hint="hint"
+    :variant="variant"
+    :flat="flat"
     suffix="₫"
     inputmode="numeric"
     @update:model-value="onInput"

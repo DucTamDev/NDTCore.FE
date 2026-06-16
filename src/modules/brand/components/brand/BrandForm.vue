@@ -13,24 +13,24 @@
             v-model="form.name"
             label="Tên thương hiệu *"
             :rules="nameRules"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             v-model="form.legalName"
             label="Tên pháp nhân"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             v-model="form.taxCode"
             label="Mã số thuế"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
       </v-row>

@@ -6,7 +6,7 @@ const { radius } = baseTokens
 
 export const componentDefaults: NonNullable<VuetifyOptions['defaults']> = {
   VApp: {
-    style: [{ fontFamily: typographyTokens.fontFamily.mono }],
+    style: [{ fontFamily: typographyTokens.fontFamily.sans }],
   },
   VTextField: { variant: 'outlined', density: 'comfortable', rounded: radius.md, hideDetails: 'auto' },
   VTextarea: {

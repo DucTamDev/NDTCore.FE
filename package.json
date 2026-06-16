@@ -20,6 +20,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@fontsource/roboto": "^5.2.9",
     "@tailwindcss/vite": "^4.1.18",
     "pinia": "^3.0.4",

@@ -1,7 +1,19 @@
 ﻿<template>
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
-            <v-col v-if="!isEditMode" cols="12">
+            <v-col cols="12">
+                <AppImageInput v-model="form.imageUrl" />
+            </v-col>
+            <v-col cols="12">
+                <v-text-field
+                    v-model="form.name"
+                    label="Tên option *"
+                    :rules="[rules.required, rules.maxLength(200)]"
+                    variant="solo-filled"
+                    flat
+                />
+            </v-col>
+            <v-col v-if="!isEditMode" cols="12" md="6">
                 <v-autocomplete
                     v-model="form.groupId"
                     :items="groupOptions"
@@ -9,19 +21,30 @@
                     item-title="name"
                     label="Nhóm option *"
                     :rules="[(v: number | null) => !!v || 'Vui lòng chọn nhóm option']"
+                    variant="solo-filled"
+                    flat
                 />
             </v-col>
-            <v-col cols="12" md="8">
-                <v-text-field
-                    v-model="form.name"
-                    label="Tên option *"
-                    :rules="[rules.required, rules.maxLength(200)]"
-                />
+            <v-col cols="12" :md="isEditMode ? 12 : 6" class="d-flex align-center">
+                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" hide-details inset />
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
                 <AppCurrencyField
                     v-model="form.price"
-                    label="Giá mặc định"
+                    label="Giá điều chỉnh"
+                    variant="solo-filled"
+                    flat
+                />
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-number-input
+                    v-model.number="form.displayOrder"
+                    control-variant="stacked"
+                    label="Thứ tự hiển thị"
+                    :min="0"
+                    variant="solo-filled"
+                    density="comfortable"
+                    flat
                 />
             </v-col>
             <v-col cols="12">
@@ -29,26 +52,11 @@
                     v-model="form.description"
                     label="Mô tả"
                     rows="3"
+                    no-resize
                     :rules="[rules.maxLength(1000)]"
+                    variant="solo-filled"
+                    flat
                 />
-            </v-col>
-            <v-col cols="12">
-                <v-text-field
-                    v-model="form.imageUrl"
-                    label="URL hình ảnh"
-                    :rules="[rules.maxLength(500)]"
-                />
-            </v-col>
-            <v-col cols="12" md="6">
-                <v-text-field
-                    v-model.number="form.displayOrder"
-                    label="Thứ tự hiển thị"
-                    type="number"
-                    min="0"
-                />
-            </v-col>
-            <v-col cols="12" md="6" class="d-flex align-center">
-                <v-switch v-model="form.isActive" label="Hiển thị" color="primary" base-color="grey" />
             </v-col>
         </v-row>
 
@@ -64,7 +72,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
-import { AppCurrencyField } from '@/components/ui'
+import { AppCurrencyField, AppImageInput } from '@/components/ui'
 import type { OptionFormModel } from '../../models/form-models/option.model'
 
 interface Props {

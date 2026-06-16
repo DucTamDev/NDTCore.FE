@@ -114,9 +114,9 @@ export interface SpacingTokens {
 
 export interface FontFamilyTokens {
   readonly sans: string;
+  readonly heading: string;
   readonly serif: string;
   readonly mono: string;
-  readonly display: string;
 }
 
 export interface FontSizeStep {

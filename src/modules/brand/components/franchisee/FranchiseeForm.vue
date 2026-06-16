@@ -16,8 +16,8 @@
             item-value="value"
             label="Thương hiệu *"
             :rules="[(v) => !!v || 'Thương hiệu là bắt buộc']"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -26,8 +26,8 @@
             v-model="localForm.name"
             label="Tên nhà nhượng quyền *"
             :rules="[(v: string) => !!v?.trim() || 'Tên là bắt buộc']"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -35,8 +35,8 @@
           <v-text-field
             v-model="localForm.legalName"
             label="Tên pháp nhân"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -44,8 +44,8 @@
           <v-text-field
             v-model="localForm.taxCode"
             label="Mã số thuế"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -53,8 +53,8 @@
           <v-text-field
             v-model="localForm.bankAccount"
             label="Số tài khoản ngân hàng"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -62,8 +62,8 @@
           <v-text-field
             v-model="localForm.bankName"
             label="Tên ngân hàng"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -72,8 +72,8 @@
             v-model="localForm.joinedDate"
             label="Ngày tham gia (ISO 8601)"
             placeholder="2024-01-15T00:00:00Z"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
@@ -82,8 +82,8 @@
             v-model="localForm.terminatedDate"
             label="Ngày kết thúc (ISO 8601)"
             placeholder="2025-12-31T00:00:00Z"
-            variant="outlined"
-            density="comfortable"
+            variant="solo-filled"
+            flat
           />
         </v-col>
 
