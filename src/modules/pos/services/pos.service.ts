@@ -23,11 +23,8 @@ class PosService {
         return r.Data ?? null
     }
 
-    async getOrderHistoryAsync(
-        storeId: number,
-        shiftId: number,
-    ): Promise<PosOrderHistoryItemDto[]> {
-        const r = await posApi.getOrderHistoryAsync(storeId, shiftId)
+    async getOrderHistoryAsync(storeId: number): Promise<PosOrderHistoryItemDto[]> {
+        const r = await posApi.getOrderHistoryAsync(storeId)
         return r.Data ?? []
     }
 }

@@ -119,7 +119,7 @@
         <div class="d-flex ga-2">
           <v-btn variant="text" @click="open = false">Huỷ</v-btn>
           <v-btn color="primary" variant="flat" :disabled="!isValid" @click="confirm">
-            Thêm vào đơn
+            {{ isEditMode ? 'Cập nhật' : 'Thêm vào đơn' }}
           </v-btn>
         </div>
       </v-card-actions>
@@ -135,11 +135,13 @@ import type { PosCartItem, PosCartOption } from '../models/types/pos-cart.types'
 const props = defineProps<{
     modelValue: boolean
     product:    PosProductDto | null
+    editItem?:  PosCartItem | null
 }>()
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean]
     add:                [item: PosCartItem]
+    update:             [uid: string, item: PosCartItem]
 }>()
 
 const open     = computed({ get: () => props.modelValue, set: (v) => emit('update:modelValue', v) })
@@ -149,14 +151,25 @@ const note     = ref('')
 const selections  = ref<Map<number, Set<number>>>(new Map())
 const groupErrors = ref<Record<number, string>>({})
 
-watch(
-    () => props.product,
-    (product) => {
-        quantity.value    = 1
-        note.value        = ''
-        groupErrors.value = {}
-        const newMap      = new Map<number, Set<number>>()
-        if (product) {
+const isEditMode = computed(() => !!props.editItem)
+
+function initState(product: PosProductDto | null, editItem: PosCartItem | null | undefined): void {
+    groupErrors.value = {}
+    const newMap      = new Map<number, Set<number>>()
+    if (product) {
+        if (editItem) {
+            quantity.value = editItem.quantity
+            note.value     = editItem.note
+            for (const group of product.OptionGroups) {
+                const set = new Set<number>()
+                for (const cartOpt of editItem.selectedOptions) {
+                    if (cartOpt.groupId === group.GroupId) set.add(cartOpt.optionId)
+                }
+                newMap.set(group.GroupId, set)
+            }
+        } else {
+            quantity.value = 1
+            note.value     = ''
             for (const group of product.OptionGroups) {
                 const set = new Set<number>()
                 for (const opt of group.Options) {
@@ -165,10 +178,16 @@ watch(
                 newMap.set(group.GroupId, set)
             }
         }
-        selections.value = newMap
-    },
-    { immediate: true },
-)
+    } else {
+        quantity.value = 1
+        note.value     = ''
+    }
+    selections.value = newMap
+}
+
+watch(open, (isOpen) => {
+    if (isOpen) initState(props.product, props.editItem)
+})
 
 function isSelected(groupId: number, optionId: number): boolean {
     return selections.value.get(groupId)?.has(optionId) ?? false
@@ -242,8 +261,9 @@ function validate(): boolean {
 function confirm(): void {
     if (!validate() || !props.product) return
     const item: PosCartItem = {
-        uid:             crypto.randomUUID(),
+        uid:             props.editItem?.uid ?? crypto.randomUUID(),
         productId:       props.product.Id,
+        productCode:     props.product.Sku,
         productName:     props.product.Name,
         imageUrl:        props.product.ImageUrl,
         resolvedPrice:   props.product.ResolvedPrice,
@@ -251,6 +271,10 @@ function confirm(): void {
         note:            note.value,
         selectedOptions: selectedOptions.value,
     }
-    emit('add', item)
+    if (isEditMode.value && props.editItem) {
+        emit('update', props.editItem.uid, item)
+    } else {
+        emit('add', item)
+    }
 }
 </script>

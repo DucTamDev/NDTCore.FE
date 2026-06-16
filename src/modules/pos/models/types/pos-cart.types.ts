@@ -9,6 +9,7 @@ export interface PosCartOption {
 export interface PosCartItem {
     uid: string
     productId: number
+    productCode: string
     productName: string
     imageUrl: string | null
     resolvedPrice: number

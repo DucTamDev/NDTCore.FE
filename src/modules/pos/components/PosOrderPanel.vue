@@ -85,13 +85,6 @@
     <div class="pa-3 pt-1 d-flex ga-2">
       <v-btn
         variant="tonal"
-        icon="mdi-history"
-        size="small"
-        :title="'Lịch sử đơn'"
-        @click="$emit('openHistory')"
-      />
-      <v-btn
-        variant="tonal"
         icon="mdi-delete-sweep-outline"
         size="small"
         color="error"
@@ -148,7 +141,7 @@ import { posService } from '../services/pos.service'
 import PosOrderItem from './PosOrderItem.vue'
 
 const props = defineProps<{ storeId: number }>()
-const emit  = defineEmits<{ openHistory: []; editProduct: [productId: number] }>()
+const emit  = defineEmits<{ editItem: [uid: string] }>()
 
 const cartStore  = usePosCartStore()
 const shiftStore = usePosShiftStore()
@@ -183,10 +176,7 @@ function runConfirmed(): void {
 }
 
 function handleEditItem(uid: string): void {
-    const item = cartStore.items.find((i) => i.uid === uid)
-    if (!item) return
-    cartStore.removeItem(uid)
-    emit('editProduct', item.productId)
+    emit('editItem', uid)
 }
 
 function confirmClear(): void {
@@ -208,21 +198,30 @@ function confirmSubmit(): void {
 }
 
 async function submitOrder(): Promise<void> {
-    const shiftId = shiftStore.shiftId
-    if (!shiftId) return
     submitting.value = true
     try {
         const payload = {
-            StoreId:       props.storeId,
-            ShiftId:       shiftId,
-            CustomerName:  cartStore.customerName || null,
-            CustomerPhone: cartStore.customerPhone || null,
-            Note:          cartStore.orderNote || null,
-            Items:         cartStore.items.map((i) => ({
-                ProductId:         i.productId,
-                Quantity:          i.quantity,
-                Note:              i.note || null,
-                SelectedOptionIds: i.selectedOptions.map((o) => o.optionId),
+            StoreId:        props.storeId,
+            Channel:        null,
+            CustomerName:   cartStore.customerName || null,
+            CustomerPhone:  cartStore.customerPhone || null,
+            Note:           cartStore.orderNote || null,
+            DiscountAmount: 0,
+            TaxAmount:      0,
+            Items:          cartStore.items.map((i) => ({
+                ProductId:      i.productId,
+                ProductCode:    i.productCode,
+                ProductName:    i.productName,
+                RegularPrice:   i.resolvedPrice,
+                Quantity:       i.quantity,
+                DiscountAmount: 0,
+                Note:           i.note || null,
+                Options:        i.selectedOptions.map((o) => ({
+                    OptionId:   o.optionId,
+                    GroupName:  o.groupName,
+                    OptionName: o.optionName,
+                    Price:      o.resolvedPrice,
+                })),
             })),
         }
         const result = await posService.createOrderAsync(payload)

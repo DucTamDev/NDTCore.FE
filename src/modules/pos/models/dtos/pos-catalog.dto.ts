@@ -27,6 +27,7 @@ export interface PosOptionGroupDto {
 export interface PosProductDto {
     Id: number
     CategoryId: number | null
+    Sku: string
     Name: string
     ShortDescription: string | null
     ResolvedPrice: number

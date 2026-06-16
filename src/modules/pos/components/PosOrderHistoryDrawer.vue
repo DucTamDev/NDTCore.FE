@@ -84,13 +84,11 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { posService } from '../services/pos.service'
-import { usePosShiftStore } from '../stores/pos-shift.store'
 import type { PosOrderHistoryItemDto } from '../models/dtos/pos-order.dto'
 
 const props = defineProps<{ modelValue: boolean; storeId: number }>()
 defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
-const shiftStore     = usePosShiftStore()
 const orders         = ref<PosOrderHistoryItemDto[]>([])
 const isLoading      = ref(false)
 const selectedStatus = ref<string>('')
@@ -107,11 +105,9 @@ watch(
 )
 
 async function load(): Promise<void> {
-    const shiftId = shiftStore.shiftId
-    if (!shiftId) return
     isLoading.value = true
     try {
-        orders.value = await posService.getOrderHistoryAsync(props.storeId, shiftId)
+        orders.value = await posService.getOrderHistoryAsync(props.storeId)
     } finally {
         isLoading.value = false
     }

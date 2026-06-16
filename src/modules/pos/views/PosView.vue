@@ -13,8 +13,7 @@
         :store-id="storeId"
         class="pos-panel pos-order-panel"
         :class="{ 'panel-hidden': activeTab !== 'order' }"
-        @open-history="historyOpen = true"
-        @edit-product="openPickerByProductId"
+        @edit-item="openPickerForEdit"
       />
     </div>
 
@@ -51,16 +50,31 @@
     <PosOptionPicker
       v-model="optionPickerOpen"
       :product="pickedProduct"
+      :edit-item="editingItem"
       @add="onAddToCart"
+      @update="onUpdateCart"
     />
 
     <PosOrderHistoryDrawer v-model="historyOpen" :store-id="storeId" />
+
+    <v-dialog v-model="leaveConfirmOpen" max-width="440px" persistent>
+      <v-card>
+        <v-card-title class="pa-4 pb-2 text-h6">Rời khỏi trang POS?</v-card-title>
+        <v-card-text class="pa-4 pt-1 text-body-2">
+          Bạn đang có sản phẩm trong giỏ hàng. Nếu rời khỏi trang, toàn bộ dữ liệu đơn hàng hiện tại sẽ bị hủy. Bạn có muốn tiếp tục không?
+        </v-card-text>
+        <v-card-actions class="pa-4 pt-0 ga-2 justify-end">
+          <v-btn variant="text" @click="onLeaveCancel">Ở lại</v-btn>
+          <v-btn color="error" variant="flat" @click="onLeaveConfirm">Tiếp tục rời trang</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { usePosShiftStore } from '../stores/pos-shift.store'
 import { usePosCatalogStore } from '../stores/pos-catalog.store'
 import { usePosCartStore } from '../stores/pos-cart.store'
@@ -79,24 +93,76 @@ const shiftStore   = usePosShiftStore()
 const catalogStore = usePosCatalogStore()
 const cartStore    = usePosCartStore()
 
-const optionPickerOpen = ref(false)
-const pickedProduct    = ref<PosProductDto | null>(null)
-const historyOpen      = ref(false)
-const activeTab        = ref<'menu' | 'order'>('menu')
+const optionPickerOpen  = ref(false)
+const pickedProduct     = ref<PosProductDto | null>(null)
+const editingItem       = ref<PosCartItem | null>(null)
+const historyOpen       = ref(false)
+const activeTab         = ref<'menu' | 'order'>('menu')
+const leaveConfirmOpen  = ref(false)
+
+let resolveLeave: ((confirmed: boolean) => void) | null = null
+
+watch(optionPickerOpen, (isOpen) => {
+    if (!isOpen) editingItem.value = null
+})
+
+onBeforeRouteLeave(async () => {
+    if (cartStore.items.length === 0) {
+        resetPosState()
+        return true
+    }
+    leaveConfirmOpen.value = true
+    const confirmed = await new Promise<boolean>(resolve => {
+        resolveLeave = resolve
+    })
+    if (confirmed) {
+        resetPosState()
+        return true
+    }
+    return false
+})
 
 function openOptionPicker(product: PosProductDto): void {
     pickedProduct.value    = product
     optionPickerOpen.value = true
 }
 
-function openPickerByProductId(productId: number): void {
-    const product = catalogStore.products.find((p) => p.Id === productId)
-    if (product) openOptionPicker(product)
+function openPickerForEdit(uid: string): void {
+    const cartItem = cartStore.items.find((i) => i.uid === uid)
+    if (!cartItem) return
+    const product = catalogStore.products.find((p) => p.Id === cartItem.productId)
+    if (!product) return
+    editingItem.value      = cartItem
+    pickedProduct.value    = product
+    optionPickerOpen.value = true
 }
 
 function onAddToCart(item: PosCartItem): void {
     cartStore.addItem(item)
     optionPickerOpen.value = false
+}
+
+function onUpdateCart(uid: string, item: PosCartItem): void {
+    cartStore.updateItem(uid, item)
+    optionPickerOpen.value = false
+}
+
+function resetPosState(): void {
+    cartStore.$reset()
+    catalogStore.$reset()
+    shiftStore.$reset()
+}
+
+function onLeaveConfirm(): void {
+    leaveConfirmOpen.value = false
+    resolveLeave?.(true)
+    resolveLeave = null
+}
+
+function onLeaveCancel(): void {
+    leaveConfirmOpen.value = false
+    resolveLeave?.(false)
+    resolveLeave = null
 }
 
 onMounted(async () => {

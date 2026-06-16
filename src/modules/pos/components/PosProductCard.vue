@@ -2,7 +2,7 @@
   <v-card
     :disabled="!product.IsAvailable"
     :ripple="product.IsAvailable"
-    variant="outlined"
+    variant="flat"
     rounded="lg"
     class="d-flex flex-column"
     style="cursor: pointer; user-select: none;"
@@ -15,28 +15,28 @@
         </div>
       </template>
 
-      <template v-if="!product.IsAvailable" #default>
+      <template #default>
         <div
+          v-if="!product.IsAvailable"
           class="d-flex align-center justify-center h-100"
           style="background: rgba(0,0,0,.45);"
         >
           <v-chip size="small" color="error">Hết hàng</v-chip>
         </div>
+        <div v-if="product.Tags.length" class="pa-1 d-flex flex-wrap ga-1">
+          <v-chip
+            v-for="tag in product.Tags.slice(0, 2)"
+            :key="tag.Id"
+            size="x-small"
+            :style="{
+              backgroundColor: tag.ColorHex ?? undefined,
+              color: tag.TextColor ?? undefined,
+            }"
+          >
+            {{ tag.Name }}
+          </v-chip>
+        </div>
       </template>
-
-      <div v-if="product.Tags.length" class="pa-1 d-flex flex-wrap ga-1">
-        <v-chip
-          v-for="tag in product.Tags.slice(0, 2)"
-          :key="tag.Id"
-          size="x-small"
-          :style="{
-            backgroundColor: tag.ColorHex ?? undefined,
-            color: tag.TextColor ?? undefined,
-          }"
-        >
-          {{ tag.Name }}
-        </v-chip>
-      </div>
     </v-img>
 
     <v-card-text class="pa-2 pt-1">
