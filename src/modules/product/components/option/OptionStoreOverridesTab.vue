@@ -1,7 +1,7 @@
 <template>
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex justify-end">
-            <v-btn color="primary" size="small" prepend-icon="mdi-plus" @click="openAdd">
+            <v-btn color="primary" prepend-icon="mdi-plus" @click="openAdd">
                 Thêm cửa hàng
             </v-btn>
         </div>

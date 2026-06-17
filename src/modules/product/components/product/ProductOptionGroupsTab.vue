@@ -2,7 +2,7 @@
     <div class="pa-4 d-flex flex-column ga-4">
         <div class="d-flex align-center justify-space-between">
             <span class="text-subtitle-2 text-medium-emphasis">Nhóm option đã gán</span>
-            <v-btn size="small" color="primary" prepend-icon="mdi-plus" @click="openAssignDialog">
+            <v-btn color="primary" prepend-icon="mdi-plus" @click="openAssignDialog">
                 Gán nhóm
             </v-btn>
         </div>

@@ -5,7 +5,6 @@
       <v-btn
         variant="text"
         rounded="lg"
-        size="small"
         prepend-icon="mdi-arrow-left"
         @click="emit('back')"
       >
@@ -18,7 +17,6 @@
             v-if="props.isDirty"
             variant="text"
             rounded="lg"
-            size="small"
             :disabled="props.submitting"
             @click="emit('discard')"
           >
@@ -30,7 +28,6 @@
           color="primary"
           variant="flat"
           rounded="lg"
-          size="small"
           prepend-icon="mdi-content-save-outline"
           :loading="props.submitting"
           :disabled="!props.isDirty"
