@@ -28,8 +28,9 @@
 
       <template #actions>
         <v-btn
+          :disabled="!hasActiveFilters"
           variant="text"
-          prepend-icon="mdi-filter-off-outline"
+          prepend-icon="mdi-filter-remove-outline"
           @click="emit(BRAND_LIST_EMIT.RESET)"
         >
           Xóa lọc
@@ -140,6 +141,7 @@ defineProps<{
   totalPages: number
   totalItems: number
   activeFilters: ActiveFilters
+  hasActiveFilters: boolean
   sortBy: SortState | null
 }>()
 

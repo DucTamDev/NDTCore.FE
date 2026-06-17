@@ -8,6 +8,7 @@
       :total-pages="listPage.pagination.totalPages.value"
       :total-items="listPage.pagination.totalItems.value"
       :active-filters="listPage.filters.activeFilters.value"
+      :has-active-filters="listPage.filters.hasActiveFilters.value"
       :sort-by="listPage.sortBy.value"
       @update:active-filters="listPage.filters.setFilters"
       @search="listPage.onSearch"

@@ -46,11 +46,10 @@
         <div class="pa-5">
             <v-row>
                 <!-- Thông tin cơ bản -->
-                <v-col cols="12" md="6">
+                <v-col cols="12">
                     <v-card
                         elevation="0"
                         rounded="lg"
-                        height="100%"
                         :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
                     >
                         <v-list-item class="bg-surface-variant py-3">
@@ -69,80 +68,115 @@
 
                         <v-divider />
 
-                        <div class="pa-4 d-flex flex-column ga-4">
-                            <v-text-field
-                                :model-value="props.form.name"
-                                label="Tên nhãn *"
-                                variant="outlined"
-                                color="primary"
-                                density="comfortable"
-                                :error-messages="props.errors.name ? [props.errors.name] : []"
-                                prepend-inner-icon="mdi-tag-outline"
-                                @update:model-value="emit('update:form', 'name', $event)"
-                            />
+                        <div class="pa-4">
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field
+                                        :model-value="props.form.name"
+                                        label="Tên nhãn *"
+                                        variant="solo-filled"
+                                        flat
+                                        :error-messages="props.errors.name ? [props.errors.name] : []"
+                                        @update:model-value="emit('update:form', 'name', $event)"
+                                    />
+                                </v-col>
 
-                            <div class="d-flex ga-2 align-start">
-                                <v-text-field
-                                    :model-value="props.form.colorHex"
-                                    label="Màu nền (ColorHex)"
-                                    variant="outlined"
-                                    color="primary"
-                                    density="comfortable"
-                                    hint="Định dạng #RRGGBB"
-                                    persistent-hint
-                                    clearable
-                                    persistent-clear
-                                    prepend-inner-icon="mdi-palette-outline"
-                                    @update:model-value="emit('update:form', 'colorHex', $event ?? '')"
-                                />
-                                <div
-                                    class="color-swatch"
-                                    :style="props.form.colorHex ? { backgroundColor: props.form.colorHex } : {}"
-                                />
-                            </div>
+                                <v-col cols="12" md="6">
+                                    <v-text-field
+                                        :model-value="props.form.colorHex"
+                                        label="Màu nền (ColorHex)"
+                                        variant="solo-filled"
+                                        flat
+                                        persistent-hint
+                                        clearable
+                                        persistent-clear
+                                        :rules="[hexRule]"
+                                        @update:model-value="emit('update:form', 'colorHex', $event ?? '')"
+                                    >
+                                        <template #append-inner>
+                                            <v-menu
+                                                v-model="bgMenuOpen"
+                                                :close-on-content-click="false"
+                                                location="bottom end"
+                                            >
+                                                <template #activator="{ props: menuProps }">
+                                                    <div
+                                                        v-bind="menuProps"
+                                                        class="color-swatch"
+                                                        :style="props.form.colorHex ? { backgroundColor: props.form.colorHex } : {}"
+                                                    />
+                                                </template>
+                                                <v-color-picker
+                                                    v-model="bgPickerModel"
+                                                    mode="hexa"
+                                                    hide-inputs
+                                                    show-swatches
+                                                    swatches-max-height="120"
+                                                />
+                                            </v-menu>
+                                        </template>
+                                    </v-text-field>
+                                </v-col>
 
-                            <div class="d-flex ga-2 align-start">
-                                <v-text-field
-                                    :model-value="props.form.textColor"
-                                    label="Màu chữ (TextColor)"
-                                    variant="outlined"
-                                    color="primary"
-                                    density="comfortable"
-                                    hint="Định dạng #RRGGBB"
-                                    persistent-hint
-                                    clearable
-                                    persistent-clear
-                                    prepend-inner-icon="mdi-format-color-text"
-                                    @update:model-value="emit('update:form', 'textColor', $event ?? '')"
-                                />
-                                <div
-                                    class="color-swatch"
-                                    :style="props.form.textColor ? { backgroundColor: props.form.textColor } : {}"
-                                />
-                            </div>
+                                <v-col cols="12" md="6">
+                                    <v-text-field
+                                        :model-value="props.form.textColor"
+                                        label="Màu chữ (TextColor)"
+                                        variant="solo-filled"
+                                        flat
+                                        persistent-hint
+                                        clearable
+                                        persistent-clear
+                                        :rules="[hexRule]"
+                                        @update:model-value="emit('update:form', 'textColor', $event ?? '')"
+                                    >
+                                        <template #append-inner>
+                                            <v-menu
+                                                v-model="textMenuOpen"
+                                                :close-on-content-click="false"
+                                                location="bottom end"
+                                            >
+                                                <template #activator="{ props: menuProps }">
+                                                    <div
+                                                        v-bind="menuProps"
+                                                        class="color-swatch"
+                                                        :style="props.form.textColor ? { backgroundColor: props.form.textColor } : {}"
+                                                    />
+                                                </template>
+                                                <v-color-picker
+                                                    v-model="textPickerModel"
+                                                    mode="hexa"
+                                                    hide-inputs
+                                                    show-swatches
+                                                    swatches-max-height="120"
+                                                />
+                                            </v-menu>
+                                        </template>
+                                    </v-text-field>
+                                </v-col>
 
-                            <div>
-                                <div class="text-caption text-medium-emphasis mb-2 ml-1">Xem trước</div>
-                                <v-chip
-                                    :style="{
-                                        backgroundColor: props.form.colorHex || undefined,
-                                        color: props.form.textColor || undefined,
-                                    }"
-                                    size="default"
-                                >
-                                    {{ props.form.name || 'Tên nhãn' }}
-                                </v-chip>
-                            </div>
+                                <v-col cols="12">
+                                    <div class="text-caption text-medium-emphasis mb-2 ml-1">Xem trước</div>
+                                    <v-chip
+                                        :style="{
+                                            backgroundColor: props.form.colorHex || undefined,
+                                            color: props.form.textColor || undefined,
+                                        }"
+                                        size="default"
+                                    >
+                                        {{ props.form.name || 'Tên nhãn' }}
+                                    </v-chip>
+                                </v-col>
+                            </v-row>
                         </div>
                     </v-card>
                 </v-col>
 
                 <!-- Cài đặt -->
-                <v-col cols="12" md="6">
+                <v-col cols="12">
                     <v-card
                         elevation="0"
                         rounded="lg"
-                        height="100%"
                         :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
                     >
                         <v-list-item class="bg-surface-variant py-3">
@@ -161,48 +195,33 @@
 
                         <v-divider />
 
-                        <div class="pa-4 d-flex flex-column ga-4">
-                            <v-number-input
-                                :model-value="props.form.displayOrder"
-                                control-variant="stacked"
-                                label="Thứ tự hiển thị"
-                                :min="0"
-                                variant="outlined"
-                                color="primary"
-                                density="comfortable"
-                                @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
-                            />
-
-                            <div>
-                                <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>
-                                <v-btn-toggle
-                                    :model-value="props.form.isActive ? 'active' : 'inactive'"
-                                    density="comfortable"
-                                    rounded="lg"
-                                    mandatory
-                                    class="w-100"
-                                    @update:model-value="emit('update:form', 'isActive', $event === 'active')"
-                                >
-                                    <v-btn
-                                        value="active"
-                                        :color="props.form.isActive ? 'primary' : undefined"
-                                        variant="outlined"
-                                        class="text-none flex-1-1"
-                                        prepend-icon="mdi-check-circle-outline"
-                                    >
-                                        Hoạt động
-                                    </v-btn>
-                                    <v-btn
-                                        value="inactive"
-                                        :color="!props.form.isActive ? 'error' : undefined"
-                                        variant="outlined"
-                                        class="text-none flex-1-1"
-                                        prepend-icon="mdi-close-circle-outline"
-                                    >
-                                        Ẩn
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </div>
+                        <div class="pa-4">
+                            <v-row>
+                                <v-col cols="12" md="6" class="d-flex align-center">
+                                    <v-switch
+                                        :model-value="props.form.isActive"
+                                        label="Hiển thị"
+                                        color="primary"
+                                        base-color="grey"
+                                        hide-details
+                                        inset
+                                        @update:model-value="emit('update:form', 'isActive', $event)"
+                                    />
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-number-input
+                                        :model-value="props.form.displayOrder"
+                                        control-variant="stacked"
+                                        label="Thứ tự hiển thị"
+                                        :min="0"
+                                        variant="solo-filled"
+                                        flat
+                                        density="comfortable"
+                                        hide-details="auto"
+                                        @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
+                                    />
+                                </v-col>
+                            </v-row>
                         </div>
                     </v-card>
                 </v-col>
@@ -223,6 +242,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { AppAuditHistory } from '@/components/ui'
 import { formatProductDate } from '../../utils/product.utils'
 import type { TagViewModel } from '../../models/view-models/tag.view-model'
@@ -242,6 +262,23 @@ const emit = defineEmits<{
     discard: []
     back: []
 }>()
+
+const hexRule = (v: string) =>
+    !v || /^#[0-9A-Fa-f]{6}$/.test(v) || 'Phải là mã hex hợp lệ (#RRGGBB)'
+
+const bgMenuOpen = ref(false)
+const textMenuOpen = ref(false)
+
+// v-color-picker (mode hexa) trả về dạng "#RRGGBBAA" -> cắt về 6 ký tự để khớp rule + dữ liệu lưu
+const bgPickerModel = computed({
+    get: () => props.form.colorHex || '#E0E0E0FF',
+    set: (val: string) => emit('update:form', 'colorHex', val.slice(0, 7).toUpperCase()),
+})
+
+const textPickerModel = computed({
+    get: () => props.form.textColor || '#000000FF',
+    set: (val: string) => emit('update:form', 'textColor', val.slice(0, 7).toUpperCase()),
+})
 </script>
 
 <style scoped>
@@ -255,10 +292,10 @@ const emit = defineEmits<{
 
 .color-swatch {
     flex-shrink: 0;
-    width: 46px;
-    height: 46px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
-    /* checkerboard — visible khi chưa có màu hoặc màu có alpha */
+    cursor: pointer;
     background-image:
         linear-gradient(45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
         linear-gradient(-45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
@@ -266,7 +303,6 @@ const emit = defineEmits<{
         linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%);
     background-size: 8px 8px;
     background-position: 0 0, 0 4px, 4px -4px, -4px 0;
-    /* contrast boundary: white inner ring + dark outer ring */
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.7),
         0 0 0 2px rgba(0, 0, 0, 0.15);

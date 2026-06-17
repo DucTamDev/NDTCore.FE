@@ -11,9 +11,6 @@
       <v-select
         :model-value="pageSize"
         :items="pageSizeItems"
-        density="compact"
-        variant="outlined"
-        hide-details
         style="min-width: 120px; max-width: 140px"
         @update:model-value="emit(APP_PAGINATION_EMIT.UPDATE_PAGE_SIZE, $event)"
       />
@@ -23,8 +20,6 @@
       :model-value="pageNumber"
       :length="totalPages"
       :total-visible="5"
-      density="compact"
-      rounded="circle"
       @update:model-value="emit(APP_PAGINATION_EMIT.UPDATE_PAGE_NUMBER, $event)"
     />
   </div>

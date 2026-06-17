@@ -47,11 +47,10 @@
     <div class="pa-5">
       <v-row>
         <!-- ── Thông tin cơ bản ──────────────────────────────── -->
-        <v-col cols="12" md="6">
+        <v-col cols="12">
           <v-card
             elevation="0"
             rounded="lg"
-            height="100%"
             :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
           >
             <v-list-item class="bg-surface-variant py-3">
@@ -70,61 +69,62 @@
 
             <v-divider />
 
-            <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field
-                :model-value="props.form.name"
-                label="Tên thương hiệu *"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                :error-messages="props.errors.name ? [props.errors.name] : []"
-                prepend-inner-icon="mdi-tag-outline"
-                @update:model-value="emit('update:form', 'name', $event)"
-              />
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :model-value="props.form.name"
+                    label="Tên thương hiệu *"
+                    variant="solo-filled"
+                    flat
+                    :error-messages="props.errors.name ? [props.errors.name] : []"
+                    @update:model-value="emit('update:form', 'name', $event)"
+                  />
+                </v-col>
 
-              <v-text-field
-                :model-value="props.form.legalName"
-                label="Tên pháp nhân"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-office-building-outline"
-                clearable
-                @update:model-value="emit('update:form', 'legalName', $event || null)"
-              />
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :model-value="props.entity.code"
+                    label="Mã thương hiệu"
+                    variant="solo-filled"
+                    flat
+                    readonly
+                    hint="Mã thương hiệu không thể thay đổi"
+                    persistent-hint
+                  />
+                </v-col>
 
-              <v-text-field
-                :model-value="props.form.taxCode"
-                label="Mã số thuế"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-file-document-outline"
-                clearable
-                @update:model-value="emit('update:form', 'taxCode', $event || null)"
-              />
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :model-value="props.form.legalName"
+                    label="Tên pháp nhân"
+                    variant="solo-filled"
+                    flat
+                    clearable
+                    @update:model-value="emit('update:form', 'legalName', $event || null)"
+                  />
+                </v-col>
 
-              <v-text-field
-                :model-value="props.entity.code"
-                label="Mã thương hiệu"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-pound"
-                readonly
-                hint="Mã thương hiệu không thể thay đổi"
-                persistent-hint
-              />
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :model-value="props.form.taxCode"
+                    label="Mã số thuế"
+                    variant="solo-filled"
+                    flat
+                    clearable
+                    @update:model-value="emit('update:form', 'taxCode', $event || null)"
+                  />
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-col>
 
         <!-- ── Cài đặt ─────────────────────────────────────────── -->
-        <v-col cols="12" md="6">
+        <v-col cols="12">
           <v-card
             elevation="0"
             rounded="lg"
-            height="100%"
             :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
           >
             <v-list-item class="bg-surface-variant py-3">
@@ -143,37 +143,20 @@
 
             <v-divider />
 
-            <div class="pa-4 d-flex flex-column ga-4">
-              <div>
-                <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>
-                <v-btn-toggle
-                  :model-value="props.form.isActive ? 'active' : 'inactive'"
-                  density="comfortable"
-                  rounded="lg"
-                  mandatory
-                  class="w-100"
-                  @update:model-value="emit('update:form', 'isActive', $event === 'active')"
-                >
-                  <v-btn
-                    value="active"
-                    :color="props.form.isActive ? 'primary' : undefined"
-                    variant="outlined"
-                    class="text-none flex-1-1"
-                    prepend-icon="mdi-check-circle-outline"
-                  >
-                    Đang hoạt động
-                  </v-btn>
-                  <v-btn
-                    value="inactive"
-                    :color="!props.form.isActive ? 'error' : undefined"
-                    variant="outlined"
-                    class="text-none flex-1-1"
-                    prepend-icon="mdi-close-circle-outline"
-                  >
-                    Ngưng hoạt động
-                  </v-btn>
-                </v-btn-toggle>
-              </div>
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12" md="6" class="d-flex align-center">
+                  <v-switch
+                    :model-value="props.form.isActive"
+                    label="Đang hoạt động"
+                    color="primary"
+                    base-color="grey"
+                    hide-details
+                    inset
+                    @update:model-value="emit('update:form', 'isActive', $event)"
+                  />
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-col>

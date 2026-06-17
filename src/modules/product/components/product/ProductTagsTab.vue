@@ -7,40 +7,38 @@
             </v-btn>
         </div>
 
-        <v-card variant="outlined" rounded="lg">
-            <AppDataTable
-                :items="(tags as Record<string, unknown>[])"
-                :columns="TAG_ASSIGNED_COLUMNS"
-                :loading="isLoading"
-                item-key="TagId"
-            >
-                <template #[`item.actions`]="{ item }">
-                    <div class="d-flex justify-end" @click.stop>
-                        <v-tooltip text="Gỡ tag" location="top">
-                            <template #activator="{ props: tp }">
-                                <v-btn
-                                    v-bind="tp"
-                                    icon="mdi-tag-off-outline"
-                                    color="error"
-                                    size="small"
-                                    variant="text"
-                                    :disabled="isSubmitting"
-                                    @click="openConfirm(Number(item['TagId']))"
-                                />
-                            </template>
-                        </v-tooltip>
-                    </div>
-                </template>
+        <AppDataTable
+            :items="(tags as Record<string, unknown>[])"
+            :columns="TAG_ASSIGNED_COLUMNS"
+            :loading="isLoading"
+            item-key="TagId"
+        >
+            <template #[`item.actions`]="{ item }">
+                <div class="d-flex justify-end" @click.stop>
+                    <v-tooltip text="Gỡ tag" location="top">
+                        <template #activator="{ props: tp }">
+                            <v-btn
+                                v-bind="tp"
+                                icon="mdi-tag-off-outline"
+                                color="error"
+                                size="small"
+                                variant="text"
+                                :disabled="isSubmitting"
+                                @click="openConfirm(Number(item['TagId']))"
+                            />
+                        </template>
+                    </v-tooltip>
+                </div>
+            </template>
 
-                <template #empty>
-                    <AppEmptyState
-                        icon="mdi-tag-off-outline"
-                        title="Chưa có tag nào được gán"
-                        description="Nhấn 'Gán tag' để thêm tag cho sản phẩm."
-                    />
-                </template>
-            </AppDataTable>
-        </v-card>
+            <template #empty>
+                <AppEmptyState
+                    icon="mdi-tag-off-outline"
+                    title="Chưa có tag nào được gán"
+                    description="Nhấn 'Gán tag' để thêm tag cho sản phẩm."
+                />
+            </template>
+        </AppDataTable>
 
         <!-- Assign dialog -->
         <AppDialog v-model="showAssign" title="Gán tag" :hide-actions="true" size="sm">

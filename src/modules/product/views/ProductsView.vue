@@ -18,7 +18,7 @@
         </AppPageHeader>
 
         <!-- Filter bar -->
-        <v-card rounded="lg" variant="outlined">
+        <v-card rounded="lg" elevation="1">
             <v-card-text class="pa-3">
                 <v-row dense align="center">
                     <v-col cols="12" md="3">
@@ -60,9 +60,8 @@
                     </v-col>
                     <v-col cols="12" md="3" class="d-flex justify-end ga-2">
                         <v-btn
-                            :style="{ visibility: hasActiveFilters ? 'visible' : 'hidden' }"
+                            :disabled="!hasActiveFilters"
                             variant="text"
-                            size="small"
                             prepend-icon="mdi-filter-remove-outline"
                             @click="clearFilters"
                         >
@@ -70,8 +69,6 @@
                         </v-btn>
                         <v-btn
                             color="primary"
-                            variant="tonal"
-                            size="small"
                             prepend-icon="mdi-magnify"
                             @click="onSearchClick"
                         >

@@ -20,11 +20,26 @@
                     flat
                 >
                     <template #append-inner>
-                        <div
-                            v-if="form.colorHex"
-                            class="rounded"
-                            :style="{ background: form.colorHex, width: '20px', height: '20px', border: '1px solid rgba(0,0,0,0.2)' }"
-                        />
+                        <v-menu
+                            v-model="bgMenuOpen"
+                            :close-on-content-click="false"
+                            location="bottom end"
+                        >
+                            <template #activator="{ props: menuProps }">
+                                <div
+                                    v-bind="menuProps"
+                                    class="rounded color-swatch"
+                                    :style="{ background: form.colorHex || '#E0E0E0' }"
+                                />
+                            </template>
+                            <v-color-picker
+                                v-model="bgPickerModel"
+                                mode="hexa"
+                                hide-inputs
+                                show-swatches
+                                swatches-max-height="120"
+                            />
+                        </v-menu>
                     </template>
                 </v-text-field>
             </v-col>
@@ -38,11 +53,26 @@
                     flat
                 >
                     <template #append-inner>
-                        <div
-                            v-if="form.textColor"
-                            class="rounded"
-                            :style="{ background: form.textColor, width: '20px', height: '20px', border: '1px solid rgba(0,0,0,0.2)' }"
-                        />
+                        <v-menu
+                            v-model="textMenuOpen"
+                            :close-on-content-click="false"
+                            location="bottom end"
+                        >
+                            <template #activator="{ props: menuProps }">
+                                <div
+                                    v-bind="menuProps"
+                                    class="rounded color-swatch"
+                                    :style="{ background: form.textColor || '#000000' }"
+                                />
+                            </template>
+                            <v-color-picker
+                                v-model="textPickerModel"
+                                mode="hexa"
+                                hide-inputs
+                                show-swatches
+                                swatches-max-height="120"
+                            />
+                        </v-menu>
                     </template>
                 </v-text-field>
             </v-col>
@@ -78,7 +108,7 @@
 
         <div class="d-flex justify-end gap-2 pt-4">
             <v-btn variant="text" @click="emit('cancel')">Hủy</v-btn>
-            <v-btn type="submit" color="primary" :loading="isSubmitting">
+            <v-btn type="submit" color="primary">
                 {{ isEditMode ? 'Cập nhật' : 'Tạo mới' }}
             </v-btn>
         </div>
@@ -116,8 +146,35 @@ const { rules } = useFormValidation()
 const hexRule = (v: string) =>
     !v || /^#[0-9A-Fa-f]{6}$/.test(v) || 'Phải là mã hex hợp lệ (#RRGGBB)'
 
+const bgMenuOpen = ref(false)
+const textMenuOpen = ref(false)
+
+// v-color-picker (mode hexa) trả về dạng "#RRGGBBAA" -> cắt về 6 ký tự để khớp rule + dữ liệu lưu
+const bgPickerModel = computed({
+    get: () => form.value.colorHex || '#E0E0E0FF',
+    set: (val: string) => {
+        form.value = { ...form.value, colorHex: val.slice(0, 7).toUpperCase() }
+    },
+})
+
+const textPickerModel = computed({
+    get: () => form.value.textColor || '#000000FF',
+    set: (val: string) => {
+        form.value = { ...form.value, textColor: val.slice(0, 7).toUpperCase() }
+    },
+})
+
 async function onSubmit() {
     const { valid } = await formRef.value?.validate()
     if (valid) emit('submit', form.value)
 }
 </script>
+
+<style scoped>
+.color-swatch {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+</style>

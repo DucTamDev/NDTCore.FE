@@ -26,7 +26,12 @@
         @search="emit(FRANCHISEE_LIST_EMIT.SEARCH)"
       />
       <template #actions>
-        <v-btn variant="text" prepend-icon="mdi-filter-off-outline" @click="emit(FRANCHISEE_LIST_EMIT.RESET)">
+        <v-btn
+          :disabled="!hasActiveFilters"
+          variant="text"
+          prepend-icon="mdi-filter-remove-outline"
+          @click="emit(FRANCHISEE_LIST_EMIT.RESET)"
+        >
           Xóa lọc
         </v-btn>
         <v-btn color="primary" prepend-icon="mdi-magnify" @click="emit(FRANCHISEE_LIST_EMIT.SEARCH)">
@@ -140,6 +145,7 @@ defineProps<{
   totalPages: number
   totalItems: number
   activeFilters: ActiveFilters
+  hasActiveFilters: boolean
   filterFields: FilterField[]
   sortBy: SortState | null
 }>()

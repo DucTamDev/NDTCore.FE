@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4" variant="outlined">
+  <v-card class="pa-4">
     <div class="d-flex flex-wrap align-start ga-3">
       <slot />
     </div>

@@ -34,7 +34,7 @@
 
     <v-row v-else dense>
       <v-col v-for="store in stores" :key="store.id" cols="12" sm="6" md="4">
-        <v-card rounded="lg" border class="d-flex flex-column h-100">
+        <v-card rounded="lg" border elevation="3" class="d-flex flex-column h-100">
           <v-card-text class="flex-grow-1 pa-4">
             <div class="d-flex align-start ga-3">
               <v-avatar

@@ -6,58 +6,56 @@
             </v-btn>
         </div>
 
-        <v-card variant="outlined" rounded="lg">
-            <AppDataTable
-                :items="(items as Record<string, unknown>[])"
-                :columns="STORE_OVERRIDE_LIST_COLUMNS"
-                :loading="isLoading"
-                item-key="StoreId"
-            >
-                <template #[`item.IsAvailable`]="{ item }">
-                    <template v-if="item['IsAvailable'] != null">
-                        <v-icon
-                            :color="item['IsAvailable'] ? 'success' : 'error'"
-                            :icon="item['IsAvailable'] ? 'mdi-check-circle' : 'mdi-close-circle'"
-                        />
-                    </template>
-                    <span v-else class="text-medium-emphasis text-caption">—</span>
-                </template>
-
-                <template #[`item.OverridePrice`]="{ item }">
-                    <span v-if="item['OverridePrice'] != null">
-                        {{ Number(item['OverridePrice']).toLocaleString('vi-VN') }} ₫
-                    </span>
-                    <span v-else class="text-medium-emphasis text-caption">—</span>
-                </template>
-
-                <template #[`item.actions`]="{ item }">
-                    <AppRowActions
-                        :actions="STORE_OVERRIDE_ROW_ACTIONS"
-                        :item="item"
-                        @action="(key) => onRowAction(key, item)"
+        <AppDataTable
+            :items="(items as Record<string, unknown>[])"
+            :columns="STORE_OVERRIDE_LIST_COLUMNS"
+            :loading="isLoading"
+            item-key="StoreId"
+        >
+            <template #[`item.IsAvailable`]="{ item }">
+                <template v-if="item['IsAvailable'] != null">
+                    <v-icon
+                        :color="item['IsAvailable'] ? 'success' : 'error'"
+                        :icon="item['IsAvailable'] ? 'mdi-check-circle' : 'mdi-close-circle'"
                     />
                 </template>
+                <span v-else class="text-medium-emphasis text-caption">—</span>
+            </template>
 
-                <template #empty>
-                    <AppEmptyState
-                        icon="mdi-store-off-outline"
-                        title="Chưa có override cửa hàng"
-                        description="Nhấn 'Thêm cửa hàng' để cấu hình override cho cửa hàng."
-                    />
-                </template>
-            </AppDataTable>
+            <template #[`item.OverridePrice`]="{ item }">
+                <span v-if="item['OverridePrice'] != null">
+                    {{ Number(item['OverridePrice']).toLocaleString('vi-VN') }} ₫
+                </span>
+                <span v-else class="text-medium-emphasis text-caption">—</span>
+            </template>
 
-            <v-divider />
+            <template #[`item.actions`]="{ item }">
+                <AppRowActions
+                    :actions="STORE_OVERRIDE_ROW_ACTIONS"
+                    :item="item"
+                    @action="(key) => onRowAction(key, item)"
+                />
+            </template>
 
-            <AppPagination
-                :page-number="pageNumber"
-                :page-size="pageSize"
-                :total-pages="totalPages"
-                :total-items="totalItems"
-                @update:page-number="onPageChange"
-                @update:page-size="onPageSizeChange"
-            />
-        </v-card>
+            <template #empty>
+                <AppEmptyState
+                    icon="mdi-store-off-outline"
+                    title="Chưa có override cửa hàng"
+                    description="Nhấn 'Thêm cửa hàng' để cấu hình override cho cửa hàng."
+                />
+            </template>
+        </AppDataTable>
+
+        <v-divider />
+
+        <AppPagination
+            :page-number="pageNumber"
+            :page-size="pageSize"
+            :total-pages="totalPages"
+            :total-items="totalItems"
+            @update:page-number="onPageChange"
+            @update:page-size="onPageSizeChange"
+        />
 
         <!-- Add / Edit dialog -->
         <AppDialog

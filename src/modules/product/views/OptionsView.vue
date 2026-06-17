@@ -49,9 +49,8 @@
                     </v-col>
                     <v-col cols="12" md="4" class="d-flex justify-end ga-2">
                         <v-btn
-                            :style="{ visibility: hasActiveFilters ? 'visible' : 'hidden' }"
+                            :disabled="!hasActiveFilters"
                             variant="text"
-                            size="small"
                             prepend-icon="mdi-filter-remove-outline"
                             @click="clearFilters"
                         >
@@ -59,8 +58,6 @@
                         </v-btn>
                         <v-btn
                             color="primary"
-                            variant="tonal"
-                            size="small"
                             prepend-icon="mdi-magnify"
                             @click="onSearchClick"
                         >

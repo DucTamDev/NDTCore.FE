@@ -2,9 +2,6 @@
     <v-form ref="formRef" @submit.prevent="onSubmit">
         <v-row>
             <v-col cols="12">
-                <AppImageInput v-model="form.imageUrl" />
-            </v-col>
-            <v-col cols="12">
                 <v-text-field
                     v-model="form.name"
                     label="Tên option *"
@@ -72,7 +69,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useFormValidation } from '@/composables/useFormValidation'
-import { AppCurrencyField, AppImageInput } from '@/components/ui'
+import { AppCurrencyField } from '@/components/ui'
 import type { OptionFormModel } from '../../models/form-models/option.model'
 
 interface Props {

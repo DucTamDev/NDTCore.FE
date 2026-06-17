@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div>
         <!-- Toolbar -->
         <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
@@ -44,11 +44,10 @@
         <div class="pa-4">
             <v-row>
                 <!-- Thông tin cơ bản -->
-                <v-col cols="12" md="6">
+                <v-col cols="12">
                     <v-card
                         elevation="0"
                         rounded="lg"
-                        height="100%"
                         :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
                     >
                         <v-list-item class="bg-surface-variant py-3">
@@ -65,47 +64,53 @@
                             <v-list-item-title class="font-weight-semibold">Thông tin cơ bản</v-list-item-title>
                         </v-list-item>
                         <v-divider />
-                        <div class="pa-4 d-flex flex-column ga-4">
-                            <v-text-field
-                                :model-value="props.form.name"
-                                label="Tên option *"
-                                :error-messages="props.errors.name ? [props.errors.name] : []"
-                                density="comfortable"
-                                variant="outlined"
-                                color="primary"
-                                @update:model-value="emit('update:form', 'name', $event)"
-                            />
-                            <v-autocomplete
-                                :model-value="props.form.groupId"
-                                :items="props.groupOptions"
-                                item-value="id"
-                                item-title="name"
-                                label="Nhóm"
-                                density="comfortable"
-                                variant="outlined"
-                                color="primary"
-                                readonly
-                            />
-                            <v-number-input
-                                :model-value="props.form.price"
-                                control-variant="stacked"
-                                label="Giá mặc định"
-                                :min="0"
-                                density="comfortable"
-                                variant="outlined"
-                                color="primary"
-                                @update:model-value="(v) => emit('update:form', 'price', v ?? 0)"
-                            />
+                        <div class="pa-4">
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field
+                                        :model-value="props.form.name"
+                                        label="Tên option *"
+                                        variant="solo-filled"
+                                        flat
+                                        :error-messages="props.errors.name ? [props.errors.name] : []"
+                                        @update:model-value="emit('update:form', 'name', $event)"
+                                    />
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-autocomplete
+                                        :model-value="props.form.groupId"
+                                        :items="props.groupOptions"
+                                        item-value="id"
+                                        item-title="name"
+                                        label="Nhóm"
+                                        variant="solo-filled"
+                                        flat
+                                        readonly
+                                    />
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-number-input
+                                        :model-value="props.form.price"
+                                        control-variant="stacked"
+                                        label="Giá mặc định"
+                                        :min="0"
+                                        variant="solo-filled"
+                                        flat
+                                        density="comfortable"
+                                        hide-details="auto"
+                                        @update:model-value="(v) => emit('update:form', 'price', v ?? 0)"
+                                    />
+                                </v-col>
+                            </v-row>
                         </div>
                     </v-card>
                 </v-col>
 
                 <!-- Cài đặt -->
-                <v-col cols="12" md="6">
+                <v-col cols="12">
                     <v-card
                         elevation="0"
                         rounded="lg"
-                        height="100%"
                         :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
                     >
                         <v-list-item class="bg-surface-variant py-3">
@@ -122,47 +127,33 @@
                             <v-list-item-title class="font-weight-semibold">Cài đặt</v-list-item-title>
                         </v-list-item>
                         <v-divider />
-                        <div class="pa-4 d-flex flex-column ga-4">
-                            <v-number-input
-                                :model-value="props.form.displayOrder"
-                                control-variant="stacked"
-                                label="Thứ tự hiển thị"
-                                :min="0"
-                                density="comfortable"
-                                variant="outlined"
-                                color="primary"
-                                @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
-                            />
-                            <div>
-                                <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>
-                                <v-btn-toggle
-                                    :model-value="props.form.isActive ? 'active' : 'inactive'"
-                                    density="comfortable"
-                                    rounded="lg"
-                                    mandatory
-                                    class="w-100"
-                                    @update:model-value="emit('update:form', 'isActive', $event === 'active')"
-                                >
-                                    <v-btn
-                                        value="active"
-                                        :color="props.form.isActive ? 'primary' : undefined"
-                                        variant="outlined"
-                                        class="text-none flex-1-1"
-                                        prepend-icon="mdi-check-circle-outline"
-                                    >
-                                        Hoạt động
-                                    </v-btn>
-                                    <v-btn
-                                        value="inactive"
-                                        :color="!props.form.isActive ? 'error' : undefined"
-                                        variant="outlined"
-                                        class="text-none flex-1-1"
-                                        prepend-icon="mdi-close-circle-outline"
-                                    >
-                                        Ẩn
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </div>
+                        <div class="pa-4">
+                            <v-row>
+                                <v-col cols="12" md="6" class="d-flex align-center">
+                                    <v-switch
+                                        :model-value="props.form.isActive"
+                                        label="Hiển thị"
+                                        color="primary"
+                                        base-color="grey"
+                                        hide-details
+                                        inset
+                                        @update:model-value="emit('update:form', 'isActive', $event)"
+                                    />
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-number-input
+                                        :model-value="props.form.displayOrder"
+                                        control-variant="stacked"
+                                        label="Thứ tự hiển thị"
+                                        :min="0"
+                                        variant="solo-filled"
+                                        flat
+                                        density="comfortable"
+                                        hide-details="auto"
+                                        @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
+                                    />
+                                </v-col>
+                            </v-row>
                         </div>
                     </v-card>
                 </v-col>

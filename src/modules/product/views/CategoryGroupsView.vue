@@ -31,17 +31,24 @@
                             hide-details
                             clearable
                             persistent-clear
+                            @keyup.enter="onSearchClick"
                         />
                     </v-col>
-                    <v-col cols="12" md="4" class="d-flex justify-end">
+                    <v-col cols="12" md="4" class="d-flex justify-end ga-2">
                         <v-btn
-                            :style="{ visibility: filterKeyword ? 'visible' : 'hidden' }"
-                            variant="text"
-                            size="small"
+                            :disabled="!(filterKeyword || appliedKeyword)"
                             prepend-icon="mdi-filter-remove-outline"
-                            @click="filterKeyword = ''"
+                            variant="text"
+                            @click="clearFilters"
                         >
                             Xóa lọc
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            prepend-icon="mdi-magnify"
+                            @click="onSearchClick"
+                        >
+                            Tìm kiếm
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -104,16 +111,26 @@ const categoryStore = useCategoryStore()
 
 const loading = ref(false)
 const filterKeyword = ref('')
+const appliedKeyword = ref('')
 const dialogOpen = ref(false)
 const formModel = ref<CategoryFormModel>(emptyForm())
 const confirmOpen = ref(false)
 const confirmItem = ref<CategoryViewModel | null>(null)
 
 const filteredItems = computed(() => {
-    const kw = filterKeyword.value.trim().toLowerCase()
+    const kw = appliedKeyword.value.trim().toLowerCase()
     if (!kw) return categoryStore.parentItems
     return categoryStore.parentItems.filter((c) => c.name.toLowerCase().includes(kw))
 })
+
+function onSearchClick() {
+    appliedKeyword.value = filterKeyword.value
+}
+
+function clearFilters() {
+    filterKeyword.value = ''
+    appliedKeyword.value = ''
+}
 
 function openCreateDialog() {
     formModel.value = emptyForm()

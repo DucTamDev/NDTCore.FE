@@ -45,8 +45,7 @@ const getFieldValue = (key: string): string | null => {
         :label="field.label"
         :placeholder="field.placeholder"
         density="compact"
-        variant="outlined"
-        hide-details
+        hide-details="auto"
         clearable
         persistent-clear
         style="min-width: 180px; max-width: 280px; flex: 0 0 auto"
@@ -63,8 +62,7 @@ const getFieldValue = (key: string): string | null => {
         item-value="value"
         :label="field.label"
         density="compact"
-        variant="outlined"
-        hide-details
+        hide-details="auto"
         style="min-width: 160px; max-width: 240px; flex: 0 0 auto"
         @update:model-value="update(field.key, $event ?? null)"
       />
@@ -78,8 +76,7 @@ const getFieldValue = (key: string): string | null => {
         item-value="value"
         :label="field.label"
         density="compact"
-        variant="outlined"
-        hide-details
+        hide-details="auto"
         multiple
         chips
         closable-chips
@@ -94,8 +91,7 @@ const getFieldValue = (key: string): string | null => {
         :label="field.label"
         type="date"
         density="compact"
-        variant="outlined"
-        hide-details
+        hide-details="auto"
         clearable
         persistent-clear
         style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
@@ -109,8 +105,7 @@ const getFieldValue = (key: string): string | null => {
           :label="`${field.label} từ`"
           type="date"
           density="compact"
-          variant="outlined"
-          hide-details
+          hide-details="auto"
           clearable
           persistent-clear
           style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
@@ -121,8 +116,7 @@ const getFieldValue = (key: string): string | null => {
           :label="`${field.label} đến`"
           type="date"
           density="compact"
-          variant="outlined"
-          hide-details
+          hide-details="auto"
           clearable
           persistent-clear
           style="min-width: 160px; max-width: 200px; flex: 0 0 auto"

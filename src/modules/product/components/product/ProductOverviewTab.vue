@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div>
     <!-- Toolbar -->
     <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
@@ -46,11 +46,10 @@
     <div class="pa-5">
       <v-row>
         <!-- Thông tin cơ bản -->
-        <v-col cols="12" md="8">
+        <v-col cols="12">
           <v-card
             elevation="0"
             rounded="lg"
-            height="100%"
             :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
           >
             <v-list-item class="bg-surface-variant py-3">
@@ -69,190 +68,200 @@
 
             <v-divider />
 
-            <div class="pa-4 d-flex flex-column ga-4">
-              <v-text-field
-                :model-value="props.form.name"
-                label="Tên sản phẩm *"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-package-variant-closed"
-                :error-messages="props.errors.name ? [props.errors.name] : []"
-                @update:model-value="emit('update:form', 'name', $event)"
-              />
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    :model-value="props.form.name"
+                    label="Tên sản phẩm *"
+                    variant="solo-filled"
+                    flat
+                    :error-messages="props.errors.name ? [props.errors.name] : []"
+                    @update:model-value="emit('update:form', 'name', $event)"
+                  />
+                </v-col>
 
-              <v-text-field
-                :model-value="props.form.sku"
-                label="SKU *"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-barcode-scan"
-                readonly
-                hint="Không thể thay đổi sau khi tạo"
-                persistent-hint
-              />
+                <v-col cols="12" md="6">
+                  <v-autocomplete
+                    :model-value="props.form.categoryId"
+                    :items="props.categoryOptions"
+                    item-value="id"
+                    item-title="name"
+                    label="Danh mục"
+                    variant="solo-filled"
+                    flat
+                    clearable
+                    @update:model-value="emit('update:form', 'categoryId', $event ?? null)"
+                  />
+                </v-col>
 
-              <v-text-field
-                :model-value="props.form.slug"
-                label="Slug"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-link-variant"
-                clearable
-                @update:model-value="emit('update:form', 'slug', $event ?? '')"
-              />
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :model-value="props.form.sku"
+                    label="SKU"
+                    variant="solo-filled"
+                    flat
+                    readonly
+                    hint="Không thể thay đổi sau khi tạo"
+                    persistent-hint
+                  />
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-col>
 
-              <v-autocomplete
-                :model-value="props.form.categoryId"
-                :items="props.categoryOptions"
-                item-value="id"
-                item-title="name"
-                label="Danh mục"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-tag-multiple-outline"
-                clearable
-                @update:model-value="emit('update:form', 'categoryId', $event ?? null)"
-              />
+        <!-- Giá bán -->
+        <v-col cols="12">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
+            <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet
+                  rounded="md"
+                  width="32"
+                  height="32"
+                  class="d-flex align-center justify-center mr-1"
+                >
+                  <v-icon icon="mdi-currency-usd" size="16" color="primary" />
+                </v-sheet>
+              </template>
+              <v-list-item-title class="font-weight-semibold">Giá bán</v-list-item-title>
+            </v-list-item>
 
+            <v-divider />
+
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-number-input
+                    :model-value="props.form.regularPrice"
+                    control-variant="stacked"
+                    label="Giá bán *"
+                    :min="0"
+                    variant="solo-filled"
+                    flat
+                    density="comfortable"
+                    hide-details="auto"
+                    :error-messages="props.errors.regularPrice ? [props.errors.regularPrice] : []"
+                    @update:model-value="(v) => emit('update:form', 'regularPrice', v ?? 0)"
+                  />
+                </v-col>
+
+                <v-col cols="12" md="6">
+                  <v-number-input
+                    :model-value="props.form.costPrice ?? undefined"
+                    control-variant="stacked"
+                    label="Giá vốn"
+                    :min="0"
+                    variant="solo-filled"
+                    flat
+                    density="comfortable"
+                    hide-details="auto"
+                    @update:model-value="(v) => emit('update:form', 'costPrice', v ?? null)"
+                  />
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Cài đặt -->
+        <v-col cols="12">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
+            <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet
+                  rounded="md"
+                  width="32"
+                  height="32"
+                  class="d-flex align-center justify-center mr-1"
+                >
+                  <v-icon icon="mdi-cog-outline" size="16" color="primary" />
+                </v-sheet>
+              </template>
+              <v-list-item-title class="font-weight-semibold">Cài đặt</v-list-item-title>
+            </v-list-item>
+
+            <v-divider />
+
+            <div class="pa-4">
+              <v-row>
+                <v-col cols="12" md="6" class="d-flex align-center">
+                  <v-switch
+                    :model-value="props.form.isActive"
+                    label="Hiển thị"
+                    color="primary"
+                    base-color="grey"
+                    hide-details
+                    inset
+                    @update:model-value="emit('update:form', 'isActive', $event)"
+                  />
+                </v-col>
+
+                <v-col cols="12" md="6">
+                  <v-number-input
+                    :model-value="props.form.displayOrder"
+                    control-variant="stacked"
+                    label="Thứ tự hiển thị"
+                    :min="0"
+                    variant="solo-filled"
+                    flat
+                    density="comfortable"
+                    hide-details="auto"
+                    @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
+                  />
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Mô tả sản phẩm -->
+        <v-col cols="12">
+          <v-card
+            elevation="0"
+            rounded="lg"
+            :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
+          >
+            <v-list-item class="bg-surface-variant py-3">
+              <template #prepend>
+                <v-sheet
+                  rounded="md"
+                  width="32"
+                  height="32"
+                  class="d-flex align-center justify-center mr-1"
+                >
+                  <v-icon icon="mdi-text-long" size="16" color="primary" />
+                </v-sheet>
+              </template>
+              <v-list-item-title class="font-weight-semibold">Mô tả sản phẩm</v-list-item-title>
+            </v-list-item>
+
+            <v-divider />
+
+            <div class="pa-4">
               <v-textarea
-                :model-value="props.form.shortDescription"
-                label="Mô tả ngắn"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                rows="2"
-                clearable
-                @update:model-value="emit('update:form', 'shortDescription', $event ?? '')"
+                :model-value="props.form.description"
+                label="Mô tả chi tiết"
+                variant="solo-filled"
+                flat
+                rows="4"
+                no-resize
+                @update:model-value="emit('update:form', 'description', $event ?? '')"
               />
             </div>
           </v-card>
         </v-col>
 
-        <!-- Giá & Cài đặt -->
-        <v-col cols="12" md="4">
-          <div class="d-flex flex-column ga-4">
-            <!-- Giá -->
-            <v-card
-              elevation="0"
-              rounded="lg"
-              :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
-            >
-              <v-list-item class="bg-surface-variant py-3">
-                <template #prepend>
-                  <v-sheet
-                    rounded="md"
-                    width="32"
-                    height="32"
-                    class="d-flex align-center justify-center mr-1"
-                  >
-                    <v-icon icon="mdi-currency-usd" size="16" color="primary" />
-                  </v-sheet>
-                </template>
-                <v-list-item-title class="font-weight-semibold">Giá</v-list-item-title>
-              </v-list-item>
-
-              <v-divider />
-
-              <div class="pa-4 d-flex flex-column ga-4">
-                <v-number-input
-                  :model-value="props.form.regularPrice"
-                  control-variant="stacked"
-                  label="Giá gốc *"
-                  :min="0"
-                  variant="outlined"
-                  color="primary"
-                  density="comfortable"
-                  :error-messages="props.errors.regularPrice ? [props.errors.regularPrice] : []"
-                  @update:model-value="(v) => emit('update:form', 'regularPrice', v ?? 0)"
-                />
-
-                <v-number-input
-                  :model-value="props.form.costPrice ?? undefined"
-                  control-variant="stacked"
-                  label="Giá vốn"
-                  :min="0"
-                  variant="outlined"
-                  color="primary"
-                  density="comfortable"
-                  @update:model-value="(v) => emit('update:form', 'costPrice', v ?? null)"
-                />
-              </div>
-            </v-card>
-
-            <!-- Cài đặt -->
-            <v-card
-              elevation="0"
-              rounded="lg"
-              :class="['info-card', props.isDirty ? 'info-card--dirty' : '']"
-            >
-              <v-list-item class="bg-surface-variant py-3">
-                <template #prepend>
-                  <v-sheet
-                    rounded="md"
-                    width="32"
-                    height="32"
-                    class="d-flex align-center justify-center mr-1"
-                  >
-                    <v-icon icon="mdi-cog-outline" size="16" color="primary" />
-                  </v-sheet>
-                </template>
-                <v-list-item-title class="font-weight-semibold">Cài đặt</v-list-item-title>
-              </v-list-item>
-
-              <v-divider />
-
-              <div class="pa-4 d-flex flex-column ga-4">
-                <div>
-                  <div class="text-caption text-medium-emphasis mb-2 ml-1">Trạng thái</div>
-                  <v-btn-toggle
-                    :model-value="props.form.isActive ? 'active' : 'inactive'"
-                    density="comfortable"
-                    rounded="lg"
-                    mandatory
-                    class="w-100"
-                    @update:model-value="emit('update:form', 'isActive', $event === 'active')"
-                  >
-                    <v-btn
-                      value="active"
-                      :color="props.form.isActive ? 'primary' : undefined"
-                      variant="outlined"
-                      class="text-none flex-1-1"
-                      prepend-icon="mdi-check-circle-outline"
-                    >
-                      Đang bán
-                    </v-btn>
-                    <v-btn
-                      value="inactive"
-                      :color="!props.form.isActive ? 'error' : undefined"
-                      variant="outlined"
-                      class="text-none flex-1-1"
-                      prepend-icon="mdi-close-circle-outline"
-                    >
-                      Ngừng bán
-                    </v-btn>
-                  </v-btn-toggle>
-                </div>
-
-                <v-number-input
-                  :model-value="props.form.displayOrder"
-                  control-variant="stacked"
-                  label="Thứ tự"
-                  :min="0"
-                  variant="outlined"
-                  color="primary"
-                  density="comfortable"
-                  @update:model-value="(v) => emit('update:form', 'displayOrder', v ?? 0)"
-                />
-              </div>
-            </v-card>
-          </div>
-        </v-col>
-
-        <!-- Lịch sử -->
+        <!-- Lịch sử hệ thống -->
         <v-col cols="12">
           <AppAuditHistory
             :created-at="props.entity.createdAt"
@@ -288,17 +297,6 @@ const emit = defineEmits<{
   discard: []
   back: []
 }>()
-
-function toNumber(v: unknown): number {
-  const n = Number(v)
-  return isNaN(n) ? 0 : n
-}
-
-function toNullableNumber(v: unknown): number | null {
-  if (v === null || v === undefined || v === '') return null
-  const n = Number(v)
-  return isNaN(n) ? null : n
-}
 </script>
 
 <style scoped>
