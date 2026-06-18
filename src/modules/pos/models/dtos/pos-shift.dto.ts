@@ -2,6 +2,10 @@ export interface PosStoreStatusDto {
     StoreId: number
     StoreName: string
     LogoUrl: string | null
+    Address: string | null
+    City: string | null
+    District: string | null
+    Province: string | null
     IsAcceptingOrders: boolean
     HasOpenShift: boolean
     ShiftId: number | null

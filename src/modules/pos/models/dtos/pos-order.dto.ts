@@ -48,3 +48,53 @@ export interface PosOrderHistoryItemDto {
     ItemSummary: string
     CreatedAt: string
 }
+
+export interface GetOrderItemOptionDto {
+    Id: number
+    OptionId: number
+    GroupName: string | null
+    OptionName: string
+    Price: number
+}
+
+export interface GetOrderItemDto {
+    Id: number
+    ProductId: number
+    ProductCode: string
+    ProductName: string
+    RegularPrice: number
+    OptionsAmount: number
+    SalePrice: number
+    Quantity: number
+    LineAmount: number
+    DiscountAmount: number
+    LineNetAmount: number
+    Note: string | null
+    Options: GetOrderItemOptionDto[]
+}
+
+export interface GetOrderDetailDto {
+    Id: number
+    TenantId: string
+    StoreId: number
+    OrderNumber: string
+    Status: string
+    Channel: string | null
+    CustomerName: string | null
+    CustomerPhone: string | null
+    Note: string | null
+    Subtotal: number
+    DiscountAmount: number
+    TaxAmount: number
+    TotalAmount: number
+    PaymentMethod: string | null
+    PaymentStatus: string | null
+    PaidAt: string | null
+    CancelledAt: string | null
+    CancelledReason: string | null
+    CreatedAt: string | null
+    CreatedBy: string | null
+    UpdatedAt: string | null
+    UpdatedBy: string | null
+    Items: GetOrderItemDto[]
+}
