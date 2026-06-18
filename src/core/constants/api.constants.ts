@@ -56,6 +56,7 @@ export const API_ENDPOINTS = {
             GET_CATALOG: (storeId: number) => `/pos/store/${storeId}/catalog`,
             CREATE_ORDER: '/pos/orders',
             GET_ORDER_HISTORY: (storeId: number) => `/pos/store/${storeId}/orders`,
+            GET_ORDER_BY_ID: (id: number) => `/pos/orders/${id}`,
         },
     },
     PRODUCT: {

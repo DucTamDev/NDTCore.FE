@@ -7,6 +7,7 @@ import type {
     CreatePosOrderRequest,
     CreatePosOrderResponse,
     PosOrderHistoryItemDto,
+    GetOrderDetailDto,
 } from '../models/dtos/pos-order.dto'
 
 const ENV_ORDER_URL = import.meta.env.VITE_ORDER_BASE_URL as string | undefined
@@ -33,5 +34,8 @@ export const posApi = {
     },
     getOrderHistoryAsync(storeId: number): Promise<ApiResponse<PosOrderHistoryItemDto[]>> {
         return posClient.get(EP.GET_ORDER_HISTORY(storeId))
+    },
+    getOrderByIdAsync(id: number): Promise<ApiResponse<GetOrderDetailDto>> {
+        return posClient.get(EP.GET_ORDER_BY_ID(id))
     },
 }

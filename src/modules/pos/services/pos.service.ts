@@ -5,6 +5,7 @@ import type {
     CreatePosOrderRequest,
     CreatePosOrderResponse,
     PosOrderHistoryItemDto,
+    GetOrderDetailDto,
 } from '../models/dtos/pos-order.dto'
 
 class PosService {
@@ -26,6 +27,11 @@ class PosService {
     async getOrderHistoryAsync(storeId: number): Promise<PosOrderHistoryItemDto[]> {
         const r = await posApi.getOrderHistoryAsync(storeId)
         return r.Data ?? []
+    }
+
+    async getOrderByIdAsync(id: number): Promise<GetOrderDetailDto | null> {
+        const r = await posApi.getOrderByIdAsync(id)
+        return r.Data ?? null
     }
 }
 
