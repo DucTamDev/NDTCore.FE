@@ -21,16 +21,16 @@
         <v-icon icon="mdi-clock-outline" size="16" />
         <span>Ca {{ openedAtFormatted }} — {{ shiftStore.shiftOpenedBy }}</span>
       </template>
-      <v-chip v-else size="x-small" color="warning" variant="tonal">
+      <v-chip v-else color="warning" variant="tonal">
         Chưa mở ca
       </v-chip>
     </div>
 
-    <v-btn icon="mdi-history" variant="text" size="small" @click="$emit('openHistory')" />
+    <v-btn icon="mdi-history" variant="text" @click="$emit('openHistory')" />
 
     <v-menu>
       <template #activator="{ props }">
-        <v-btn v-bind="props" variant="text" size="small" append-icon="mdi-chevron-down">
+        <v-btn v-bind="props" variant="text" append-icon="mdi-chevron-down">
           Tài khoản
         </v-btn>
       </template>

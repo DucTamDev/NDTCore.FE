@@ -26,7 +26,6 @@
         <div class="d-flex align-start justify-space-between ga-1">
           <span class="text-body-2 font-weight-semibold item-name">{{ item.productName }}</span>
           <v-btn
-            size="x-small"
             variant="tonal"
             color="primary"
             class="flex-shrink-0 edit-btn"

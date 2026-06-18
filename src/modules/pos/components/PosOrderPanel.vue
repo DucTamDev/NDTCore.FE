@@ -45,6 +45,86 @@
 
     <v-divider />
 
+    <!-- Service type / Payment method / Payment status -->
+    <div class="px-3 pb-2 d-flex flex-column ga-3">
+      <div>
+        <span class="text-caption text-medium-emphasis">Loại đơn</span>
+        <v-btn-toggle
+          v-model="cartStore.serviceType"
+          mandatory
+          divided
+          rounded="lg"
+          density="comfortable"
+          class="w-100 mt-1 bg-surface-light"
+        >
+          <v-btn
+            v-for="opt in POS_SERVICE_TYPE_OPTIONS"
+            :key="opt.value"
+            :value="opt.value"
+            :color="cartStore.serviceType === opt.value ? 'primary' : undefined"
+            :variant="cartStore.serviceType === opt.value ? 'flat' : 'text'"
+            class="text-none"
+            style="flex: 1 1 0%; min-width: 0"
+            :prepend-icon="opt.icon"
+          >
+            {{ opt.label }}
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+
+      <div>
+        <span class="text-caption text-medium-emphasis">Phương thức thanh toán</span>
+        <v-btn-toggle
+          v-model="cartStore.paymentMethod"
+          mandatory
+          divided
+          rounded="lg"
+          density="comfortable"
+          class="w-100 mt-1 bg-surface-light"
+        >
+          <v-btn
+            v-for="opt in POS_PAYMENT_METHOD_OPTIONS"
+            :key="opt.value"
+            :value="opt.value"
+            :color="cartStore.paymentMethod === opt.value ? 'primary' : undefined"
+            :variant="cartStore.paymentMethod === opt.value ? 'flat' : 'text'"
+            class="text-none"
+            style="flex: 1 1 0%; min-width: 0"
+            :prepend-icon="opt.icon"
+          >
+            {{ opt.label }}
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+
+      <div>
+        <span class="text-caption text-medium-emphasis">Trạng thái thanh toán</span>
+        <v-btn-toggle
+          v-model="cartStore.paymentStatus"
+          mandatory
+          divided
+          rounded="lg"
+          density="comfortable"
+          class="w-100 mt-1 bg-surface-light"
+        >
+          <v-btn
+            v-for="opt in POS_PAYMENT_STATUS_OPTIONS"
+            :key="opt.value"
+            :value="opt.value"
+            :color="cartStore.paymentStatus === opt.value ? 'primary' : undefined"
+            :variant="cartStore.paymentStatus === opt.value ? 'flat' : 'text'"
+            class="text-none"
+            style="flex: 1 1 0%; min-width: 0"
+            :prepend-icon="opt.icon"
+          >
+            {{ opt.label }}
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+    </div>
+
+    <v-divider />
+
     <!-- Cart items -->
     <div v-if="cartStore.items.length === 0" class="d-flex flex-column align-center justify-center ga-2 flex-grow-1 text-medium-emphasis">
       <v-icon icon="mdi-cart-outline" size="48" />
@@ -86,7 +166,6 @@
       <v-btn
         variant="tonal"
         icon="mdi-delete-sweep-outline"
-        size="small"
         color="error"
         :disabled="cartStore.items.length === 0"
         :title="'Xoá tất cả'"
@@ -139,6 +218,11 @@ import { usePosCartStore } from '../stores/pos-cart.store'
 import { usePosShiftStore } from '../stores/pos-shift.store'
 import { posService } from '../services/pos.service'
 import PosOrderItem from './PosOrderItem.vue'
+import {
+    POS_PAYMENT_METHOD_OPTIONS,
+    POS_PAYMENT_STATUS_OPTIONS,
+    POS_SERVICE_TYPE_OPTIONS,
+} from '../constants/pos-order-panel.constants'
 
 const props = defineProps<{ storeId: number }>()
 const emit  = defineEmits<{ editItem: [uid: string] }>()
@@ -208,6 +292,9 @@ async function submitOrder(): Promise<void> {
             Note:           cartStore.orderNote || null,
             DiscountAmount: 0,
             TaxAmount:      0,
+            PaymentMethod:  cartStore.paymentMethod,
+            PaymentStatus:  cartStore.paymentStatus,
+            ServiceType:    cartStore.serviceType,
             Items:          cartStore.items.map((i) => ({
                 ProductId:      i.productId,
                 ProductCode:    i.productCode,

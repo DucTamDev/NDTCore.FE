@@ -3,8 +3,10 @@
     :disabled="!product.IsAvailable"
     :ripple="product.IsAvailable"
     variant="flat"
+    elevation="2"
     rounded="lg"
     class="d-flex flex-column"
+    size = "md"
     style="cursor: pointer; user-select: none;"
     @click="product.IsAvailable && $emit('pick', product)"
   >

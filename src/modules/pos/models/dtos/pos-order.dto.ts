@@ -1,3 +1,5 @@
+import type { PaymentMethod, PaymentStatus, ServiceType } from '../../enums/_index'
+
 export interface CreatePosOrderItemOptionRequest {
     OptionId: number
     GroupName: string | null
@@ -24,6 +26,9 @@ export interface CreatePosOrderRequest {
     Note: string | null
     DiscountAmount: number
     TaxAmount: number
+    PaymentMethod: PaymentMethod
+    PaymentStatus: PaymentStatus
+    ServiceType: ServiceType
     Items: CreatePosOrderItemRequest[]
 }
 

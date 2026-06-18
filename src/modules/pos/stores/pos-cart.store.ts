@@ -1,12 +1,16 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { PosCartItem } from '../models/types/pos-cart.types'
+import { PaymentMethod, PaymentStatus, ServiceType } from '../enums/_index'
 
 export const usePosCartStore = defineStore('pos-cart', () => {
     const items         = ref<PosCartItem[]>([])
     const customerName  = ref('')
     const customerPhone = ref('')
     const orderNote     = ref('')
+    const paymentMethod = ref<PaymentMethod>(PaymentMethod.Cash)
+    const paymentStatus = ref<PaymentStatus>(PaymentStatus.Unpaid)
+    const serviceType   = ref<ServiceType>(ServiceType.TakeAway)
 
     const itemCount = computed(() => items.value.reduce((s, i) => s + i.quantity, 0))
 
@@ -40,6 +44,9 @@ export const usePosCartStore = defineStore('pos-cart', () => {
         customerName.value  = ''
         customerPhone.value = ''
         orderNote.value     = ''
+        paymentMethod.value = PaymentMethod.Cash
+        paymentStatus.value = PaymentStatus.Unpaid
+        serviceType.value   = ServiceType.TakeAway
     }
 
     function $reset(): void {
@@ -47,7 +54,7 @@ export const usePosCartStore = defineStore('pos-cart', () => {
     }
 
     return {
-        items, customerName, customerPhone, orderNote,
+        items, customerName, customerPhone, orderNote, paymentMethod, paymentStatus, serviceType,
         itemCount, totalAmount,
         addItem, updateItem, removeItem, updateQuantity, clearCart, $reset,
     }

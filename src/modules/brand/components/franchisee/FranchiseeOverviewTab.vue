@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div>
     <!-- ── Tab toolbar ──────────────────────────────────────────── -->
     <div class="d-flex align-center justify-space-between ga-2 pa-3 px-4">
