@@ -54,6 +54,16 @@
                 </v-chip>
               </template>
 
+              <template #append v-if="order.Status !== 'Cancelled'">
+                <v-btn
+                  icon="mdi-printer-outline"
+                  variant="text"
+                  size="small"
+                  :loading="isPrinting"
+                  @click="printBill(order.Id)"
+                />
+              </template>
+
               <v-list-item-title class="font-weight-semibold text-body-2">
                 #{{ order.OrderNumber }}
                 <span class="text-medium-emphasis font-weight-regular">
@@ -85,9 +95,12 @@
 import { ref, computed, watch } from 'vue'
 import { posService } from '../services/pos.service'
 import type { PosOrderHistoryItemDto } from '../models/dtos/pos-order.dto'
+import { usePrintBill } from '../composables/usePrintBill'
 
 const props = defineProps<{ modelValue: boolean; storeId: number }>()
 defineEmits<{ 'update:modelValue': [value: boolean] }>()
+
+const { isPrinting, printBill } = usePrintBill()
 
 const orders         = ref<PosOrderHistoryItemDto[]>([])
 const isLoading      = ref(false)
