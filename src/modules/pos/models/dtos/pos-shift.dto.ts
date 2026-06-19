@@ -6,6 +6,7 @@ export interface PosStoreStatusDto {
     City: string | null
     District: string | null
     Province: string | null
+    Phone: string | null
     IsAcceptingOrders: boolean
     HasOpenShift: boolean
     ShiftId: number | null

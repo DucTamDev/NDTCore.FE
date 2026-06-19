@@ -26,8 +26,10 @@ export interface CreatePosOrderRequest {
     Note: string | null
     DiscountAmount: number
     TaxAmount: number
+    DeliveryFee: number
     PaymentMethod: PaymentMethod
     PaymentStatus: PaymentStatus
+    AmountReceived: number | null
     ServiceType: ServiceType
     Items: CreatePosOrderItemRequest[]
 }
@@ -80,15 +82,19 @@ export interface GetOrderDetailDto {
     OrderNumber: string
     Status: string
     Channel: string | null
+    ServiceType: string
     CustomerName: string | null
     CustomerPhone: string | null
     Note: string | null
     Subtotal: number
     DiscountAmount: number
     TaxAmount: number
+    DeliveryFee: number
     TotalAmount: number
     PaymentMethod: string | null
     PaymentStatus: string | null
+    AmountReceived: number | null
+    ChangeAmount: number | null
     PaidAt: string | null
     CancelledAt: string | null
     CancelledReason: string | null
