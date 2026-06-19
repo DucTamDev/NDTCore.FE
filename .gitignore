@@ -34,3 +34,6 @@ coverage
 
 # Vitest
 __screenshots__/
+
+# Git worktrees used for isolated agent workspaces
+.worktrees/
