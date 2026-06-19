@@ -13,4 +13,5 @@ export const POS_PAYMENT_STATUS_OPTIONS = [
 export const POS_SERVICE_TYPE_OPTIONS = [
     { value: ServiceType.TakeAway, label: 'Mang đi', icon: 'mdi-walk' },
     { value: ServiceType.DineIn, label: 'Ngồi lại', icon: 'mdi-silverware-fork-knife' },
+    { value: ServiceType.Delivery, label: 'Giao hàng', icon: 'mdi-moped' },
 ] as const
