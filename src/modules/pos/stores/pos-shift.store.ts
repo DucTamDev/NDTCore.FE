@@ -15,6 +15,7 @@ export const usePosShiftStore = defineStore('pos-shift', () => {
             .filter(Boolean)
             .join(', ')
     })
+    const hotline           = computed(() => status.value?.Phone ?? null)
     const isAcceptingOrders = computed(() => status.value?.IsAcceptingOrders ?? false)
     const hasOpenShift      = computed(() => status.value?.HasOpenShift ?? false)
     const shiftId           = computed(() => status.value?.ShiftId ?? null)
@@ -38,7 +39,7 @@ export const usePosShiftStore = defineStore('pos-shift', () => {
 
     return {
         status, isLoading,
-        storeName, logoUrl, address, isAcceptingOrders, hasOpenShift,
+        storeName, logoUrl, address, hotline, isAcceptingOrders, hasOpenShift,
         shiftId, shiftOpenedAt, shiftOpenedBy, canCreateOrder,
         fetchStatus, $reset,
     }
