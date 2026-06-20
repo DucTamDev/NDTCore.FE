@@ -324,6 +324,7 @@ async function submitOrder(): Promise<void> {
             DiscountAmount: 0,
             TaxAmount:      0,
             DeliveryFee:    cartStore.deliveryFee,
+            DeliveryAddress: cartStore.deliveryAddress || null,
             PaymentMethod:  cartStore.paymentMethod,
             PaymentStatus:  cartStore.paymentStatus,
             AmountReceived: cartStore.amountReceived,
