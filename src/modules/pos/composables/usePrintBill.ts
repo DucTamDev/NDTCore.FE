@@ -22,6 +22,7 @@ export function usePrintBill() {
                 name: shiftStore.storeName,
                 logoUrl: shiftStore.logoUrl,
                 address: shiftStore.address,
+                hotline: shiftStore.hotline,
             })
             printHtmlViaIframe(html)
         } catch (error) {
