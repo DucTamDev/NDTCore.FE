@@ -15,3 +15,5 @@ export const POS_SERVICE_TYPE_OPTIONS = [
     { value: ServiceType.DineIn, label: 'Ngồi lại', icon: 'mdi-silverware-fork-knife' },
     { value: ServiceType.Delivery, label: 'Giao hàng', icon: 'mdi-moped' },
 ] as const
+
+export const POS_QUICK_CASH_AMOUNTS = [50000, 100000, 200000, 500000] as const

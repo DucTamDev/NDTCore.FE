@@ -12,6 +12,7 @@ export const usePosCartStore = defineStore('pos-cart', () => {
     const paymentStatus  = ref<PaymentStatus>(PaymentStatus.Unpaid)
     const serviceType    = ref<ServiceType>(ServiceType.TakeAway)
     const deliveryFee    = ref(0)
+    const deliveryAddress = ref('')
     const amountReceived = ref<number | null>(null)
 
     const itemCount = computed(() => items.value.reduce((s, i) => s + i.quantity, 0))
@@ -22,6 +23,8 @@ export const usePosCartStore = defineStore('pos-cart', () => {
             return sum + (item.resolvedPrice + optionTotal) * item.quantity
         }, 0) + deliveryFee.value,
     )
+
+    const subtotalAmount = computed(() => totalAmount.value - deliveryFee.value)
 
     const changeAmount = computed(() =>
         amountReceived.value !== null ? amountReceived.value - totalAmount.value : null,
@@ -62,6 +65,7 @@ export const usePosCartStore = defineStore('pos-cart', () => {
         paymentStatus.value  = PaymentStatus.Unpaid
         serviceType.value    = ServiceType.TakeAway
         deliveryFee.value    = 0
+        deliveryAddress.value = ''
         amountReceived.value = null
     }
 
@@ -71,8 +75,8 @@ export const usePosCartStore = defineStore('pos-cart', () => {
 
     return {
         items, customerName, customerPhone, orderNote, paymentMethod, paymentStatus, serviceType,
-        deliveryFee, amountReceived,
-        itemCount, totalAmount, changeAmount,
+        deliveryFee, deliveryAddress, amountReceived,
+        itemCount, totalAmount, subtotalAmount, changeAmount,
         addItem, updateItem, removeItem, updateQuantity, clearCart, $reset,
     }
 })
