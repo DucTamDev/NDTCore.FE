@@ -72,6 +72,17 @@
         </v-btn-toggle>
       </div>
 
+      <v-text-field
+        v-if="cartStore.serviceType === ServiceType.Delivery"
+        v-model.number="cartStore.deliveryFee"
+        label="Phí giao hàng"
+        type="number"
+        density="compact"
+        variant="outlined"
+        hide-details
+        suffix="₫"
+      />
+
       <div>
         <span class="text-caption text-medium-emphasis">Phương thức thanh toán</span>
         <v-btn-toggle
@@ -95,6 +106,25 @@
             {{ opt.label }}
           </v-btn>
         </v-btn-toggle>
+      </div>
+
+      <div v-if="cartStore.paymentMethod === PaymentMethod.Cash">
+        <v-text-field
+          v-model.number="cartStore.amountReceived"
+          label="Số tiền khách đưa"
+          type="number"
+          density="compact"
+          variant="outlined"
+          hide-details
+          suffix="₫"
+        />
+        <div
+          v-if="cartStore.changeAmount !== null"
+          class="text-body-2 mt-1"
+          :class="cartStore.changeAmount < 0 ? 'text-error' : 'text-medium-emphasis'"
+        >
+          Tiền thừa: {{ cartStore.changeAmount.toLocaleString('vi-VN') }}₫
+        </div>
       </div>
 
       <div>
@@ -223,6 +253,7 @@ import {
     POS_PAYMENT_STATUS_OPTIONS,
     POS_SERVICE_TYPE_OPTIONS,
 } from '../constants/pos-order-panel.constants'
+import { PaymentMethod, ServiceType } from '../enums/_index'
 
 const props = defineProps<{ storeId: number }>()
 const emit  = defineEmits<{ editItem: [uid: string] }>()
@@ -292,8 +323,10 @@ async function submitOrder(): Promise<void> {
             Note:           cartStore.orderNote || null,
             DiscountAmount: 0,
             TaxAmount:      0,
+            DeliveryFee:    cartStore.deliveryFee,
             PaymentMethod:  cartStore.paymentMethod,
             PaymentStatus:  cartStore.paymentStatus,
+            AmountReceived: cartStore.amountReceived,
             ServiceType:    cartStore.serviceType,
             Items:          cartStore.items.map((i) => ({
                 ProductId:      i.productId,
