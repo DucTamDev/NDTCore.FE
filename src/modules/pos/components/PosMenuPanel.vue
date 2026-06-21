@@ -3,10 +3,9 @@
     <div class="pa-3 pb-0">
       <v-text-field
         v-model="catalogStore.keyword"
-        placeholder="Tìm theo tên hoặc SKU..."
+        placeholder="Tìm theo tên"
         prepend-inner-icon="mdi-magnify"
         density="compact"
-        variant="outlined"
         hide-details
         clearable
       />

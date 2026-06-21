@@ -16,7 +16,7 @@
 
     <v-spacer />
 
-    <div class="d-flex align-center ga-2 mr-4 text-caption text-medium-emphasis">
+    <!-- <div class="d-flex align-center ga-2 mr-4 text-caption text-medium-emphasis">
       <template v-if="shiftStore.hasOpenShift">
         <v-icon icon="mdi-clock-outline" size="16" />
         <span>Ca {{ openedAtFormatted }} — {{ shiftStore.shiftOpenedBy }}</span>
@@ -24,7 +24,7 @@
       <v-chip v-else color="warning" variant="tonal">
         Chưa mở ca
       </v-chip>
-    </div>
+    </div> -->
 
     <v-btn icon="mdi-history" variant="text" @click="$emit('openHistory')" />
 

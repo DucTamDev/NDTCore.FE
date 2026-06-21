@@ -39,19 +39,26 @@ function isSizeOption(o: GetOrderItemOptionDto): boolean {
     return (o.GroupName ?? '').toLowerCase() === 'size'
 }
 
+function groupOptionsByGroupName(options: GetOrderItemOptionDto[]): { groupName: string; options: GetOrderItemOptionDto[] }[] {
+    const map = new Map<string, { groupName: string; options: GetOrderItemOptionDto[] }>()
+    for (const opt of options) {
+        const key = opt.GroupName ?? ''
+        if (!map.has(key)) {
+            map.set(key, { groupName: opt.GroupName ?? '', options: [] })
+        }
+        map.get(key)!.options.push(opt)
+    }
+    return Array.from(map.values())
+}
+
 function renderItemBlock(item: GetOrderItemDto, index: number): string {
     const sizeOption = item.Options.find(isSizeOption)
     const sizeSuffix = sizeOption ? ` (${sizeOption.OptionName})` : ''
     const toppingOptions = item.Options.filter((o) => !isSizeOption(o))
+    const groupedOptions = groupOptionsByGroupName(toppingOptions)
 
-    const quantityLine = item.Quantity > 1
-        ? `<div class="bill-item-sub">SL: ${item.Quantity} x ${formatCurrency(item.SalePrice)}</div>`
-        : ''
-
-    const toppingLines = toppingOptions
-        .map((o) => o.Price > 0
-            ? `<div class="bill-item-sub">+ ${o.OptionName} +${formatCurrency(o.Price)}</div>`
-            : `<div class="bill-item-sub">- ${o.OptionName}</div>`)
+    const toppingLines = groupedOptions
+        .map((group) => `<div class="bill-item-sub">${group.groupName ? `${group.groupName}: ` : ''}${group.options.map((o) => o.OptionName).join(', ')}</div>`)
         .join('')
 
     return `
@@ -60,7 +67,6 @@ function renderItemBlock(item: GetOrderItemDto, index: number): string {
                 <span>${index}. ${item.ProductName}${sizeSuffix}</span>
                 <span class="bill-item-amount">${formatCurrency(item.LineNetAmount)}</span>
             </div>
-            ${quantityLine}
             ${toppingLines}
         </div>
     `
@@ -77,9 +83,6 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
         ? `<div class="bill-store-hotline">ĐT: ${store.hotline}</div>`
         : ''
 
-    const cashierLine = order.CreatedBy
-        ? `<div class="bill-row"><span>Thu ngân</span><span>${order.CreatedBy}</span></div>`
-        : ''
     const serviceTypeLabel = SERVICE_TYPE_LABEL[order.ServiceType] ?? order.ServiceType
 
     const discountLine = order.DiscountAmount > 0
@@ -106,19 +109,30 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
 <title>Bill ${order.OrderNumber}</title>
 <style>
     * { box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; font-size: 12px; color: #000; margin: 0; padding: 16px; }
-    .bill-header { text-align: center; margin-bottom: 10px; }
-    .bill-logo { max-width: 80px; max-height: 80px; margin-bottom: 8px; }
-    .bill-store-name { font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
-    .bill-store-address, .bill-store-hotline { font-size: 11px; color: #444; }
-    .bill-divider { border-top: 1px dashed #000; margin: 8px 0; }
-    .bill-row { display: flex; justify-content: space-between; font-size: 12px; margin: 3px 0; }
-    .bill-products-label { font-size: 12px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
-    .bill-item { margin: 6px 0; }
-    .bill-item-amount { font-weight: 600; }
-    .bill-item-sub { font-size: 11px; color: #666; padding-left: 10px; margin: 1px 0; }
-    .bill-total { display: flex; justify-content: space-between; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-size: 16px; font-weight: bold; margin: 6px 0; }
-    .bill-footer { text-align: center; font-style: italic; margin-top: 12px; margin-bottom: 16px; }
+    @page { size: 58mm auto; margin: 0; }
+    html, body { width: 58mm; }
+    body {
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        line-height: 1.35;
+        color: #000;
+        margin: 0;
+        padding: 4mm 2mm;
+    }
+    .bill-header { text-align: center; margin-bottom: 6px; }
+    .bill-logo { max-width: 32mm; max-height: 32mm; margin-bottom: 4px; }
+    .bill-store-name { font-size: 13px; font-weight: bold; letter-spacing: 0.3px; word-break: break-word; }
+    .bill-store-address, .bill-store-hotline { font-size: 10px; color: #000; word-break: break-word; }
+    .bill-divider { border-top: 1px dashed #000; margin: 5px 0; }
+    .bill-row { display: flex; justify-content: space-between; gap: 4px; font-size: 11px; margin: 2px 0; }
+    .bill-row span:first-child { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+    .bill-row span:last-child { flex: 0 0 auto; text-align: right; white-space: nowrap; }
+    .bill-products-label { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 3px; letter-spacing: 0.5px; }
+    .bill-item { margin: 7px 0; }
+    .bill-item-amount { font-weight: bold; }
+    .bill-item-sub { font-size: 10px; color: #000; padding-left: 8px; margin: 1px 0; }
+    .bill-total { display: flex; justify-content: space-between; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 5px 0; font-size: 13px; font-weight: bold; margin: 5px 0; }
+    .bill-footer { text-align: center; font-style: italic; font-size: 10px; margin-top: 10px; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -133,7 +147,6 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
 
     <div class="bill-row"><span>Mã đơn</span><span>#${order.OrderNumber}</span></div>
     <div class="bill-row"><span>Thời gian</span><span>${formatDateTime(order.CreatedAt)}</span></div>
-    ${cashierLine}
     <div class="bill-row"><span>Hình thức</span><span>${serviceTypeLabel}</span></div>
 
     <div class="bill-divider"></div>

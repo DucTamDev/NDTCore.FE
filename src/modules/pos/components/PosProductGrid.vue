@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-y-auto flex-grow-1 pa-3">
-    <v-row v-if="catalogStore.isLoading" dense>
-      <v-col v-for="n in 8" :key="n" cols="6" sm="4">
+    <v-row v-if="catalogStore.isLoading">
+      <v-col v-for="n in 8" :key="n" cols="12" sm="4">
         <v-skeleton-loader type="card" height="180" />
       </v-col>
     </v-row>
@@ -14,11 +14,11 @@
       <span>Không tìm thấy sản phẩm phù hợp</span>
     </div>
 
-    <v-row v-else dense>
+    <v-row v-else>
       <v-col
         v-for="product in catalogStore.filteredProducts"
         :key="product.Id"
-        cols="6"
+        cols="12"
         sm="4"
       >
         <PosProductCard :product="product" @pick="$emit('pick', product)" />

@@ -28,29 +28,22 @@
           <v-btn
             variant="tonal"
             color="primary"
+            icon="mdi-pencil"
+            size="small"
+            density="comfortable"
             class="flex-shrink-0 edit-btn"
             @click="emit('edit', item.uid)"
-          >
-            Sửa
-          </v-btn>
+          />
         </div>
 
         <!-- Grouped options -->
-        <div v-for="group in groupedOptions" :key="group.groupId" class="mt-1">
-          <div class="text-caption text-medium-emphasis font-weight-bold group-label">
-            {{ group.groupName.toUpperCase() }}
-          </div>
-          <div
-            v-for="opt in group.options"
-            :key="opt.optionId"
-            class="opt-row d-flex align-center text-caption text-medium-emphasis"
-          >
-            <div class="opt-bar" />
-            <span>{{ opt.optionName }}</span>
-            <span v-if="opt.resolvedPrice > 0" class="ml-1 opt-price">
-              +{{ opt.resolvedPrice.toLocaleString('vi-VN') }}₫
-            </span>
-          </div>
+        <div v-for="group in groupedOptions" :key="group.groupId" class="mt-1 flex-wrap ga-1">
+          <span class="text-caption text-medium-emphasis font-weight-bold group-label">
+            {{ group.groupName}}:
+          </span>
+          <span class="text-caption text-medium-emphasis opt-row">
+            {{ group.options.map(o => o.optionName).join(', ') }}
+          </span>
         </div>
       </div>
     </div>
@@ -139,14 +132,14 @@ const groupedOptions = computed<GroupedOption[]>(() => {
 }
 
 .group-label {
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.04em;
 }
 
 .opt-row {
     gap: 4px;
-    font-size: 11px;
-    line-height: 1.5;
+    font-size: 10px;
+    line-height: 1.4;
 }
 
 .opt-bar {
