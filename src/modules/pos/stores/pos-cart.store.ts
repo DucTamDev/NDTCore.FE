@@ -11,9 +11,9 @@ export const usePosCartStore = defineStore('pos-cart', () => {
     const paymentMethod  = ref<PaymentMethod>(PaymentMethod.Cash)
     const paymentStatus  = ref<PaymentStatus>(PaymentStatus.Unpaid)
     const serviceType    = ref<ServiceType>(ServiceType.TakeAway)
-    const deliveryFee    = ref(0)
+    const deliveryFee    = ref<number>(0)
     const deliveryAddress = ref('')
-    const amountReceived = ref<number | null>(null)
+    const amountReceived = ref<number>(0)
 
     const itemCount = computed(() => items.value.reduce((s, i) => s + i.quantity, 0))
 
@@ -35,7 +35,7 @@ export const usePosCartStore = defineStore('pos-cart', () => {
     })
 
     watch(paymentMethod, (value) => {
-        if (value !== PaymentMethod.Cash) amountReceived.value = null
+        if (value !== PaymentMethod.Cash) amountReceived.value = 0
     })
 
     function addItem(item: PosCartItem): void {
@@ -66,7 +66,7 @@ export const usePosCartStore = defineStore('pos-cart', () => {
         serviceType.value    = ServiceType.TakeAway
         deliveryFee.value    = 0
         deliveryAddress.value = ''
-        amountReceived.value = null
+        amountReceived.value = 0
     }
 
     function $reset(): void {

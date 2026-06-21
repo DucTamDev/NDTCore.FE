@@ -102,24 +102,20 @@
       <v-divider />
 
       <div class="px-3 py-2">
-        <span class="text-caption text-medium-emphasis">Loại đơn</span>
         <v-btn-toggle
           v-model="cartStore.serviceType"
           mandatory
-          divided
-          rounded="lg"
-          density="comfortable"
-          class="w-100 mt-1 bg-surface-light"
+          density="compact"
+          class="w-100 pos-btn-group"
         >
           <v-btn
             v-for="opt in POS_SERVICE_TYPE_OPTIONS"
             :key="opt.value"
             :value="opt.value"
             :color="cartStore.serviceType === opt.value ? 'primary' : undefined"
-            :variant="cartStore.serviceType === opt.value ? 'flat' : 'text'"
-            class="text-none"
-            style="flex: 1 1 0%; min-width: 0"
+            :variant="cartStore.serviceType === opt.value ? 'flat' : 'outlined'"
             :prepend-icon="opt.icon"
+            class="text-none bg-surface-light"
           >
             {{ opt.label }}
           </v-btn>
@@ -191,55 +187,49 @@
       </div>
 
       <div class="d-flex justify-space-between align-center pb-2 total-row">
-        <span class="text-body-2 text-medium-emphasis">{{ cartStore.itemCount }} món</span>
+        <span class="text-body-2 text-medium-emphasis">Tổng</span>
         <span class="text-subtitle-1 font-weight-semibold">
           {{ cartStore.totalAmount.toLocaleString('vi-VN') }}₫
         </span>
       </div>
 
-      <div v-if="cartStore.paymentMethod === PaymentMethod.Cash" class="d-flex align-center">
-        <div class="flex-grow-1 text-center">
-          <div class="text-caption text-medium-emphasis">Đã nhận</div>
-          <div class="text-body-2 font-weight-medium">
+      <div v-if="cartStore.paymentMethod === PaymentMethod.Cash" class="d-flex flex-column ga-1">
+        <div class="d-flex justify-space-between text-body-2 text-medium-emphasis">
+          <span>Đã nhận</span>
+          <span class="text-high-emphasis font-weight-medium">
             {{ (cartStore.amountReceived ?? 0).toLocaleString('vi-VN') }}₫
-          </div>
+          </span>
         </div>
-        <v-divider vertical class="mx-2" style="height: 32px" />
-        <div class="flex-grow-1 text-center">
-          <div
-            class="text-caption"
-            :class="(cartStore.changeAmount ?? 0) < 0 ? 'text-error' : 'text-medium-emphasis'"
-          >
-            {{ (cartStore.changeAmount ?? 0) < 0 ? 'Còn thiếu' : 'Tiền thừa' }}
-          </div>
-          <div
-            class="text-body-2 font-weight-medium"
-            :class="(cartStore.changeAmount ?? 0) < 0 ? 'text-error' : undefined"
-          >
+        <div
+          class="d-flex justify-space-between text-body-2"
+          :class="(cartStore.changeAmount ?? 0) < 0 ? 'text-error' : 'text-medium-emphasis'"
+        >
+          <span>{{ (cartStore.changeAmount ?? 0) < 0 ? 'Còn thiếu' : 'Tiền thừa' }}</span>
+          <span class="font-weight-medium">
             {{ Math.abs(cartStore.changeAmount ?? 0).toLocaleString('vi-VN') }}₫
-          </div>
+          </span>
         </div>
       </div>
       
-      <div >
-        <span class="text-caption text-medium-emphasis">Trạng thái thanh toán</span>
+      <div v-if="false">
+        <span v-show="false" class="text-caption text-medium-emphasis">Trạng thái thanh toán</span>
+
         <v-btn-toggle
           v-model="cartStore.paymentStatus"
           mandatory
           divided
           rounded="lg"
-          density="comfortable"
-          class="w-100 mt-1 bg-surface-light"
+          density="compact"
+          class="w-100 mt-1 pos-btn-group"
         >
           <v-btn
             v-for="opt in POS_PAYMENT_STATUS_OPTIONS"
             :key="opt.value"
             :value="opt.value"
             :color="cartStore.paymentStatus === opt.value ? 'primary' : undefined"
-            :variant="cartStore.paymentStatus === opt.value ? 'flat' : 'text'"
-            class="text-none"
-            style="flex: 1 1 0%; min-width: 0"
+            :variant="cartStore.paymentStatus === opt.value ? 'flat' : 'outlined'"
             :prepend-icon="opt.icon"
+            class="text-none bg-surface-light"
           >
             {{ opt.label }}
           </v-btn>
@@ -247,24 +237,21 @@
       </div>
 
       <div>
-        <span class="text-caption text-medium-emphasis">Phương thức thanh toán</span>
+        <span v-show="false" class="text-caption text-medium-emphasis">Phương thức thanh toán</span>
         <v-btn-toggle
           v-model="cartStore.paymentMethod"
           mandatory
-          divided
-          rounded="lg"
-          density="comfortable"
-          class="w-100 mt-1 bg-surface-light"
+          density="compact"
+          class="w-100 pos-btn-group"
         >
           <v-btn
             v-for="opt in POS_PAYMENT_METHOD_OPTIONS"
             :key="opt.value"
             :value="opt.value"
             :color="cartStore.paymentMethod === opt.value ? 'primary' : undefined"
-            :variant="cartStore.paymentMethod === opt.value ? 'flat' : 'text'"
-            class="text-none"
-            style="flex: 1 1 0%; min-width: 0"
+            :variant="cartStore.paymentMethod === opt.value ? 'flat' : 'outlined'"
             :prepend-icon="opt.icon"
+            class="text-none bg-surface-light"
           >
             {{ opt.label }}
           </v-btn>
@@ -274,7 +261,7 @@
       <div v-if="cartStore.paymentMethod === PaymentMethod.Cash" class="d-flex flex-column ga-2">
         <AppCurrencyField
           v-model="cartStore.amountReceived"
-          label="Số tiền khách đưa"
+          label="Số tiền đã nhận"
           density="compact"
           variant="solo-filled"
           flat
@@ -373,12 +360,27 @@ const hasCustomerInfo = computed(
 )
 
 watch(
-    () => cartStore.amountReceived,
-    (amount) => {
-        if ((amount ?? 0) > 0) {
-            cartStore.paymentStatus = PaymentStatus.Paid
-        }
-    },
+  () => ({
+    amount: cartStore.amountReceived,
+    method: cartStore.paymentMethod,
+  }),
+  ({ amount, method }) => {
+
+    const hasMoney = (amount ?? 0) > 0
+
+    if (method === PaymentMethod.Cash) {
+      cartStore.paymentStatus =
+        hasMoney ? PaymentStatus.Paid : PaymentStatus.Unpaid
+      return
+    }
+
+    // Tạm thời auto Paid đối với chuyển khoản
+    if (method === PaymentMethod.Transfer) {
+      cartStore.paymentStatus = PaymentStatus.Paid
+      return
+    }
+  },
+  { immediate: true }
 )
 
 function formatQuickCash(amount: number): string {
@@ -396,8 +398,16 @@ const successDialog    = ref(false)
 const lastOrderNumber  = ref('')
 const lastOrderStatus  = ref('')
 
+const isCashAmountValid = computed(
+    () => cartStore.paymentMethod !== PaymentMethod.Cash || (cartStore.amountReceived ?? 0) >= cartStore.totalAmount,
+)
+
 const canSubmit = computed(
-    () => shiftStore.canCreateOrder && cartStore.items.length > 0 && !submitting.value,
+    () =>
+        shiftStore.canCreateOrder &&
+        cartStore.items.length > 0 &&
+        isCashAmountValid.value &&
+        !submitting.value,
 )
 
 function openConfirm(title: string, message: string, color: 'primary' | 'error', action: () => void): void {
@@ -511,5 +521,31 @@ async function submitOrder(): Promise<void> {
 .customer-phone {
     font-size: 11px;
     line-height: 1.3;
+}
+
+.pos-btn-group {
+    display: flex;
+    gap: 8px;
+    height: auto !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible;
+}
+
+.pos-btn-group :deep(.v-btn) {
+    flex: 1 1 0%;
+    min-width: 0;
+    height: 28px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+}
+
+.pos-btn-group :deep(.v-icon) {
+    font-size: 16px;
+}
+
+.pos-btn-group :deep(.v-btn--variant-outlined) {
+    border-inline-start: thin solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+    border-inline-end: thin solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 </style>
