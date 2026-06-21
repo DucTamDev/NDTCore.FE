@@ -30,6 +30,29 @@ function onInput(raw: string) {
   emit('update:modelValue', isNaN(num) ? 0 : num)
 }
 
+const allowedKeys = new Set([
+  'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+  'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+  'Home', 'End',
+])
+
+function onKeydown(e: KeyboardEvent) {
+  // Cho phép tổ hợp Ctrl/Cmd (copy, paste, select all, undo...)
+  if (e.ctrlKey || e.metaKey) return
+  // Cho phép các phím điều khiển/điều hướng
+  if (allowedKeys.has(e.key)) return
+  // Chỉ cho phép ký tự số 0-9, chặn tất cả còn lại (chữ, ký tự đặc biệt...)
+  if (!/^\d$/.test(e.key)) {
+    e.preventDefault()
+  }
+}
+
+function onPaste(e: ClipboardEvent) {
+  e.preventDefault()
+  const text = e.clipboardData?.getData('text') ?? ''
+  onInput(text)
+}
+
 const rules = computed(() => {
   const r: ((v: string) => true | string)[] = []
   if (props.required) {
@@ -57,5 +80,7 @@ const rules = computed(() => {
     suffix="₫"
     inputmode="numeric"
     @update:model-value="onInput"
+    @keydown="onKeydown"
+    @paste="onPaste"
   />
 </template>

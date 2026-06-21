@@ -25,18 +25,66 @@
     <!-- ───────────────────────── Header zone ───────────────────────── -->
     <div class="panel-header">
       <div class="pa-3 pb-2">
-        <div v-if="!showCustomerForm" class="d-flex align-center justify-space-between">
-          <span class="text-body-2">Khách lẻ</span>
-          <v-btn variant="text" size="small" color="primary" class="text-none" @click="showCustomerForm = true">
-            + Thêm khách
-          </v-btn>
+        <div class="d-flex align-center ga-2">
+          <v-icon
+            icon="mdi-account-circle-outline"
+            size="16"
+            :color="hasCustomerInfo ? 'primary' : undefined"
+          />
+
+          <!-- Trạng thái 1: chưa có thông tin, form đóng -->
+          <template v-if="!hasCustomerInfo && !showCustomerForm">
+            <span class="text-body-2 text-medium-emphasis">Khách lẻ</span>
+            <v-btn
+              variant="text"
+              size="small"
+              color="primary"
+              class="text-none ml-auto"
+              @click="showCustomerForm = true"
+            >
+              + Thêm khách
+            </v-btn>
+          </template>
+
+          <!-- Trạng thái 2: có thông tin, form đóng (thu gọn) -->
+          <template v-else-if="hasCustomerInfo && !showCustomerForm">
+            <div class="d-flex flex-column min-w-0">
+              <span class="text-body-2 font-weight-medium">{{ cartStore.customerName || 'Khách lẻ' }}</span>
+              <span v-if="cartStore.customerPhone" class="text-disabled customer-phone">
+                {{ cartStore.customerPhone }}
+              </span>
+            </div>
+            <v-btn
+              variant="text"
+              size="small"
+              color="primary"
+              class="text-none ml-auto"
+              @click="showCustomerForm = true"
+            >
+              Sửa
+            </v-btn>
+          </template>
+
+          <!-- Trạng thái 3: form đang mở -->
+          <template v-else>
+            <span class="text-body-2 font-weight-medium">{{ cartStore.customerName || 'Khách lẻ' }}</span>
+            <v-btn
+              variant="text"
+              size="small"
+              class="text-none ml-auto"
+              @click="showCustomerForm = false"
+            >
+              <v-icon icon="mdi-chevron-up" size="16" start />
+              Thu lại
+            </v-btn>
+          </template>
         </div>
-        <div v-else class="d-flex flex-column ga-2">
+
+        <div v-if="showCustomerForm" class="d-flex flex-column ga-2 mt-2">
           <v-text-field
             v-model="cartStore.customerName"
             label="Tên khách hàng"
             density="compact"
-            variant="outlined"
             hide-details
             clearable
           />
@@ -44,7 +92,6 @@
             v-model="cartStore.customerPhone"
             label="Số điện thoại"
             density="compact"
-            variant="outlined"
             hide-details
             clearable
             type="tel"
@@ -84,19 +131,16 @@
           v-model="cartStore.deliveryAddress"
           label="Địa chỉ giao hàng"
           density="compact"
-          variant="outlined"
           hide-details
           clearable
           maxlength="300"
         />
-        <v-text-field
-          v-model.number="cartStore.deliveryFee"
+        <AppCurrencyField
+          v-model="cartStore.deliveryFee"
           label="Phí giao hàng"
-          type="number"
           density="compact"
-          variant="outlined"
-          hide-details
-          suffix="₫"
+          variant="solo-filled"
+          flat
         />
       </div>
 
@@ -122,7 +166,6 @@
           v-model="cartStore.orderNote"
           label="Ghi chú đơn hàng"
           density="compact"
-          variant="outlined"
           hide-details
           rows="1"
           auto-grow
@@ -177,6 +220,31 @@
           </div>
         </div>
       </div>
+      
+      <div >
+        <span class="text-caption text-medium-emphasis">Trạng thái thanh toán</span>
+        <v-btn-toggle
+          v-model="cartStore.paymentStatus"
+          mandatory
+          divided
+          rounded="lg"
+          density="comfortable"
+          class="w-100 mt-1 bg-surface-light"
+        >
+          <v-btn
+            v-for="opt in POS_PAYMENT_STATUS_OPTIONS"
+            :key="opt.value"
+            :value="opt.value"
+            :color="cartStore.paymentStatus === opt.value ? 'primary' : undefined"
+            :variant="cartStore.paymentStatus === opt.value ? 'flat' : 'text'"
+            class="text-none"
+            style="flex: 1 1 0%; min-width: 0"
+            :prepend-icon="opt.icon"
+          >
+            {{ opt.label }}
+          </v-btn>
+        </v-btn-toggle>
+      </div>
 
       <div>
         <span class="text-caption text-medium-emphasis">Phương thức thanh toán</span>
@@ -204,20 +272,19 @@
       </div>
 
       <div v-if="cartStore.paymentMethod === PaymentMethod.Cash" class="d-flex flex-column ga-2">
-        <v-text-field
-          v-model.number="cartStore.amountReceived"
+        <AppCurrencyField
+          v-model="cartStore.amountReceived"
           label="Số tiền khách đưa"
-          type="number"
           density="compact"
-          variant="outlined"
-          hide-details
-          suffix="₫"
+          variant="solo-filled"
+          flat
         />
         <div class="quick-cash-grid">
           <v-btn
             v-for="amount in POS_QUICK_CASH_AMOUNTS"
             :key="amount"
-            variant="tonal"
+            :variant="cartStore.amountReceived === amount ? 'flat' : 'outlined'"
+            :color="cartStore.amountReceived === amount ? 'primary' : undefined"
             size="small"
             class="text-none"
             @click="cartStore.amountReceived = amount"
@@ -225,31 +292,6 @@
             {{ formatQuickCash(amount) }}
           </v-btn>
         </div>
-      </div>
-
-      <div>
-        <span class="text-caption text-medium-emphasis">Trạng thái thanh toán</span>
-        <v-btn-toggle
-          v-model="cartStore.paymentStatus"
-          mandatory
-          divided
-          rounded="lg"
-          density="comfortable"
-          class="w-100 mt-1 bg-surface-light"
-        >
-          <v-btn
-            v-for="opt in POS_PAYMENT_STATUS_OPTIONS"
-            :key="opt.value"
-            :value="opt.value"
-            :color="cartStore.paymentStatus === opt.value ? 'primary' : undefined"
-            :variant="cartStore.paymentStatus === opt.value ? 'flat' : 'text'"
-            class="text-none"
-            style="flex: 1 1 0%; min-width: 0"
-            :prepend-icon="opt.icon"
-          >
-            {{ opt.label }}
-          </v-btn>
-        </v-btn-toggle>
       </div>
 
       <div class="d-flex ga-2">
@@ -304,18 +346,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { usePosCartStore } from '../stores/pos-cart.store'
 import { usePosShiftStore } from '../stores/pos-shift.store'
 import { posService } from '../services/pos.service'
 import PosOrderItem from './PosOrderItem.vue'
+import AppCurrencyField from '@/components/ui/components/AppCurrencyField.vue'
 import {
     POS_PAYMENT_METHOD_OPTIONS,
     POS_PAYMENT_STATUS_OPTIONS,
     POS_QUICK_CASH_AMOUNTS,
     POS_SERVICE_TYPE_OPTIONS,
 } from '../constants/pos-order-panel.constants'
-import { PaymentMethod, ServiceType } from '../enums/_index'
+import { PaymentMethod, PaymentStatus, ServiceType } from '../enums/_index'
 
 const props = defineProps<{ storeId: number }>()
 const emit  = defineEmits<{ editItem: [uid: string] }>()
@@ -323,7 +366,20 @@ const emit  = defineEmits<{ editItem: [uid: string] }>()
 const cartStore  = usePosCartStore()
 const shiftStore = usePosShiftStore()
 
-const showCustomerForm = ref(cartStore.customerName !== '' || cartStore.customerPhone !== '')
+// Customer block - 3 trạng thái, state cục bộ không lưu store
+const showCustomerForm = ref(false)
+const hasCustomerInfo = computed(
+    () => !!cartStore.customerName || !!cartStore.customerPhone,
+)
+
+watch(
+    () => cartStore.amountReceived,
+    (amount) => {
+        if ((amount ?? 0) > 0) {
+            cartStore.paymentStatus = PaymentStatus.Paid
+        }
+    },
+)
 
 function formatQuickCash(amount: number): string {
     return `${(amount / 1000).toLocaleString('vi-VN')}K`
@@ -450,5 +506,10 @@ async function submitOrder(): Promise<void> {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
+}
+
+.customer-phone {
+    font-size: 11px;
+    line-height: 1.3;
 }
 </style>
