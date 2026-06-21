@@ -17,7 +17,7 @@
           v-else
           class="item-img-placeholder d-flex align-center justify-center rounded-lg bg-surface-variant"
         >
-          <v-icon icon="mdi-food" size="22" class="text-medium-emphasis" />
+          <v-icon icon="mdi-food" size="18" class="text-medium-emphasis" />
         </div>
       </div>
 
@@ -63,7 +63,7 @@
 
     <!-- Tier 3: Price + Qty control -->
     <div class="d-flex align-center justify-space-between mt-2">
-      <span class="text-body-2 font-weight-semibold text-primary">
+      <span class="font-weight-semibold text-primary" style="font-size: 13px">
         {{ lineTotal.toLocaleString('vi-VN') }}₫
       </span>
 
@@ -75,7 +75,7 @@
           <v-icon
             :icon="item.quantity <= 1 ? 'mdi-trash-can-outline' : 'mdi-minus'"
             :color="item.quantity <= 1 ? 'error' : undefined"
-            size="14"
+            size="12"
           />
         </button>
         <span class="qty-num text-body-2 font-weight-bold">{{ item.quantity }}</span>
@@ -83,7 +83,7 @@
           class="qty-btn d-flex align-center justify-center"
           @click="cartStore.updateQuantity(item.uid, item.quantity + 1)"
         >
-          <v-icon icon="mdi-plus" size="14" />
+          <v-icon icon="mdi-plus" size="12" />
         </button>
       </div>
     </div>
@@ -129,20 +129,23 @@ const groupedOptions = computed<GroupedOption[]>(() => {
 <style scoped>
 .item-img,
 .item-img-placeholder {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
 }
 
 .item-name {
+    font-size: 13px;
     line-height: 1.3;
 }
 
 .group-label {
+    font-size: 10px;
     letter-spacing: 0.04em;
 }
 
 .opt-row {
     gap: 4px;
+    font-size: 11px;
     line-height: 1.5;
 }
 
@@ -161,6 +164,10 @@ const groupedOptions = computed<GroupedOption[]>(() => {
 
 .note-block {
     background: rgb(var(--v-theme-primary), 0.06);
+}
+
+.note-block em {
+    font-size: 11px;
 }
 
 .note-icon {
@@ -182,8 +189,8 @@ const groupedOptions = computed<GroupedOption[]>(() => {
 }
 
 .qty-btn {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: white;
     border: none;
@@ -198,7 +205,7 @@ const groupedOptions = computed<GroupedOption[]>(() => {
 }
 
 .qty-num {
-    min-width: 24px;
+    min-width: 20px;
     text-align: center;
 }
 </style>

@@ -27,6 +27,7 @@ export interface CreatePosOrderRequest {
     DiscountAmount: number
     TaxAmount: number
     DeliveryFee: number
+    DeliveryAddress: string | null
     PaymentMethod: PaymentMethod
     PaymentStatus: PaymentStatus
     AmountReceived: number | null
@@ -90,6 +91,7 @@ export interface GetOrderDetailDto {
     DiscountAmount: number
     TaxAmount: number
     DeliveryFee: number
+    DeliveryAddress: string | null
     TotalAmount: number
     PaymentMethod: string | null
     PaymentStatus: string | null
