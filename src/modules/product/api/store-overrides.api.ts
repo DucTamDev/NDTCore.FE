@@ -6,7 +6,7 @@ import type {
     UpsertProductStoreRequest,
     UpsertProductStorePriceRequest,
     OptionStoreOverviewDto,
-    UpsertOptionStoreAvailabilityRequest,
+    UpsertOptionStoreRequest,
     UpsertOptionStorePriceRequest,
     StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
@@ -43,7 +43,7 @@ export const storeOverridesApi = {
     upsertOptionAvailabilityAsync(
         optionId: number,
         storeId: number,
-        payload: UpsertOptionStoreAvailabilityRequest,
+        payload: UpsertOptionStoreRequest,
     ): Promise<ApiResponse<unknown>> {
         return productClient.put(EP.UPSERT_OPTION_AVAILABILITY(optionId, storeId), payload)
     },

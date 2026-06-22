@@ -4,7 +4,7 @@ import { useToastNotification } from '@/composables/useToastNotification'
 import type {
     UpsertProductStoreRequest,
     UpsertProductStorePriceRequest,
-    UpsertOptionStoreAvailabilityRequest,
+    UpsertOptionStoreRequest,
     UpsertOptionStorePriceRequest,
     StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
@@ -107,7 +107,7 @@ export function useOptionStoreOverrides(optionId: number) {
     async function upsertAvailability(storeId: number, isAvailable: boolean): Promise<boolean> {
         isSubmitting.value = true
         try {
-            const payload: UpsertOptionStoreAvailabilityRequest = { StoreId: storeId, IsAvailable: isAvailable }
+            const payload: UpsertOptionStoreRequest = { StoreId: storeId, IsAvailable: isAvailable }
             await storeOverridesService.upsertOptionAvailabilityAsync(optionId, storeId, payload)
             toast.success('Lưu thành công.')
             return true

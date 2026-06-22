@@ -4,7 +4,7 @@ import type {
     UpsertProductStoreRequest,
     UpsertProductStorePriceRequest,
     OptionStoreOverviewDto,
-    UpsertOptionStoreAvailabilityRequest,
+    UpsertOptionStoreRequest,
     UpsertOptionStorePriceRequest,
     StoreOverrideItemDto,
 } from '../models/dtos/store-overrides.dto'
@@ -51,7 +51,7 @@ class StoreOverridesService {
     async upsertOptionAvailabilityAsync(
         optionId: number,
         storeId: number,
-        payload: UpsertOptionStoreAvailabilityRequest,
+        payload: UpsertOptionStoreRequest,
     ): Promise<boolean> {
         await storeOverridesApi.upsertOptionAvailabilityAsync(optionId, storeId, payload)
         return true
