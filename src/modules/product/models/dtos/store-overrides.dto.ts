@@ -20,13 +20,13 @@ export interface UpsertProductStorePriceRequest {
     OverridePrice: number
 }
 
-export interface OptionStoreAvailabilityDto {
+export interface OptionStoreDto {
     StoreId: number
     OptionId: number
     IsAvailable: boolean
 }
 
-export interface UpsertOptionStoreAvailabilityRequest {
+export interface UpsertOptionStoreRequest {
     StoreId: number
     IsAvailable: boolean
 }
