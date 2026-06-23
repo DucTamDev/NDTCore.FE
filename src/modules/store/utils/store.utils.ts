@@ -27,9 +27,11 @@ export function onTimeKeydown(event: KeyboardEvent): void {
     const next = input.value.slice(0, s) + event.key + input.value.slice(e)
     const digits = next.replace(/\D/g, '').slice(0, 4)
 
-    if (digits.length >= 1 && parseInt(digits[0]) > 2) { event.preventDefault(); return }
+    const d0 = digits[0]
+    const d2 = digits[2]
+    if (digits.length >= 1 && d0 !== undefined && parseInt(d0) > 2) { event.preventDefault(); return }
     if (digits.length >= 2 && parseInt(digits.slice(0, 2)) > 23) { event.preventDefault(); return }
-    if (digits.length >= 3 && parseInt(digits[2]) > 5) { event.preventDefault(); return }
+    if (digits.length >= 3 && d2 !== undefined && parseInt(d2) > 5) { event.preventDefault(); return }
     if (digits.length >= 4 && parseInt(digits.slice(2, 4)) > 59) { event.preventDefault(); return }
 }
 

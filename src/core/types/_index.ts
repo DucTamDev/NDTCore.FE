@@ -1,5 +1,4 @@
 export type { LoadingState } from './loading.types'
-export type { AsyncStateOptions } from './async-state.types'
 export type { ValidationRules } from './form.types'
 export type { MenuItem, MenuItemBadge, MenuSection, MenuEntry } from './menu-dashboard.types'
 export { isMenuSection } from './menu-dashboard.types'

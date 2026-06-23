@@ -2,17 +2,17 @@ import { API_ENDPOINTS } from '@/core/constants/api.constants'
 import type { ApiResponse } from '@/core/models/common.dto'
 
 import { identityClient } from '@/core/api/clients/identity.client'
-import {
+import type {
     LoginRequest,
     LoginResponse,
     RegisterRequest,
     RegisterResponse,
 } from '@/modules/auth/models/dtos/_index'
-import {
+import type {
     RefreshTokenRequest,
     RefreshTokenResponse,
 } from '@/modules/auth/models/dtos/refresh-token.dto'
-import { RequestConfig } from '@/core/api/clients/base.client'
+import type { RequestConfig } from '@/core/api/clients/base.client'
 
 export const authApi = {
     loginAsync(payload: LoginRequest): Promise<ApiResponse<LoginResponse>> {

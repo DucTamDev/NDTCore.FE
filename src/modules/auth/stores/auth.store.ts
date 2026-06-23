@@ -7,7 +7,7 @@ import { createLogger } from '@/core/logger/logger'
 import type { AuthTokenModel } from '@/core/models/auth.model'
 
 import { authService } from '@/modules/auth/services/auth.service'
-import { LoginRequest, RegisterRequest, RegisterResponse } from '@/modules/auth/models/dtos/_index'
+import type { LoginRequest, RegisterRequest, RegisterResponse } from '@/modules/auth/models/dtos/_index'
 
 const log = createLogger('auth-store')
 

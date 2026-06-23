@@ -80,7 +80,7 @@ export const useUIStore = defineStore('ui', () => {
         if (id) {
             const idx = modals.value.findIndex((m) => m.id === id)
             if (idx === -1) return
-            modals.value[idx].onClose?.()
+            modals.value[idx]?.onClose?.()
             modals.value.splice(idx, 1)
         } else {
             modals.value.at(-1)?.onClose?.()
@@ -107,7 +107,7 @@ export const useUIStore = defineStore('ui', () => {
         if (id) {
             const idx = drawers.value.findIndex((d) => d.id === id)
             if (idx === -1) return
-            drawers.value[idx].onClose?.()
+            drawers.value[idx]?.onClose?.()
             drawers.value.splice(idx, 1)
         } else {
             drawers.value.at(-1)?.onClose?.()

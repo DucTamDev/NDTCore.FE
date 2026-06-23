@@ -6,8 +6,8 @@ import {
     APP_PAGINATION_EMIT,
     APP_ROW_ACTIONS_EMIT,
 } from '../constants/emit-keys'
-import { ActiveFilters } from './filter'
-import { SortState } from './table'
+import type { ActiveFilters } from './filter'
+import type { SortState } from './table'
 
 export type AppDataTableEmits<T> = {
     (event: typeof APP_DATA_TABLE_EMIT.UPDATE_SELECTED, value: T[]): void

@@ -1,5 +1,5 @@
 import { userApi } from '@/modules/user/api/user.api'
-import { UserProfileDto } from '@/modules/user/models/dtos/_index'
+import type { UserProfileDto } from '@/modules/user/models/dtos/_index'
 
 class UserService {
     async getProfileAsync(): Promise<UserProfileDto | null> {

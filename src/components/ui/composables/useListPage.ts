@@ -18,7 +18,7 @@ export interface ListPageOptions<T> {
   defaultPageSize?: number
 }
 
-export function useListPage<T>(options: ListPageOptions<T>) {
+export function useListPage<T extends Record<string, unknown>>(options: ListPageOptions<T>) {
   const { fetchFn, keyField, fields = [], defaultPageSize = 10 } = options
 
   const items = ref<T[]>([])

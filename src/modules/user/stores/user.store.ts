@@ -20,9 +20,11 @@ export const useUserStore = defineStore('user', () => {
 
     const initials = computed(() => {
         const parts = fullName.value.split(' ').filter(Boolean)
-        return parts.length >= 2
-            ? `${parts[0][0]}${parts.at(-1)![0]}`.toUpperCase()
-            : (parts[0]?.[0] ?? '?').toUpperCase()
+        if (parts.length === 0) return '?'
+        if (parts.length === 1) return (parts[0]?.[0] ?? '?').toUpperCase()
+        const first = parts[0]?.[0] ?? ''
+        const last = parts.at(-1)?.[0] ?? ''
+        return `${first}${last}`.toUpperCase()
     })
 
     async function fetchProfile(): Promise<void> {

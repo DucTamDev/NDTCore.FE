@@ -6,7 +6,7 @@ import type {
 } from '@/modules/brand/models/dtos/_index'
 import type { BrandFormModel } from '@/modules/brand/models/form-models/brand.model'
 import type { BrandViewModel } from '@/modules/brand/models/view-models/brand.view-model'
-import { BrandDto } from '@/modules/brand/models/dtos/brand.dto'
+import type { BrandDto } from '@/modules/brand/models/dtos/brand.dto'
 
 export const brandMapper = {
     toViewModels(dtos: BrandDto[]): BrandViewModel[] {

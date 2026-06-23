@@ -1,7 +1,8 @@
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 
-export function useTableSelection<T>(keyField: keyof T) {
-  const selected = ref<T[]>([])
+export function useTableSelection<T extends Record<string, unknown>>(keyField: keyof T) {
+  const selected = ref<T[]>([]) as Ref<T[]>
 
   const getKey = (item: T): unknown => item[keyField]
 
