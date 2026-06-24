@@ -3,6 +3,7 @@ import { APP_NAME } from '@/core/constants/app.constants'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { routes } from './routes'
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
+import { useUserStore } from '@/modules/user/stores/user.store'
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -24,6 +25,7 @@ export const router = createRouter({
 
 router.beforeEach((to) => {
     const authStore = useAuthStore()
+    const userStore = useUserStore()
 
     // Đã login → không cho vào trang không cần auth
     if (authStore.isLoggedIn && !to.meta.requiresAuth) {
@@ -33,6 +35,16 @@ router.beforeEach((to) => {
     // Chưa login → không cho vào trang cần auth
     if (!authStore.isLoggedIn && to.meta.requiresAuth) {
         return { name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME }
+    }
+
+    // Có yêu cầu role cụ thể → kiểm tra role hiện tại của user (lấy từ userStore, không phải authStore)
+    if (to.meta.roles?.length) {
+        const userRoles = userStore.profile?.Roles?.map((r) => r.Name) ?? []
+        const hasAccess = to.meta.roles.some((role) => userRoles.includes(role))
+
+        if (!hasAccess) {
+            return { name: APP_ROUTES.ADMIN.CHILDREN.DASHBOARD.NAME }
+        }
     }
 
     const pageTitle = to.meta.title as string | undefined

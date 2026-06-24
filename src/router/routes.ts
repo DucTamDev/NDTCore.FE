@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
+import { SYSTEM_ROLES } from '@/core/constants/app.constants'
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -216,9 +217,38 @@ export const routes: RouteRecordRaw[] = [
                 meta: { title: 'Bán hàng', requiresAuth: true },
             },
             {
-                path: 'orders',
-                name: 'admin:orders',
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                path: APP_ROUTES.ADMIN.CHILDREN.ORDERS.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.ORDERS.NAME,
+                component: () => import('@/modules/order/views/OrdersView.vue'),
+                meta: {
+                    title: 'Đơn hàng',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                    ],
+                    breadcrumbs: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Đơn hàng', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.ORDER_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.ORDER_DETAIL.NAME,
+                component: () => import('@/modules/order/views/OrderDetailView.vue'),
+                meta: {
+                    title: 'Chi tiết đơn hàng',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                    ],
+                },
             },
             {
                 path: 'reports/revenue',

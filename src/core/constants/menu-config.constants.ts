@@ -110,7 +110,12 @@ export const menuConfig: MenuEntry[] = [
                 title: 'Đơn hàng',
                 icon: 'mdi-clipboard-list-outline',
                 to: 'admin:orders',
-                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.CASHIER],
+                roles: [
+                    SYSTEM_ROLES.SUPER_ADMIN,
+                    SYSTEM_ROLES.ORG_ADMIN,
+                    SYSTEM_ROLES.BRAND_MANAGER,
+                    SYSTEM_ROLES.FRANCHISEE_OWNER,
+                ],
             },
         ],
     },

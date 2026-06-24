@@ -67,6 +67,14 @@ export const APP_ROUTES = {
                 NAME: 'admin:store-members',
                 PATH: 'store-members',
             },
+            ORDERS: {
+                NAME: 'admin:orders',
+                PATH: 'orders',
+            },
+            ORDER_DETAIL: {
+                NAME: 'admin:order-detail',
+                PATH: 'orders/:id',
+            },
             SALES: {
                 NAME: 'admin:sales',
                 PATH: 'sales',

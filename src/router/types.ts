@@ -12,5 +12,6 @@ declare module 'vue-router' {
         title?: string
         requiresAuth?: boolean
         breadcrumbs?: BreadcrumbItem[]
+        roles?: string[]
     }
 }
