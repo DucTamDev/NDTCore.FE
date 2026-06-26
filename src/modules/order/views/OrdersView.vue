@@ -53,6 +53,13 @@
 
                 <template #empty>
                     <AppEmptyState
+                        v-if="hasNoStoreScope"
+                        icon="mdi-store-off-outline"
+                        title="Chưa được gán cửa hàng"
+                        description="Tài khoản của bạn chưa được gán cửa hàng nào, vui lòng liên hệ quản trị viên."
+                    />
+                    <AppEmptyState
+                        v-else
                         icon="mdi-clipboard-text-off-outline"
                         title="Không có đơn hàng"
                         description="Không tìm thấy đơn hàng phù hợp với điều kiện lọc."
@@ -119,6 +126,7 @@ const brandOptions = ref<FilterOption[]>([])
 const filterFields = computed(() =>
     buildOrderFilterFields(storeOptions.value, canSeeBrandFilter.value ? brandOptions.value : null),
 )
+const hasNoStoreScope = computed(() => !canSeeBrandFilter.value && storeOptions.value.length === 0)
 
 // ── List page ───────────────────────────────────────────────────────────────
 const fetchOrders = async (params: ListPageParams): Promise<{ items: OrderViewModel[]; total: number }> => {
