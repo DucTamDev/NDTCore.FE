@@ -40,7 +40,7 @@
                 @row-click="onRowClick"
             >
                 <template #[`item.status`]="{ item }">
-                    <AppStatusChip :config="resolveStatusConfig(item.status as string)" />
+                    <AppStatusChip :config="resolveOrderStatusConfig(item.status as string)" />
                 </template>
 
                 <template #[`item.totalAmount`]="{ item }">
@@ -87,7 +87,7 @@ import {
     AppStatusChip,
     AppEmptyState,
 } from '@/components/ui'
-import type { FilterOption, StatusConfig } from '@/components/ui'
+import type { FilterOption } from '@/components/ui'
 import { useListPage } from '@/components/ui/composables'
 import type { ListPageParams } from '@/components/ui/composables'
 import { APP_ROUTES, DEFAULT_PAGINATION, SYSTEM_ROLES } from '@/core/constants/_index'
@@ -97,8 +97,8 @@ import { useStore } from '@/modules/store/composables/useStore'
 import { useBrand } from '@/modules/brand/composables/useBrand'
 import {
     ORDER_LIST_COLUMNS,
-    ORDER_STATUS_CONFIG,
     buildOrderFilterFields,
+    resolveOrderStatusConfig,
 } from '@/modules/order/constants/order-list.constants'
 import type { OrderViewModel } from '@/modules/order/models/view-models/order.view-model'
 
@@ -168,12 +168,6 @@ watch(
 function applyTodayDefault(): void {
     const today = new Date().toISOString().slice(0, 10)
     listPage.filters.setFilter('dateRange', [today, today])
-}
-
-const UNKNOWN_STATUS_CONFIG: StatusConfig = { label: 'Không xác định', color: 'default', variant: 'tonal' }
-
-function resolveStatusConfig(status: string): StatusConfig {
-    return ORDER_STATUS_CONFIG[status] ?? UNKNOWN_STATUS_CONFIG
 }
 
 function formatCurrency(value: number): string {

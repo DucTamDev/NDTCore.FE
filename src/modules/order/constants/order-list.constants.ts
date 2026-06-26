@@ -15,6 +15,13 @@ export const ORDER_STATUS_CONFIG: Record<string, StatusConfig> = {
     [ORDER_STATUS.CANCELLED]: { label: 'Đã huỷ', color: 'error', icon: 'mdi-close-circle-outline', variant: 'tonal' },
 }
 
+const UNKNOWN_ORDER_STATUS_CONFIG: StatusConfig = { label: 'Không xác định', color: 'default', variant: 'tonal' }
+
+// noUncheckedIndexedAccess makes ORDER_STATUS_CONFIG[status] possibly undefined; this guards against an unrecognized status.
+export function resolveOrderStatusConfig(status: string): StatusConfig {
+    return ORDER_STATUS_CONFIG[status] ?? UNKNOWN_ORDER_STATUS_CONFIG
+}
+
 export const ORDER_LIST_COLUMNS: TableColumn[] = [
     { key: 'orderNumber', title: 'Mã đơn', sortable: true, minWidth: '140px' },
     { key: 'status', title: 'Trạng thái', width: '140px', align: 'center' },
