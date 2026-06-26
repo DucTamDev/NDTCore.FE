@@ -148,8 +148,9 @@ const viewItems = computed<OrderViewModel[]>(() => listPage.items.value ?? [])
 const onResetFilters = async () => {
     listPage.filters.resetFilters()
     applyTodayDefault()
+    applyDefaultStoreIfRestricted()
     listPage.pagination.reset()
-    await listPage.refresh()
+    await refreshIfScoped()
 }
 
 watch(
@@ -168,6 +169,22 @@ watch(
 function applyTodayDefault(): void {
     const today = new Date().toISOString().slice(0, 10)
     listPage.filters.setFilter('dateRange', [today, today])
+}
+
+// BrandManager/FranchiseeOwner are required by the backend to supply StoreId on every order list
+// request (deny-by-default scoping) — auto-select their first store so the page doesn't 403 on load.
+function applyDefaultStoreIfRestricted(): void {
+    if (canSeeBrandFilter.value) return
+    const defaultStoreId = storeOptions.value[0]?.value
+    if (defaultStoreId != null) {
+        listPage.filters.setFilter('storeId', String(defaultStoreId))
+    }
+}
+
+async function refreshIfScoped(): Promise<void> {
+    if (canSeeBrandFilter.value || listPage.filters.activeFilters.value['storeId']) {
+        await listPage.refresh()
+    }
 }
 
 function formatCurrency(value: number): string {
@@ -190,9 +207,11 @@ onMounted(async () => {
     if (canSeeBrandFilter.value) {
         const brandsResult = await getPagedBrands({ PageNumber: 1, PageSize: 200 })
         brandOptions.value = brandsResult.items.map((b) => ({ label: b.name, value: b.id }))
+    } else {
+        applyDefaultStoreIfRestricted()
     }
 
     applyTodayDefault()
-    await listPage.refresh()
+    await refreshIfScoped()
 })
 </script>
