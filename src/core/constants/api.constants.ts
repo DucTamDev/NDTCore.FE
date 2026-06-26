@@ -58,6 +58,12 @@ export const API_ENDPOINTS = {
             GET_ORDER_HISTORY: (storeId: number) => `/pos/store/${storeId}/orders`,
             GET_ORDER_BY_ID: (id: number) => `/pos/orders/${id}`,
         },
+        ADMIN_API: {
+            GET_PAGED: '/admin/order',
+            GET_BY_ID: (id: number) => `/admin/order/${id}`,
+            UPDATE_STATUS: (id: number) => `/admin/order/${id}/status`,
+            CANCEL: (id: number) => `/admin/order/${id}/cancel`,
+        },
     },
     PRODUCT: {
         CATEGORY_API: {
