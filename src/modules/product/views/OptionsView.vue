@@ -19,7 +19,7 @@
         </AppPageHeader>
 
         <!-- Filter bar -->
-        <v-card rounded="lg" variant="outlined">
+        <v-card rounded="lg" elevation="1">
             <v-card-text class="pa-3">
                 <v-row dense align="center">
                     <v-col cols="12" md="4">
