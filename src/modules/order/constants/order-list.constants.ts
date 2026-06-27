@@ -1,4 +1,4 @@
-import type { FilterField, FilterOption, TableColumn, StatusConfig } from '@/components/ui'
+import type { FilterField, TableColumn, StatusConfig, RowAction } from '@/components/ui'
 import type { OrderViewModel } from '@/modules/order/models/view-models/order.view-model'
 
 export const ORDER_STATUS = {
@@ -22,37 +22,27 @@ export function resolveOrderStatusConfig(status: string): StatusConfig {
     return ORDER_STATUS_CONFIG[status] ?? UNKNOWN_ORDER_STATUS_CONFIG
 }
 
+export const ORDER_ROW_ACTION = {
+    VIEW: 'view',
+} as const
+
+export const ORDER_LIST_ROW_ACTIONS: RowAction<OrderViewModel>[] = [
+    { key: ORDER_ROW_ACTION.VIEW, label: 'Xem chi tiết', icon: 'mdi-eye-outline' },
+]
+
 export const ORDER_LIST_COLUMNS: TableColumn[] = [
     { key: 'orderNumber', title: 'Mã đơn', sortable: true, minWidth: '140px' },
     { key: 'status', title: 'Trạng thái', width: '140px', align: 'center' },
+    { key: 'storeCode', title: 'Mã cửa hàng', width: '120px', hideBelow: 'md' },
     { key: 'channel', title: 'Kênh', width: '110px', hideBelow: 'md' },
-    { key: 'customerName', title: 'Khách hàng', minWidth: '160px', hideBelow: 'md' },
     { key: 'totalAmount', title: 'Tổng tiền', width: '130px', align: 'end' },
     { key: 'createdAt', title: 'Thời gian tạo', width: '170px', sortable: true },
+    { key: 'actions', title: 'Hành động', width: '110px', align: 'end' },
 ]
 
-export function buildOrderFilterFields(
-    storeOptions: FilterOption[],
-    brandOptions: FilterOption[] | null,
-): FilterField[] {
-    const fields: FilterField[] = []
-
-    if (brandOptions) {
-        fields.push({
-            key: 'brandId',
-            label: 'Thương hiệu',
-            type: 'select',
-            options: [{ label: 'Tất cả', value: null }, ...brandOptions],
-        })
-    }
-
-    fields.push(
-        {
-            key: 'storeId',
-            label: 'Cửa hàng',
-            type: 'select',
-            options: [{ label: 'Tất cả', value: null }, ...storeOptions],
-        },
+export function buildOrderFilterFields(): FilterField[] {
+    return [
+        { key: 'keyword', label: 'Tìm kiếm', type: 'text', placeholder: 'Mã đơn, khách hàng, SĐT...' },
         {
             key: 'status',
             label: 'Trạng thái',
@@ -77,9 +67,5 @@ export function buildOrderFilterFields(
             ],
         },
         { key: 'dateRange', label: 'Ngày tạo', type: 'daterange' },
-    )
-
-    return fields
+    ]
 }
-
-export type OrderRowClickHandler = (item: OrderViewModel) => void

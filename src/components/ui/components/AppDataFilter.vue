@@ -106,8 +106,6 @@ const getFieldValue = (key: string): string | null => {
           type="date"
           density="compact"
           hide-details="auto"
-          clearable
-          persistent-clear
           style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
           @update:model-value="updateDateRange(field.key, 0, $event ?? '')"
         />
@@ -117,8 +115,6 @@ const getFieldValue = (key: string): string | null => {
           type="date"
           density="compact"
           hide-details="auto"
-          clearable
-          persistent-clear
           style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
           @update:model-value="updateDateRange(field.key, 1, $event ?? '')"
         />

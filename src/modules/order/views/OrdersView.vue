@@ -37,10 +37,13 @@
                 :sort-by="listPage.sortBy.value"
                 item-key="id"
                 @update:sort-by="listPage.onSort"
-                @row-click="onRowClick"
             >
                 <template #[`item.status`]="{ item }">
                     <AppStatusChip :config="resolveOrderStatusConfig(item.status as string)" />
+                </template>
+
+                <template #[`item.storeCode`]="{ item }">
+                    {{ storeCodeById[item.storeId as number] ?? '—' }}
                 </template>
 
                 <template #[`item.totalAmount`]="{ item }">
@@ -49,6 +52,14 @@
 
                 <template #[`item.createdAt`]="{ item }">
                     {{ formatDateTime(item.createdAt as string | null) }}
+                </template>
+
+                <template #[`item.actions`]="{ item }">
+                    <AppRowActions
+                        :actions="ORDER_LIST_ROW_ACTIONS"
+                        :item="item"
+                        @action="onRowAction"
+                    />
                 </template>
 
                 <template #empty>
@@ -82,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
     AppBreadcrumb,
@@ -91,19 +102,20 @@ import {
     AppDataFilter,
     AppDataTable,
     AppPagination,
+    AppRowActions,
     AppStatusChip,
     AppEmptyState,
 } from '@/components/ui'
-import type { FilterOption } from '@/components/ui'
 import { useListPage } from '@/components/ui/composables'
 import type { ListPageParams } from '@/components/ui/composables'
 import { APP_ROUTES, DEFAULT_PAGINATION, SYSTEM_ROLES } from '@/core/constants/_index'
 import { useUserStore } from '@/modules/user/stores/user.store'
 import { useOrder } from '@/modules/order/composables/useOrder'
 import { useStore } from '@/modules/store/composables/useStore'
-import { useBrand } from '@/modules/brand/composables/useBrand'
 import {
     ORDER_LIST_COLUMNS,
+    ORDER_LIST_ROW_ACTIONS,
+    ORDER_ROW_ACTION,
     buildOrderFilterFields,
     resolveOrderStatusConfig,
 } from '@/modules/order/constants/order-list.constants'
@@ -113,20 +125,17 @@ const router = useRouter()
 const userStore = useUserStore()
 const { getPagedOrders } = useOrder()
 const { getPagedStores } = useStore()
-const { getPagedBrands } = useBrand()
 
-// ── Role-based filter visibility ────────────────────────────────────────────
+// ── Store scope (deny-by-default on the backend for these 2 roles) ─────────
 const userRoles = computed(() => userStore.profile?.Roles?.map((r) => r.Name) ?? [])
-const BRAND_FILTER_ROLES: readonly string[] = [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN]
-const canSeeBrandFilter = computed(() => userRoles.value.some((r) => BRAND_FILTER_ROLES.includes(r)))
+const SCOPED_ROLES: readonly string[] = [SYSTEM_ROLES.BRAND_MANAGER, SYSTEM_ROLES.FRANCHISEE_OWNER]
+const requiresStoreScope = computed(() => userRoles.value.some((r) => SCOPED_ROLES.includes(r)))
 
-// ── Filter options ─────────────────────────────────────────────────────────
-const storeOptions = ref<FilterOption[]>([])
-const brandOptions = ref<FilterOption[]>([])
-const filterFields = computed(() =>
-    buildOrderFilterFields(storeOptions.value, canSeeBrandFilter.value ? brandOptions.value : null),
-)
-const hasNoStoreScope = computed(() => !canSeeBrandFilter.value && storeOptions.value.length === 0)
+const storeCodeById = ref<Record<number, string>>({})
+const firstScopedStoreId = ref<number | null>(null)
+const hasNoStoreScope = computed(() => requiresStoreScope.value && firstScopedStoreId.value == null)
+
+const filterFields = buildOrderFilterFields()
 
 // ── List page ───────────────────────────────────────────────────────────────
 const fetchOrders = async (params: ListPageParams): Promise<{ items: OrderViewModel[]; total: number }> => {
@@ -135,6 +144,7 @@ const fetchOrders = async (params: ListPageParams): Promise<{ items: OrderViewMo
         PageNumber: params.pageNumber,
         PageSize: params.pageSize,
         StoreId: params.filters['storeId'] ? Number(params.filters['storeId']) : null,
+        Keyword: (params.filters['keyword'] as string | null) ?? null,
         Status: (params.filters['status'] as string | null) ?? null,
         Channel: (params.filters['channel'] as string | null) ?? null,
         FromDate: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : null,
@@ -161,19 +171,6 @@ const onResetFilters = async () => {
     await refreshIfScoped()
 }
 
-watch(
-    () => listPage.filters.activeFilters.value['brandId'],
-    async (brandId) => {
-        listPage.filters.setFilter('storeId', null)
-        const result = await getPagedStores({
-            PageNumber: 1,
-            PageSize: 200,
-            BrandId: brandId ? Number(brandId) : null,
-        })
-        storeOptions.value = result.items.map((s) => ({ label: s.name, value: s.id }))
-    },
-)
-
 function applyTodayDefault(): void {
     const today = new Date().toISOString().slice(0, 10)
     listPage.filters.setFilter('dateRange', [today, today])
@@ -182,15 +179,14 @@ function applyTodayDefault(): void {
 // BrandManager/FranchiseeOwner are required by the backend to supply StoreId on every order list
 // request (deny-by-default scoping) — auto-select their first store so the page doesn't 403 on load.
 function applyDefaultStoreIfRestricted(): void {
-    if (canSeeBrandFilter.value) return
-    const defaultStoreId = storeOptions.value[0]?.value
-    if (defaultStoreId != null) {
-        listPage.filters.setFilter('storeId', String(defaultStoreId))
+    if (!requiresStoreScope.value) return
+    if (firstScopedStoreId.value != null) {
+        listPage.filters.setFilter('storeId', String(firstScopedStoreId.value))
     }
 }
 
 async function refreshIfScoped(): Promise<void> {
-    if (canSeeBrandFilter.value || listPage.filters.activeFilters.value['storeId']) {
+    if (!requiresStoreScope.value || listPage.filters.activeFilters.value['storeId']) {
         await listPage.refresh()
     }
 }
@@ -204,21 +200,18 @@ function formatDateTime(value: string | null | undefined): string {
     return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value))
 }
 
-function onRowClick(item: OrderViewModel): void {
-    void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.ORDER_DETAIL.NAME, params: { id: item.id } })
+function onRowAction(actionKey: string, item: OrderViewModel): void {
+    if (actionKey === ORDER_ROW_ACTION.VIEW) {
+        void router.push({ name: APP_ROUTES.ADMIN.CHILDREN.ORDER_DETAIL.NAME, params: { id: item.id } })
+    }
 }
 
 onMounted(async () => {
     const storesResult = await getPagedStores({ PageNumber: 1, PageSize: 200 })
-    storeOptions.value = storesResult.items.map((s) => ({ label: s.name, value: s.id }))
+    storeCodeById.value = Object.fromEntries(storesResult.items.map((s) => [s.id, s.code]))
+    firstScopedStoreId.value = storesResult.items[0]?.id ?? null
 
-    if (canSeeBrandFilter.value) {
-        const brandsResult = await getPagedBrands({ PageNumber: 1, PageSize: 200 })
-        brandOptions.value = brandsResult.items.map((b) => ({ label: b.name, value: b.id }))
-    } else {
-        applyDefaultStoreIfRestricted()
-    }
-
+    applyDefaultStoreIfRestricted()
     applyTodayDefault()
     await refreshIfScoped()
 })
