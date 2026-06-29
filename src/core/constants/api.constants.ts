@@ -149,4 +149,12 @@ export const API_ENDPOINTS = {
                 `/admin/store-overrides/options/${optionId}/paged`,
         },
     },
+    REPORT: {
+        STORE_REVENUE_API: {
+            GET_PAGED: '/reports/store-revenue',
+            GET_DETAIL: (storeId: number) => `/reports/store-revenue/${storeId}`,
+            EXPORT_LIST: '/reports/store-revenue/export',
+            EXPORT_DETAIL: (storeId: number) => `/reports/store-revenue/${storeId}/export`,
+        },
+    },
 } as const

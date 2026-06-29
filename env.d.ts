@@ -12,6 +12,7 @@ interface ImportMetaEnv {
     readonly VITE_PRODUCT_BASE_URL: string
     readonly VITE_ORDER_BASE_URL: string
     readonly VITE_TENANT_BASE_URL: string
+    readonly VITE_REPORT_BASE_URL: string
     readonly VITE_API_TIMEOUT: number
     readonly VITE_API_WITH_CREDS: boolean
 }
