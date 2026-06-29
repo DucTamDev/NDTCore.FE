@@ -17,10 +17,20 @@
                 />
             </template>
 
-            <v-btn variant="outlined" prepend-icon="mdi-file-excel-outline" @click="onExport('excel')">
+            <v-btn
+                variant="outlined"
+                prepend-icon="mdi-file-excel-outline"
+                :loading="exporting"
+                @click="onExport('excel')"
+            >
                 Xuất Excel
             </v-btn>
-            <v-btn variant="outlined" prepend-icon="mdi-file-delimited-outline" @click="onExport('csv')">
+            <v-btn
+                variant="outlined"
+                prepend-icon="mdi-file-delimited-outline"
+                :loading="exporting"
+                @click="onExport('csv')"
+            >
                 Xuất CSV
             </v-btn>
         </AppPageHeader>
@@ -135,6 +145,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { AppBreadcrumb, AppPageHeader, AppDataTable, AppEmptyState } from '@/components/ui'
 import { APP_ROUTES } from '@/core/constants/_index'
+import { downloadBlob } from '@/core/utils/download.util'
 import { useStoreRevenueDetail } from '@/modules/report/composables/useStoreRevenueDetail'
 import {
     STORE_REVENUE_BUCKET_COLUMNS,
@@ -196,14 +207,25 @@ async function onFilterChange(): Promise<void> {
     await loadDetail()
 }
 
+const exporting = ref(false)
+
 async function onExport(format: 'excel' | 'csv'): Promise<void> {
-    await exportDetail(
-        storeId,
-        `${fromDate.value}T00:00:00`,
-        `${toDate.value}T23:59:59`,
-        granularity.value,
-        format,
-    )
+    exporting.value = true
+    try {
+        const blob = await exportDetail(
+            storeId,
+            `${fromDate.value}T00:00:00`,
+            `${toDate.value}T23:59:59`,
+            granularity.value,
+            format,
+        )
+        const today = toDateKey(new Date())
+        const extension = format === 'excel' ? 'xlsx' : 'csv'
+        const storeCode = detail.value?.storeCode ?? storeId
+        downloadBlob(blob, `chi-tiet-doanh-thu-${storeCode}-${today}.${extension}`)
+    } finally {
+        exporting.value = false
+    }
 }
 
 onMounted(async () => {

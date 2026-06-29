@@ -14,9 +14,9 @@ export function useStoreRevenueList() {
         }
     }
 
-    async function exportStoreRevenueList(filter: StoreRevenueFilterDto & { format: 'excel' | 'csv' }) {
+    async function exportStoreRevenueList(filter: StoreRevenueFilterDto & { format: 'excel' | 'csv' }): Promise<Blob> {
         try {
-            await reportService.exportStoreRevenueListAsync(filter)
+            return await reportService.exportStoreRevenueListAsync(filter)
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Xuất file thất bại.')
             throw error

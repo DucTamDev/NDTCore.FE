@@ -21,9 +21,9 @@ export function useStoreRevenueDetail() {
         }
     }
 
-    async function exportDetail(storeId: number, from: string, to: string, granularity: BucketGranularityDto, format: 'excel' | 'csv') {
+    async function exportDetail(storeId: number, from: string, to: string, granularity: BucketGranularityDto, format: 'excel' | 'csv'): Promise<Blob> {
         try {
-            await reportService.exportStoreRevenueDetailAsync(storeId, from, to, granularity, format)
+            return await reportService.exportStoreRevenueDetailAsync(storeId, from, to, granularity, format)
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Xuất file thất bại.')
             throw error

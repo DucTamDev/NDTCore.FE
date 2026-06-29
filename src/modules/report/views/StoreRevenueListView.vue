@@ -10,10 +10,20 @@
                 />
             </template>
 
-            <v-btn variant="outlined" prepend-icon="mdi-file-excel-outline" @click="onExport('excel')">
+            <v-btn
+                variant="outlined"
+                prepend-icon="mdi-file-excel-outline"
+                :loading="exporting"
+                @click="onExport('excel')"
+            >
                 Xuất Excel
             </v-btn>
-            <v-btn variant="outlined" prepend-icon="mdi-file-delimited-outline" @click="onExport('csv')">
+            <v-btn
+                variant="outlined"
+                prepend-icon="mdi-file-delimited-outline"
+                :loading="exporting"
+                @click="onExport('csv')"
+            >
                 Xuất CSV
             </v-btn>
         </AppPageHeader>
@@ -81,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
     AppBreadcrumb,
@@ -96,6 +106,7 @@ import {
 import { useListPage } from '@/components/ui/composables'
 import type { ListPageParams } from '@/components/ui/composables'
 import { APP_ROUTES, DEFAULT_PAGINATION } from '@/core/constants/_index'
+import { downloadBlob } from '@/core/utils/download.util'
 import { useStoreRevenueList } from '@/modules/report/composables/useStoreRevenueList'
 import {
     STORE_REVENUE_LIST_COLUMNS,
@@ -176,18 +187,28 @@ function onRowAction(actionKey: string, item: StoreRevenueListItemViewModel): vo
     }
 }
 
+const exporting = ref(false)
+
 async function onExport(format: 'excel' | 'csv'): Promise<void> {
     const dateRange = listPage.filters.activeFilters.value['dateRange'] as [string, string] | null
-    await exportStoreRevenueList({
-        PageNumber: listPage.pagination.pageNumber.value,
-        PageSize: listPage.pagination.pageSize.value,
-        From: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : defaultDateRange().from,
-        To: dateRange?.[1] ? `${dateRange[1]}T23:59:59` : defaultDateRange().to,
-        Keyword: (listPage.filters.activeFilters.value['keyword'] as string | null) ?? null,
-        SortBy: listPage.sortBy.value?.key ?? null,
-        SortDirection: listPage.sortBy.value?.order ?? null,
-        format,
-    })
+    exporting.value = true
+    try {
+        const blob = await exportStoreRevenueList({
+            PageNumber: listPage.pagination.pageNumber.value,
+            PageSize: listPage.pagination.pageSize.value,
+            From: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : defaultDateRange().from,
+            To: dateRange?.[1] ? `${dateRange[1]}T23:59:59` : defaultDateRange().to,
+            Keyword: (listPage.filters.activeFilters.value['keyword'] as string | null) ?? null,
+            SortBy: listPage.sortBy.value?.key ?? null,
+            SortDirection: listPage.sortBy.value?.order ?? null,
+            format,
+        })
+        const today = toDateKey(new Date())
+        const extension = format === 'excel' ? 'xlsx' : 'csv'
+        downloadBlob(blob, `bao-cao-doanh-thu-${today}.${extension}`)
+    } finally {
+        exporting.value = false
+    }
 }
 
 onMounted(async () => {
