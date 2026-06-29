@@ -156,10 +156,7 @@ import RevenueTrendChart from '@/modules/report/components/RevenueTrendChart.vue
 import RevenueOrderChart from '@/modules/report/components/RevenueOrderChart.vue'
 import type { RevenueBucketViewModel } from '@/modules/report/models/view-models/store-revenue.view-model'
 import type { BucketGranularityDto } from '@/modules/report/models/dtos/store-revenue.dto'
-
-// AppDataTable requires T extends Record<string, unknown>; RevenueBucketViewModel doesn't carry that index
-// signature (it's a plain DTO-shaped model), so we widen it locally for table rendering only.
-type BucketRow = RevenueBucketViewModel & Record<string, unknown>
+import { toDateKey, currentMonthDateKeys, toRangeStart, toRangeEnd } from '@/modules/report/utils/date-range.util'
 
 const route = useRoute()
 const { detail, loading, fetchDetail, exportDetail } = useStoreRevenueDetail()
@@ -170,19 +167,7 @@ const granularity = ref<BucketGranularityDto>('Day')
 const fromDate = ref('')
 const toDate = ref('')
 
-const bucketItems = computed<BucketRow[]>(() => (detail.value?.currentPeriodBuckets ?? []) as BucketRow[])
-
-function toDateKey(date: Date): string {
-    return date.toISOString().slice(0, 10)
-}
-
-// new Date(year, month + 1, 0) rolls back to the last day of `month` — avoids an off-by-one.
-function currentMonthDateKeys(): [string, string] {
-    const now = new Date()
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    return [toDateKey(firstDay), toDateKey(lastDay)]
-}
+const bucketItems = computed<RevenueBucketViewModel[]>(() => detail.value?.currentPeriodBuckets ?? [])
 
 function formatCurrency(value: number): string {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)
@@ -197,8 +182,8 @@ function formatBucketLabel(bucketStart: string): string {
 async function loadDetail(): Promise<void> {
     await fetchDetail(
         storeId,
-        `${fromDate.value}T00:00:00`,
-        `${toDate.value}T23:59:59`,
+        toRangeStart(fromDate.value),
+        toRangeEnd(toDate.value),
         granularity.value,
     )
 }
@@ -214,8 +199,8 @@ async function onExport(format: 'excel' | 'csv'): Promise<void> {
     try {
         const blob = await exportDetail(
             storeId,
-            `${fromDate.value}T00:00:00`,
-            `${toDate.value}T23:59:59`,
+            toRangeStart(fromDate.value),
+            toRangeEnd(toDate.value),
             granularity.value,
             format,
         )

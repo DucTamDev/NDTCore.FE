@@ -6,7 +6,7 @@ export interface StoreRevenueListItemViewModel extends Record<string, unknown> {
     orderCount: number
 }
 
-export interface RevenueBucketViewModel {
+export interface RevenueBucketViewModel extends Record<string, unknown> {
     bucketStart: string
     revenue: number
     orderCount: number

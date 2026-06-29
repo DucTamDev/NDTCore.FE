@@ -114,6 +114,7 @@ import {
     STORE_REVENUE_ROW_ACTION,
     buildStoreRevenueFilterFields,
 } from '@/modules/report/constants/store-revenue-list.constants'
+import { toDateKey, currentMonthDateKeys, toRangeStart, toRangeEnd } from '@/modules/report/utils/date-range.util'
 import type { StoreRevenueListItemViewModel } from '@/modules/report/models/view-models/store-revenue.view-model'
 
 const router = useRouter()
@@ -129,8 +130,8 @@ const fetchStoreRevenue = async (
     const result = await getPagedStoreRevenue({
         PageNumber: params.pageNumber,
         PageSize: params.pageSize,
-        From: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : defaultDateRange().from,
-        To: dateRange?.[1] ? `${dateRange[1]}T23:59:59` : defaultDateRange().to,
+        From: dateRange?.[0] ? toRangeStart(dateRange[0]) : defaultDateRange().from,
+        To: dateRange?.[1] ? toRangeEnd(dateRange[1]) : defaultDateRange().to,
         Keyword: (params.filters['keyword'] as string | null) ?? null,
         SortBy: params.sortBy?.key ?? null,
         SortDirection: params.sortBy?.order ?? null,
@@ -153,21 +154,9 @@ const onResetFilters = async () => {
     await listPage.refresh()
 }
 
-function toDateKey(date: Date): string {
-    return date.toISOString().slice(0, 10)
-}
-
-// new Date(year, month + 1, 0) rolls back to the last day of `month` — avoids an off-by-one.
-function currentMonthDateKeys(): [string, string] {
-    const now = new Date()
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    return [toDateKey(firstDay), toDateKey(lastDay)]
-}
-
 function defaultDateRange(): { from: string; to: string } {
     const [from, to] = currentMonthDateKeys()
-    return { from: `${from}T00:00:00`, to: `${to}T23:59:59` }
+    return { from: toRangeStart(from), to: toRangeEnd(to) }
 }
 
 function applyCurrentMonthDefault(): void {
@@ -196,8 +185,8 @@ async function onExport(format: 'excel' | 'csv'): Promise<void> {
         const blob = await exportStoreRevenueList({
             PageNumber: listPage.pagination.pageNumber.value,
             PageSize: listPage.pagination.pageSize.value,
-            From: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : defaultDateRange().from,
-            To: dateRange?.[1] ? `${dateRange[1]}T23:59:59` : defaultDateRange().to,
+            From: dateRange?.[0] ? toRangeStart(dateRange[0]) : defaultDateRange().from,
+            To: dateRange?.[1] ? toRangeEnd(dateRange[1]) : defaultDateRange().to,
             Keyword: (listPage.filters.activeFilters.value['keyword'] as string | null) ?? null,
             SortBy: listPage.sortBy.value?.key ?? null,
             SortDirection: listPage.sortBy.value?.order ?? null,
