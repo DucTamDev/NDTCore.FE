@@ -251,9 +251,42 @@ export const routes: RouteRecordRaw[] = [
                 },
             },
             {
-                path: 'reports/revenue',
-                name: 'admin:reports-revenue',
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                path: APP_ROUTES.ADMIN.CHILDREN.REPORTS_STORE_REVENUE.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.REPORTS_STORE_REVENUE.NAME,
+                component: () => import('@/modules/report/views/StoreRevenueListView.vue'),
+                meta: {
+                    title: 'Báo cáo doanh thu',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                        SYSTEM_ROLES.STORE_MANAGER,
+                        SYSTEM_ROLES.CASHIER,
+                    ],
+                    breadcrumbs: [
+                        { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
+                        { title: 'Báo cáo doanh thu', disabled: true },
+                    ],
+                },
+            },
+            {
+                path: APP_ROUTES.ADMIN.CHILDREN.REPORTS_STORE_REVENUE_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.REPORTS_STORE_REVENUE_DETAIL.NAME,
+                component: () => import('@/modules/report/views/StoreRevenueDetailView.vue'),
+                meta: {
+                    title: 'Chi tiết doanh thu cửa hàng',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                        SYSTEM_ROLES.STORE_MANAGER,
+                        SYSTEM_ROLES.CASHIER,
+                    ],
+                },
             },
             {
                 path: 'reports/shift',

@@ -79,6 +79,14 @@ export const APP_ROUTES = {
                 NAME: 'admin:sales',
                 PATH: 'sales',
             },
+            REPORTS_STORE_REVENUE: {
+                NAME: 'admin:reports-store-revenue',
+                PATH: 'reports/store-revenue',
+            },
+            REPORTS_STORE_REVENUE_DETAIL: {
+                NAME: 'admin:reports-store-revenue-detail',
+                PATH: 'reports/store-revenue/:storeId',
+            },
         },
     },
 

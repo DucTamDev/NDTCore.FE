@@ -127,8 +127,15 @@ export const menuConfig: MenuEntry[] = [
             {
                 title: 'Doanh thu',
                 icon: 'mdi-chart-line',
-                to: 'admin:reports-revenue',
-                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
+                to: 'admin:reports-store-revenue',
+                roles: [
+                    SYSTEM_ROLES.SUPER_ADMIN,
+                    SYSTEM_ROLES.ORG_ADMIN,
+                    SYSTEM_ROLES.BRAND_MANAGER,
+                    SYSTEM_ROLES.FRANCHISEE_OWNER,
+                    SYSTEM_ROLES.STORE_MANAGER,
+                    SYSTEM_ROLES.CASHIER,
+                ],
             },
             {
                 title: 'Báo cáo ca',
