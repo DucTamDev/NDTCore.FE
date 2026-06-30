@@ -33,3 +33,25 @@ export function toRangeStart(dateKey: string): string {
 export function toRangeEnd(dateKey: string): string {
     return `${dateKey}T23:59:59${localOffsetSuffix()}`
 }
+
+export function todayKey(): string {
+    return toDateKey(new Date())
+}
+
+export function yesterdayKey(): string {
+    const now = new Date()
+    return toDateKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1))
+}
+
+// Inclusive of today — e.g. "7 ngày gần nhất" spans today and the 6 days before it.
+export function last7DaysKeys(): [string, string] {
+    const now = new Date()
+    const from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6)
+    return [toDateKey(from), toDateKey(now)]
+}
+
+export function last30DaysKeys(): [string, string] {
+    const now = new Date()
+    const from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29)
+    return [toDateKey(from), toDateKey(now)]
+}
