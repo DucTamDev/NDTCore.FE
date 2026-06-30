@@ -14,8 +14,8 @@ export function buildVariables(
 ): VuetifyVariables {
   return {
     // BORDER SYSTEM
-    'border-color': toHex(colors.border),
-    'border-opacity': 0.12,
+    // 'border-color': toHex(colors.border),
+    // 'border-opacity': 0.12,
 
     // TEXT / EMPHASIS SYSTEM
     'high-emphasis-opacity': 1,
