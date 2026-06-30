@@ -36,54 +36,96 @@
         </AppPageHeader>
 
         <v-card rounded="lg">
-            <v-card-text class="d-flex flex-wrap ga-6">
-                <div>
-                    <div class="text-caption text-medium-emphasis">Cửa hàng</div>
-                    <div>{{ detail?.storeName ?? '—' }}</div>
+            <v-card-text class="d-flex flex-wrap justify-space-between ga-6">
+                <div class="d-flex flex-wrap ga-6">
+                    <div>
+                        <div class="text-caption text-medium-emphasis">Cửa hàng</div>
+                        <div>{{ detail?.storeName ?? '—' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-caption text-medium-emphasis">Mã cửa hàng</div>
+                        <div>{{ detail?.storeCode ?? '—' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-caption text-medium-emphasis">Franchisee</div>
+                        <div>{{ detail?.franchiseeName ?? '—' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-caption text-medium-emphasis">Brand</div>
+                        <div>{{ detail?.brandName ?? '—' }}</div>
+                    </div>
                 </div>
-                <div>
-                    <div class="text-caption text-medium-emphasis">Mã cửa hàng</div>
-                    <div>{{ detail?.storeCode ?? '—' }}</div>
-                </div>
-                <div>
-                    <div class="text-caption text-medium-emphasis">Franchisee</div>
-                    <div>{{ detail?.franchiseeName ?? '—' }}</div>
-                </div>
-                <div>
-                    <div class="text-caption text-medium-emphasis">Brand</div>
-                    <div>{{ detail?.brandName ?? '—' }}</div>
+                <div class="text-body-2 text-medium-emphasis align-self-end">
+                    {{ fromDate && toDate ? `${formatBucketLabel(fromDate)} – ${formatBucketLabel(toDate)}` : '—' }}
                 </div>
             </v-card-text>
         </v-card>
 
         <v-card rounded="lg">
-            <v-card-text class="d-flex flex-wrap align-center ga-4">
+            <v-card-text class="d-flex flex-wrap align-center ga-4 border-b">
+                <v-btn-toggle
+                    :model-value="datePreset"
+                    mandatory
+                    density="compact"
+                    color="primary"
+                    @update:model-value="onPresetToggle"
+                >
+                    <v-btn
+                        v-for="option in DATE_PRESET_OPTIONS.filter((o) => o.value !== 'custom')"
+                        :key="option.value"
+                        :value="option.value"
+                        class="text-none"
+                    >
+                        {{ option.label }}
+                    </v-btn>
+                    <v-btn value="custom" class="text-none">
+                        {{ customRangeLabel || 'Tùy chỉnh' }}
+                        <v-menu
+                            v-model="isCustomMenuOpen"
+                            activator="parent"
+                            location="bottom end"
+                            :close-on-content-click="false"
+                            @update:model-value="onCustomMenuToggle"
+                        >
+                            <v-card min-width="280">
+                                <v-card-text class="d-flex flex-column ga-3">
+                                    <div class="text-caption font-weight-medium">Chọn khoảng thời gian</div>
+                                    <v-text-field
+                                        v-model="draftFromDate"
+                                        label="Từ ngày"
+                                        type="date"
+                                        :max="maxDate"
+                                        density="compact"
+                                        hide-details="auto"
+                                    />
+                                    <v-text-field
+                                        v-model="draftToDate"
+                                        label="Đến ngày"
+                                        type="date"
+                                        :max="maxDate"
+                                        density="compact"
+                                        hide-details="auto"
+                                    />
+                                    <div class="text-caption text-error" style="min-height: 20px">
+                                        {{ customRangeError }}
+                                    </div>
+                                    <div class="d-flex justify-end ga-2">
+                                        <v-btn variant="text" @click="cancelCustomRange">Hủy</v-btn>
+                                        <v-btn variant="flat" color="primary" @click="applyCustomRange">Áp dụng</v-btn>
+                                    </div>
+                                </v-card-text>
+                            </v-card>
+                        </v-menu>
+                    </v-btn>
+                </v-btn-toggle>
+
+                <v-spacer />
+
                 <v-tabs v-model="granularity" color="primary" density="compact" @update:model-value="onFilterChange">
                     <v-tab v-for="option in GRANULARITY_TAB_OPTIONS" :key="option.value" :value="option.value" class="text-none">
                         {{ option.label }}
                     </v-tab>
                 </v-tabs>
-
-                <v-spacer />
-
-                <v-text-field
-                    v-model="fromDate"
-                    label="Từ ngày"
-                    type="date"
-                    density="compact"
-                    hide-details="auto"
-                    style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
-                    @update:model-value="onFilterChange"
-                />
-                <v-text-field
-                    v-model="toDate"
-                    label="Đến ngày"
-                    type="date"
-                    density="compact"
-                    hide-details="auto"
-                    style="min-width: 160px; max-width: 200px; flex: 0 0 auto"
-                    @update:model-value="onFilterChange"
-                />
             </v-card-text>
         </v-card>
 
@@ -150,13 +192,24 @@ import { useStoreRevenueDetail } from '@/modules/report/composables/useStoreReve
 import {
     STORE_REVENUE_BUCKET_COLUMNS,
     GRANULARITY_TAB_OPTIONS,
+    DATE_PRESET_OPTIONS,
+    type DatePreset,
 } from '@/modules/report/constants/store-revenue-detail.constants'
 import RevenueKpiCards from '@/modules/report/components/RevenueKpiCards.vue'
 import RevenueTrendChart from '@/modules/report/components/RevenueTrendChart.vue'
 import RevenueOrderChart from '@/modules/report/components/RevenueOrderChart.vue'
 import type { RevenueBucketViewModel } from '@/modules/report/models/view-models/store-revenue.view-model'
 import type { BucketGranularityDto } from '@/modules/report/models/dtos/store-revenue.dto'
-import { toDateKey, currentMonthDateKeys, toRangeStart, toRangeEnd } from '@/modules/report/utils/date-range.util'
+import {
+    toDateKey,
+    currentMonthDateKeys,
+    todayKey,
+    yesterdayKey,
+    last7DaysKeys,
+    last30DaysKeys,
+    toRangeStart,
+    toRangeEnd,
+} from '@/modules/report/utils/date-range.util'
 
 const route = useRoute()
 const { detail, loading, fetchDetail, exportDetail } = useStoreRevenueDetail()
@@ -166,6 +219,15 @@ const storeId = Number(route.params.storeId)
 const granularity = ref<BucketGranularityDto>('Day')
 const fromDate = ref('')
 const toDate = ref('')
+
+const datePreset = ref<DatePreset>('thisMonth')
+const isCustomMenuOpen = ref(false)
+const draftFromDate = ref('')
+const draftToDate = ref('')
+const customRangeError = ref('')
+const customRangeLabel = ref('')
+
+const maxDate = computed(() => todayKey())
 
 const bucketItems = computed<RevenueBucketViewModel[]>(() => detail.value?.currentPeriodBuckets ?? [])
 
@@ -177,6 +239,63 @@ function formatBucketLabel(bucketStart: string): string {
     return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
         new Date(bucketStart),
     )
+}
+
+function applyPreset(preset: DatePreset): void {
+    if (preset === 'today') {
+        const key = todayKey()
+        fromDate.value = key
+        toDate.value = key
+    } else if (preset === 'yesterday') {
+        const key = yesterdayKey()
+        fromDate.value = key
+        toDate.value = key
+    } else if (preset === 'last7') {
+        const [from, to] = last7DaysKeys()
+        fromDate.value = from
+        toDate.value = to
+    } else if (preset === 'last30') {
+        const [from, to] = last30DaysKeys()
+        fromDate.value = from
+        toDate.value = to
+    } else if (preset === 'thisMonth') {
+        const [from, to] = currentMonthDateKeys()
+        fromDate.value = from
+        toDate.value = to
+    }
+    datePreset.value = preset
+}
+
+async function onPresetToggle(preset: DatePreset | null): Promise<void> {
+    if (preset === null || preset === 'custom') return
+    applyPreset(preset)
+    await onFilterChange()
+}
+
+function onCustomMenuToggle(isOpen: boolean): void {
+    if (isOpen) {
+        draftFromDate.value = fromDate.value
+        draftToDate.value = toDate.value
+        customRangeError.value = ''
+    }
+}
+
+function cancelCustomRange(): void {
+    isCustomMenuOpen.value = false
+}
+
+async function applyCustomRange(): Promise<void> {
+    if (draftFromDate.value > draftToDate.value) {
+        customRangeError.value = 'Từ ngày phải nhỏ hơn hoặc bằng đến ngày.'
+        return
+    }
+    customRangeError.value = ''
+    fromDate.value = draftFromDate.value
+    toDate.value = draftToDate.value
+    datePreset.value = 'custom'
+    customRangeLabel.value = `${formatBucketLabel(fromDate.value)} – ${formatBucketLabel(toDate.value)}`
+    isCustomMenuOpen.value = false
+    await onFilterChange()
 }
 
 async function loadDetail(): Promise<void> {
