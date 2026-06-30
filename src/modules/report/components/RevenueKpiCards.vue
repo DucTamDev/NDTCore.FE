@@ -8,10 +8,10 @@
                 </v-card-text>
 
                 <v-card-text v-else>
-                    <div class="text-body-2 text-medium-emphasis">{{ card.label }}</div>
+                    <div class="text-caption text-medium-emphasis">{{ card.label }}</div>
                     <div class="d-flex align-center ga-2 mt-1">
                         <v-icon v-if="card.icon" :icon="card.icon" :color="card.color" size="20" />
-                        <span class="text-h6 font-weight-bold" :class="card.color ? `text-${card.color}` : undefined">{{ card.value }}</span>
+                        <span class="text-h5 font-weight-medium" :class="card.color ? `text-${card.color}` : undefined">{{ card.value }}</span>
                     </div>
                 </v-card-text>
             </v-card>
@@ -46,10 +46,10 @@ function formatGrowth(growthPercent: number | null): { value: string; icon?: str
         return { value: '—' }
     }
     if (growthPercent > 0) {
-        return { value: `${growthPercent.toFixed(1)}%`, icon: 'mdi-arrow-up', color: 'success' }
+        return { value: `+${growthPercent.toFixed(1)}%`, icon: 'mdi-arrow-up', color: 'success' }
     }
     if (growthPercent < 0) {
-        return { value: `${growthPercent.toFixed(1)}%`, icon: 'mdi-arrow-down', color: 'error' }
+        return { value: `−${Math.abs(growthPercent).toFixed(1)}%`, icon: 'mdi-arrow-down', color: 'error' }
     }
     return { value: `${growthPercent.toFixed(1)}%` }
 }
