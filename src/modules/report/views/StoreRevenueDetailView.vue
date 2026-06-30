@@ -16,23 +16,6 @@
                     ]"
                 />
             </template>
-
-            <v-btn
-                variant="outlined"
-                prepend-icon="mdi-file-excel-outline"
-                :loading="exporting"
-                @click="onExport('excel')"
-            >
-                Xuất Excel
-            </v-btn>
-            <v-btn
-                variant="outlined"
-                prepend-icon="mdi-file-delimited-outline"
-                :loading="exporting"
-                @click="onExport('csv')"
-            >
-                Xuất CSV
-            </v-btn>
         </AppPageHeader>
 
         <v-card rounded="lg">
@@ -154,6 +137,27 @@
         </v-row>
 
         <v-card rounded="lg">
+            <v-card-title class="d-flex align-center justify-space-between flex-wrap ga-2">
+                <span class="text-body-1 font-weight-bold">Bảng chi tiết</span>
+                <div class="d-flex ga-2">
+                    <v-btn
+                        variant="outlined"
+                        prepend-icon="mdi-file-excel-outline"
+                        :loading="exporting"
+                        @click="onExport('excel')"
+                    >
+                        Xuất Excel
+                    </v-btn>
+                    <v-btn
+                        variant="outlined"
+                        prepend-icon="mdi-file-delimited-outline"
+                        :loading="exporting"
+                        @click="onExport('csv')"
+                    >
+                        Xuất CSV
+                    </v-btn>
+                </div>
+            </v-card-title>
             <AppDataTable
                 :items="bucketItems"
                 :columns="STORE_REVENUE_BUCKET_COLUMNS"
