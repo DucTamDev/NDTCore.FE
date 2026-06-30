@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-s type-check build-only",
-    "preview": "vite preview",
+    "preview": "npm run build-only && wrangler dev",
     "generate:tokens": "tsx src/plugins/vuetify/generator/index.ts",
     "test:unit": "vitest",
     "build-only": "vite build",
@@ -17,7 +17,8 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix --cache",
     "lint": "run-s lint:*",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "deploy": "npm run build-only && wrangler deploy"
   },
   "dependencies": {
     "@fontsource/plus-jakarta-sans": "^5.2.8",
@@ -30,6 +31,7 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.42.4",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@prettier/plugin-oxc": "^0.0.5",
@@ -66,6 +68,7 @@
     "vitest": "^4.0.14",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-tsc": "^3.1.5",
-    "vuetify": "^3.11.4"
+    "vuetify": "^3.11.4",
+    "wrangler": "^4.106.0"
   }
 }
