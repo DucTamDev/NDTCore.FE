@@ -30,11 +30,11 @@
                         <div>{{ detail?.storeCode ?? '—' }}</div>
                     </div>
                     <div>
-                        <div class="text-caption text-medium-emphasis">Franchisee</div>
+                        <div class="text-caption text-medium-emphasis">Đối tác nhượng quyền</div>
                         <div>{{ detail?.franchiseeName ?? '—' }}</div>
                     </div>
                     <div>
-                        <div class="text-caption text-medium-emphasis">Brand</div>
+                        <div class="text-caption text-medium-emphasis">Thương hiệu</div>
                         <div>{{ detail?.brandName ?? '—' }}</div>
                     </div>
                 </div>
@@ -48,9 +48,10 @@
             <v-card-text class="d-flex flex-wrap align-center ga-4 border-b">
                 <v-btn-toggle
                     :model-value="datePreset"
-                    mandatory
                     density="compact"
                     color="primary"
+                    variant="outlined"
+                    divided
                     @update:model-value="onPresetToggle"
                 >
                     <v-btn
