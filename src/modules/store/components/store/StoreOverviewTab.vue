@@ -66,7 +66,8 @@
               <v-text-field
                 :model-value="props.form.name"
                 label="Tên cửa hàng *"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-store"
@@ -76,7 +77,8 @@
               <v-text-field
                 :model-value="props.form.code"
                 label="Mã cửa hàng"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-pound"
@@ -149,7 +151,8 @@
               <v-text-field
                 :model-value="props.form.phone"
                 label="Số điện thoại"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-phone-outline"
@@ -160,7 +163,8 @@
               <v-text-field
                 :model-value="props.form.email"
                 label="Email"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-email-outline"
@@ -194,7 +198,8 @@
               <v-text-field
                 :model-value="props.form.address"
                 label="Địa chỉ"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-road"
@@ -205,7 +210,8 @@
               <v-text-field
                 :model-value="props.form.province"
                 label="Tỉnh/Thành"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-map-outline"
@@ -216,7 +222,8 @@
               <v-text-field
                 :model-value="props.form.district"
                 label="Quận/Huyện"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-map-outline"
@@ -227,7 +234,8 @@
               <v-text-field
                 :model-value="props.form.ward"
                 label="Phường/Xã"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-map-outline"
@@ -262,7 +270,8 @@
                 :model-value="props.form.openTime"
                 label="Giờ mở cửa"
                 type="time"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-clock-start"
@@ -274,7 +283,8 @@
                 :model-value="props.form.closeTime"
                 label="Giờ đóng cửa"
                 type="time"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-clock-end"
@@ -285,7 +295,8 @@
               <v-text-field
                 :model-value="props.form.timeZone"
                 label="Múi giờ"
-                variant="outlined"
+                variant="solo-filled"
+                flat
                 density="comfortable"
                 color="primary"
                 prepend-inner-icon="mdi-earth"
@@ -321,7 +332,8 @@
                   <v-autocomplete
                     :model-value="props.form.brandId"
                     label="Thương hiệu *"
-                    variant="outlined"
+                    variant="solo-filled"
+                    flat
                     density="comfortable"
                     color="primary"
                     prepend-inner-icon="mdi-domain"
@@ -336,7 +348,8 @@
                   <v-autocomplete
                     :model-value="props.form.franchiseeId"
                     label="Nhà nhượng quyền"
-                    variant="outlined"
+                    variant="solo-filled"
+                    flat
                     density="comfortable"
                     color="primary"
                     prepend-inner-icon="mdi-handshake-outline"
