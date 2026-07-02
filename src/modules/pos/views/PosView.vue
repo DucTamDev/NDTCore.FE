@@ -169,6 +169,7 @@ onMounted(async () => {
     await Promise.all([
         shiftStore.fetchStatus(storeId.value),
         catalogStore.fetchCatalog(storeId.value),
+        shiftStore.fetchNextOrderNumber(storeId.value),
     ])
 })
 </script>

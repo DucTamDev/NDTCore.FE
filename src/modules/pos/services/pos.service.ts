@@ -4,6 +4,7 @@ import type { PosStoreStatusDto } from '../models/dtos/pos-shift.dto'
 import type {
     CreatePosOrderRequest,
     CreatePosOrderResponse,
+    GetNextOrderNumberDto,
     PosOrderHistoryItemDto,
     GetOrderDetailDto,
 } from '../models/dtos/pos-order.dto'
@@ -16,6 +17,11 @@ class PosService {
 
     async getCatalogAsync(storeId: number): Promise<PosCatalogDto | null> {
         const r = await posApi.getCatalogAsync(storeId)
+        return r.Data ?? null
+    }
+
+    async getNextOrderNumberAsync(storeId: number): Promise<GetNextOrderNumberDto | null> {
+        const r = await posApi.getNextOrderNumberAsync(storeId)
         return r.Data ?? null
     }
 

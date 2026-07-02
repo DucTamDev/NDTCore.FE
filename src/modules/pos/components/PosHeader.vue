@@ -16,6 +16,13 @@
 
     <v-spacer />
 
+    <span
+      v-if="shiftStore.nextOrderNumber"
+      class="text-caption text-medium-emphasis mr-4"
+    >
+      Đơn tiếp theo: {{ shiftStore.nextOrderNumber }}
+    </span>
+
     <!-- <div class="d-flex align-center ga-2 mr-4 text-caption text-medium-emphasis">
       <template v-if="shiftStore.hasOpenShift">
         <v-icon icon="mdi-clock-outline" size="16" />

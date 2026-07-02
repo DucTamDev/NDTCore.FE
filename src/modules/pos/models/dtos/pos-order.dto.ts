@@ -43,6 +43,10 @@ export interface CreatePosOrderResponse {
     CreatedAt: string
 }
 
+export interface GetNextOrderNumberDto {
+    OrderNumber: string
+}
+
 export interface PosOrderHistoryItemDto {
     Id: number
     OrderNumber: string

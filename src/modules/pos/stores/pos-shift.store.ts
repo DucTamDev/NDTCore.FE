@@ -4,8 +4,9 @@ import { posService } from '../services/pos.service'
 import type { PosStoreStatusDto } from '../models/dtos/pos-shift.dto'
 
 export const usePosShiftStore = defineStore('pos-shift', () => {
-    const status    = ref<PosStoreStatusDto | null>(null)
-    const isLoading = ref(false)
+    const status          = ref<PosStoreStatusDto | null>(null)
+    const isLoading       = ref(false)
+    const nextOrderNumber = ref<string | null>(null)
 
     const storeName         = computed(() => status.value?.StoreName ?? '')
     const logoUrl           = computed(() => status.value?.LogoUrl ?? null)
@@ -32,15 +33,25 @@ export const usePosShiftStore = defineStore('pos-shift', () => {
         }
     }
 
+    async function fetchNextOrderNumber(storeId: number): Promise<void> {
+        try {
+            const result = await posService.getNextOrderNumberAsync(storeId)
+            nextOrderNumber.value = result?.OrderNumber ?? null
+        } catch {
+            nextOrderNumber.value = null
+        }
+    }
+
     function $reset(): void {
-        status.value    = null
-        isLoading.value = false
+        status.value          = null
+        isLoading.value       = false
+        nextOrderNumber.value = null
     }
 
     return {
-        status, isLoading,
+        status, isLoading, nextOrderNumber,
         storeName, logoUrl, address, hotline, isAcceptingOrders, hasOpenShift,
         shiftId, shiftOpenedAt, shiftOpenedBy, canCreateOrder,
-        fetchStatus, $reset,
+        fetchStatus, fetchNextOrderNumber, $reset,
     }
 })

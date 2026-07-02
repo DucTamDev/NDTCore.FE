@@ -485,6 +485,7 @@ async function submitOrder(): Promise<void> {
             lastOrderStatus.value = result.Status
             cartStore.clearCart()
             successDialog.value = true
+            void shiftStore.fetchNextOrderNumber(props.storeId)
         }
     } finally {
         submitting.value = false

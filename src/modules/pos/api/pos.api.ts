@@ -6,6 +6,7 @@ import type { PosStoreStatusDto } from '../models/dtos/pos-shift.dto'
 import type {
     CreatePosOrderRequest,
     CreatePosOrderResponse,
+    GetNextOrderNumberDto,
     PosOrderHistoryItemDto,
     GetOrderDetailDto,
 } from '../models/dtos/pos-order.dto'
@@ -28,6 +29,9 @@ export const posApi = {
     },
     getCatalogAsync(storeId: number): Promise<ApiResponse<PosCatalogDto>> {
         return posClient.get(EP.GET_CATALOG(storeId))
+    },
+    getNextOrderNumberAsync(storeId: number): Promise<ApiResponse<GetNextOrderNumberDto>> {
+        return posClient.get(EP.GET_NEXT_ORDER_NUMBER(storeId))
     },
     createOrderAsync(payload: CreatePosOrderRequest): Promise<ApiResponse<CreatePosOrderResponse>> {
         return posClient.post(EP.CREATE_ORDER, payload)

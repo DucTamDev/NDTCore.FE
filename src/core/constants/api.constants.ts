@@ -54,6 +54,7 @@ export const API_ENDPOINTS = {
         POS_API: {
             GET_STORE_STATUS: (storeId: number) => `/pos/store/${storeId}/status`,
             GET_CATALOG: (storeId: number) => `/pos/store/${storeId}/catalog`,
+            GET_NEXT_ORDER_NUMBER: (storeId: number) => `/pos/store/${storeId}/next-order-number`,
             CREATE_ORDER: '/pos/orders',
             GET_ORDER_HISTORY: (storeId: number) => `/pos/store/${storeId}/orders`,
             GET_ORDER_BY_ID: (id: number) => `/pos/orders/${id}`,
