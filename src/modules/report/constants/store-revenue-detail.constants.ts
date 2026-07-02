@@ -32,5 +32,4 @@ export const DATE_PRESET_OPTIONS: DatePresetOption[] = [
     { value: 'last7', label: '7 ngày gần nhất' },
     { value: 'last30', label: '30 ngày gần nhất' },
     { value: 'thisMonth', label: 'Tháng này' },
-    { value: 'custom', label: 'Tùy chỉnh' },
 ]

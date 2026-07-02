@@ -55,53 +55,20 @@
                     @update:model-value="onPresetToggle"
                 >
                     <v-btn
-                        v-for="option in DATE_PRESET_OPTIONS.filter((o) => o.value !== 'custom')"
+                        v-for="option in DATE_PRESET_OPTIONS"
                         :key="option.value"
                         :value="option.value"
                         class="text-none"
                     >
                         {{ option.label }}
                     </v-btn>
-                    <v-btn value="custom" class="text-none">
-                        {{ customRangeLabel || 'Tùy chỉnh' }}
-                        <v-menu
-                            v-model="isCustomMenuOpen"
-                            activator="parent"
-                            location="bottom end"
-                            :close-on-content-click="false"
-                            @update:model-value="onCustomMenuToggle"
-                        >
-                            <v-card min-width="280">
-                                <v-card-text class="d-flex flex-column ga-3">
-                                    <div class="text-caption font-weight-medium">Chọn khoảng thời gian</div>
-                                    <v-text-field
-                                        v-model="draftFromDate"
-                                        label="Từ ngày"
-                                        type="date"
-                                        :max="maxDate"
-                                        density="compact"
-                                        hide-details="auto"
-                                    />
-                                    <v-text-field
-                                        v-model="draftToDate"
-                                        label="Đến ngày"
-                                        type="date"
-                                        :max="maxDate"
-                                        density="compact"
-                                        hide-details="auto"
-                                    />
-                                    <div class="text-caption text-error" style="min-height: 20px">
-                                        {{ customRangeError }}
-                                    </div>
-                                    <div class="d-flex justify-end ga-2">
-                                        <v-btn variant="text" @click="cancelCustomRange">Hủy</v-btn>
-                                        <v-btn variant="flat" color="primary" @click="applyCustomRange">Áp dụng</v-btn>
-                                    </div>
-                                </v-card-text>
-                            </v-card>
-                        </v-menu>
-                    </v-btn>
                 </v-btn-toggle>
+
+                <AppDateRangeMenu
+                    :model-value="customRange"
+                    label="Khoảng Thời gian"
+                    @update:model-value="onCustomRangeApply"
+                />
 
                 <v-spacer />
 
@@ -190,7 +157,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { AppBreadcrumb, AppPageHeader, AppDataTable, AppEmptyState } from '@/components/ui'
+import { AppBreadcrumb, AppPageHeader, AppDataTable, AppEmptyState, AppDateRangeMenu } from '@/components/ui'
 import { APP_ROUTES } from '@/core/constants/_index'
 import { downloadBlob } from '@/core/utils/download.util'
 import { useStoreRevenueDetail } from '@/modules/report/composables/useStoreRevenueDetail'
@@ -224,13 +191,7 @@ const fromDate = ref('')
 const toDate = ref('')
 
 const datePreset = ref<DatePreset>('today')
-const isCustomMenuOpen = ref(false)
-const draftFromDate = ref('')
-const draftToDate = ref('')
-const customRangeError = ref('')
-const customRangeLabel = ref('')
-
-const maxDate = computed(() => todayKey())
+const customRange = ref<[string, string] | null>(null)
 
 const bucketItems = computed<RevenueBucketViewModel[]>(() => detail.value?.currentPeriodBuckets ?? [])
 
@@ -270,34 +231,18 @@ function applyPreset(preset: DatePreset): void {
 }
 
 async function onPresetToggle(preset: DatePreset | null): Promise<void> {
-    if (preset === null || preset === 'custom') return
+    if (preset === null) return
     applyPreset(preset)
+    customRange.value = null
     await onFilterChange()
 }
 
-function onCustomMenuToggle(isOpen: boolean): void {
-    if (isOpen) {
-        draftFromDate.value = fromDate.value
-        draftToDate.value = toDate.value
-        customRangeError.value = ''
-    }
-}
-
-function cancelCustomRange(): void {
-    isCustomMenuOpen.value = false
-}
-
-async function applyCustomRange(): Promise<void> {
-    if (draftFromDate.value > draftToDate.value) {
-        customRangeError.value = 'Từ ngày phải nhỏ hơn hoặc bằng đến ngày.'
-        return
-    }
-    customRangeError.value = ''
-    fromDate.value = draftFromDate.value
-    toDate.value = draftToDate.value
+async function onCustomRangeApply(value: [string, string] | null): Promise<void> {
+    if (!value) return
+    fromDate.value = value[0]
+    toDate.value = value[1]
     datePreset.value = 'custom'
-    customRangeLabel.value = `${formatBucketLabel(fromDate.value)} – ${formatBucketLabel(toDate.value)}`
-    isCustomMenuOpen.value = false
+    customRange.value = value
     await onFilterChange()
 }
 
