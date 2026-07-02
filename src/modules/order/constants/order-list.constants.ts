@@ -66,6 +66,6 @@ export function buildOrderFilterFields(): FilterField[] {
                 { label: 'Kiosk', value: 'Kiosk' },
             ],
         },
-        { key: 'dateRange', label: 'Ngày tạo', type: 'daterange' },
+        { key: 'dateRange', label: 'Khoảng thời gian', type: 'daterange' },
     ]
 }

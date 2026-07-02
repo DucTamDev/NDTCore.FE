@@ -120,6 +120,7 @@ import {
     resolveOrderStatusConfig,
 } from '@/modules/order/constants/order-list.constants'
 import type { OrderViewModel } from '@/modules/order/models/view-models/order.view-model'
+import { toRangeStart, toRangeEnd } from '@/core/utils/date-range.util'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -147,8 +148,8 @@ const fetchOrders = async (params: ListPageParams): Promise<{ items: OrderViewMo
         Keyword: (params.filters['keyword'] as string | null) ?? null,
         Status: (params.filters['status'] as string | null) ?? null,
         Channel: (params.filters['channel'] as string | null) ?? null,
-        FromDate: dateRange?.[0] ? `${dateRange[0]}T00:00:00` : null,
-        ToDate: dateRange?.[1] ? `${dateRange[1]}T23:59:59` : null,
+        FromDate: dateRange?.[0] ? toRangeStart(dateRange[0]) : null,
+        ToDate: dateRange?.[1] ? toRangeEnd(dateRange[1]) : null,
         SortBy: params.sortBy?.key ?? null,
         SortDirection: params.sortBy?.order ?? null,
     })
@@ -165,15 +166,9 @@ const viewItems = computed<OrderViewModel[]>(() => listPage.items.value ?? [])
 
 const onResetFilters = async () => {
     listPage.filters.resetFilters()
-    applyTodayDefault()
     applyDefaultStoreIfRestricted()
     listPage.pagination.reset()
     await refreshIfScoped()
-}
-
-function applyTodayDefault(): void {
-    const today = new Date().toISOString().slice(0, 10)
-    listPage.filters.setFilter('dateRange', [today, today])
 }
 
 // BrandManager/FranchiseeOwner are required by the backend to supply StoreId on every order list
@@ -212,7 +207,6 @@ onMounted(async () => {
     firstScopedStoreId.value = storesResult.items[0]?.id ?? null
 
     applyDefaultStoreIfRestricted()
-    applyTodayDefault()
     await refreshIfScoped()
 })
 </script>
