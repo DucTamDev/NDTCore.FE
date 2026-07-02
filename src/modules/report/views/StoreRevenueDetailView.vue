@@ -205,15 +205,13 @@ import RevenueTrendChart from '@/modules/report/components/RevenueTrendChart.vue
 import RevenueOrderChart from '@/modules/report/components/RevenueOrderChart.vue'
 import type { RevenueBucketViewModel } from '@/modules/report/models/view-models/store-revenue.view-model'
 import type { BucketGranularityDto } from '@/modules/report/models/dtos/store-revenue.dto'
+import { toDateKey, toRangeStart, toRangeEnd } from '@/core/utils/date-range.util'
 import {
-    toDateKey,
     currentMonthDateKeys,
     todayKey,
     yesterdayKey,
     last7DaysKeys,
     last30DaysKeys,
-    toRangeStart,
-    toRangeEnd,
 } from '@/modules/report/utils/date-range.util'
 
 const route = useRoute()
