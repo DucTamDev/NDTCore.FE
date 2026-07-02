@@ -173,6 +173,12 @@ export const componentDefaults: NonNullable<VuetifyOptions['defaults']> = {
         offset: 4,
     },
 
+    VDatePicker: {
+        elevation: 0,
+        rounded: radius.lg,
+        color: 'primary',
+    },
+
     VTabs: {
         density: 'comfortable',
         color: 'primary',

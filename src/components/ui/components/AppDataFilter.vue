@@ -140,8 +140,9 @@ function cancelDateRange(key: string): void {
         <v-btn
           variant="outlined"
           prepend-icon="mdi-calendar-range"
-          class="text-none"
+          class="text-none align-self-center"
           style="min-width: 220px; flex: 0 0 auto"
+          height="40"
         >
           {{ dateRangeLabel(field) }}
           <v-menu
@@ -151,7 +152,7 @@ function cancelDateRange(key: string): void {
             :close-on-content-click="false"
             @update:model-value="onDateRangeMenuUpdate(field.key, $event)"
           >
-            <v-card min-width="300">
+            <v-card min-width="300" border="sm">
               <v-date-picker
                 :model-value="draftDates[field.key] ?? []"
                 :multiple="'range'"

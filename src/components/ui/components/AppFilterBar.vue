@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4" elevation="1">
+  <v-card class="pa-4 border-primary" border="sm">
     <div class="d-flex flex-wrap align-start ga-3">
       <slot />
     </div>
