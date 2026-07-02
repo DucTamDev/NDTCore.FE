@@ -223,7 +223,7 @@ const granularity = ref<BucketGranularityDto>('Day')
 const fromDate = ref('')
 const toDate = ref('')
 
-const datePreset = ref<DatePreset>('thisMonth')
+const datePreset = ref<DatePreset>('today')
 const isCustomMenuOpen = ref(false)
 const draftFromDate = ref('')
 const draftToDate = ref('')
@@ -336,9 +336,7 @@ async function onExport(format: 'excel' | 'csv'): Promise<void> {
 }
 
 onMounted(async () => {
-    const [from, to] = currentMonthDateKeys()
-    fromDate.value = from
-    toDate.value = to
+    applyPreset('today')
     granularity.value = 'Day'
     await loadDetail()
 })
