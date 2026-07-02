@@ -114,8 +114,7 @@ import {
     STORE_REVENUE_ROW_ACTION,
     buildStoreRevenueFilterFields,
 } from '@/modules/report/constants/store-revenue-list.constants'
-import { toDateKey, toRangeStart, toRangeEnd } from '@/core/utils/date-range.util'
-import { currentMonthDateKeys } from '@/modules/report/utils/date-range.util'
+import { toDateKey } from '@/core/utils/date-range.util'
 import type { StoreRevenueListItemViewModel } from '@/modules/report/models/view-models/store-revenue.view-model'
 
 const router = useRouter()
@@ -127,12 +126,11 @@ const filterFields = buildStoreRevenueFilterFields()
 const fetchStoreRevenue = async (
     params: ListPageParams,
 ): Promise<{ items: StoreRevenueListItemViewModel[]; total: number }> => {
-    const dateRange = params.filters['dateRange'] as [string, string] | null
     const result = await getPagedStoreRevenue({
         PageNumber: params.pageNumber,
         PageSize: params.pageSize,
-        From: dateRange?.[0] ? toRangeStart(dateRange[0]) : defaultDateRange().from,
-        To: dateRange?.[1] ? toRangeEnd(dateRange[1]) : defaultDateRange().to,
+        From: null,
+        To: null,
         Keyword: (params.filters['keyword'] as string | null) ?? null,
         SortBy: params.sortBy?.key ?? null,
         SortDirection: params.sortBy?.order ?? null,
@@ -150,18 +148,8 @@ const viewItems = computed<StoreRevenueListItemViewModel[]>(() => listPage.items
 
 const onResetFilters = async () => {
     listPage.filters.resetFilters()
-    applyCurrentMonthDefault()
     listPage.pagination.reset()
     await listPage.refresh()
-}
-
-function defaultDateRange(): { from: string; to: string } {
-    const [from, to] = currentMonthDateKeys()
-    return { from: toRangeStart(from), to: toRangeEnd(to) }
-}
-
-function applyCurrentMonthDefault(): void {
-    listPage.filters.setFilter('dateRange', currentMonthDateKeys())
 }
 
 function formatCurrency(value: number): string {
@@ -180,14 +168,13 @@ function onRowAction(actionKey: string, item: StoreRevenueListItemViewModel): vo
 const exporting = ref(false)
 
 async function onExport(format: 'excel' | 'csv'): Promise<void> {
-    const dateRange = listPage.filters.activeFilters.value['dateRange'] as [string, string] | null
     exporting.value = true
     try {
         const blob = await exportStoreRevenueList({
             PageNumber: listPage.pagination.pageNumber.value,
             PageSize: listPage.pagination.pageSize.value,
-            From: dateRange?.[0] ? toRangeStart(dateRange[0]) : defaultDateRange().from,
-            To: dateRange?.[1] ? toRangeEnd(dateRange[1]) : defaultDateRange().to,
+            From: null,
+            To: null,
             Keyword: (listPage.filters.activeFilters.value['keyword'] as string | null) ?? null,
             SortBy: listPage.sortBy.value?.key ?? null,
             SortDirection: listPage.sortBy.value?.order ?? null,
@@ -202,7 +189,6 @@ async function onExport(format: 'excel' | 'csv'): Promise<void> {
 }
 
 onMounted(async () => {
-    applyCurrentMonthDefault()
     await listPage.refresh()
 })
 </script>

@@ -20,6 +20,5 @@ export const STORE_REVENUE_LIST_COLUMNS: TableColumn[] = [
 export function buildStoreRevenueFilterFields(): FilterField[] {
     return [
         { key: 'keyword', label: 'Tìm kiếm', type: 'text', placeholder: 'Mã cửa hàng, tên cửa hàng...' },
-        { key: 'dateRange', label: 'Khoảng thời gian', type: 'daterange' },
     ]
 }

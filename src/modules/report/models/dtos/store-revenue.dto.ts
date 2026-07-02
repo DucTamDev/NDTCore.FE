@@ -1,8 +1,8 @@
 export interface StoreRevenueFilterDto {
     PageNumber: number
     PageSize: number
-    From: string
-    To: string
+    From?: string | null
+    To?: string | null
     Keyword?: string | null
     SortBy?: string | null
     SortDirection?: string | null
