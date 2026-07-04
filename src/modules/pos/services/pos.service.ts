@@ -1,4 +1,5 @@
 import { posApi } from '../api/pos.api'
+import { toDateKey, toRangeStart, toRangeEnd } from '@/core/utils/date-range.util'
 import type { PosCatalogDto } from '../models/dtos/pos-catalog.dto'
 import type { PosStoreStatusDto } from '../models/dtos/pos-shift.dto'
 import type {
@@ -31,7 +32,8 @@ class PosService {
     }
 
     async getOrderHistoryAsync(storeId: number): Promise<PosOrderHistoryItemDto[]> {
-        const r = await posApi.getOrderHistoryAsync(storeId)
+        const todayKey = toDateKey(new Date())
+        const r = await posApi.getOrderHistoryAsync(storeId, toRangeStart(todayKey), toRangeEnd(todayKey))
         return r.Data ?? []
     }
 

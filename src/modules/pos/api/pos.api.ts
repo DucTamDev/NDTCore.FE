@@ -36,8 +36,8 @@ export const posApi = {
     createOrderAsync(payload: CreatePosOrderRequest): Promise<ApiResponse<CreatePosOrderResponse>> {
         return posClient.post(EP.CREATE_ORDER, payload)
     },
-    getOrderHistoryAsync(storeId: number): Promise<ApiResponse<PosOrderHistoryItemDto[]>> {
-        return posClient.get(EP.GET_ORDER_HISTORY(storeId))
+    getOrderHistoryAsync(storeId: number, fromDate: string, toDate: string): Promise<ApiResponse<PosOrderHistoryItemDto[]>> {
+        return posClient.get(EP.GET_ORDER_HISTORY(storeId), { fromDate, toDate })
     },
     getOrderByIdAsync(id: number): Promise<ApiResponse<GetOrderDetailDto>> {
         return posClient.get(EP.GET_ORDER_BY_ID(id))
