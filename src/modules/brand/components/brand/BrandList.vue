@@ -29,7 +29,7 @@
       <template #actions>
         <v-btn
           :disabled="!hasActiveFilters"
-          variant="text"
+          variant="outlined"
           prepend-icon="mdi-filter-remove-outline"
           @click="emit(BRAND_LIST_EMIT.RESET)"
         >

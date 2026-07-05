@@ -28,7 +28,7 @@
       <template #actions>
         <v-btn
           :disabled="!hasActiveFilters"
-          variant="text"
+          variant="outlined"
           prepend-icon="mdi-filter-remove-outline"
           @click="emit(FRANCHISEE_LIST_EMIT.RESET)"
         >

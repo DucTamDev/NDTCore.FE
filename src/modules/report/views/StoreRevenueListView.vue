@@ -37,7 +37,7 @@
             />
 
             <template #actions>
-                <v-btn variant="text" prepend-icon="mdi-filter-off-outline" @click="onResetFilters">
+                <v-btn variant="outlined" prepend-icon="mdi-filter-off-outline" @click="onResetFilters">
                     Xóa lọc
                 </v-btn>
                 <v-btn color="primary" prepend-icon="mdi-magnify" @click="listPage.onSearch">

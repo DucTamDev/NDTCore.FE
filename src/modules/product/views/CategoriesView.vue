@@ -51,7 +51,7 @@
                     <v-col cols="12" md="4" class="d-flex justify-end ga-2">
                         <v-btn
                             :disabled="!hasActiveFilters"
-                            variant="text"
+                            variant="outlined"
                             prepend-icon="mdi-filter-remove-outline"
                             @click="clearFilters"
                         >

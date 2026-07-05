@@ -38,7 +38,7 @@
                         <v-btn
                             :disabled="!(filterKeyword || appliedKeyword)"
                             prepend-icon="mdi-filter-remove-outline"
-                            variant="text"
+                            variant="outlined"
                             @click="clearFilters"
                         >
                             Xóa lọc

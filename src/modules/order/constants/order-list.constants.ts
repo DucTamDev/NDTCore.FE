@@ -32,9 +32,9 @@ export const ORDER_LIST_ROW_ACTIONS: RowAction<OrderViewModel>[] = [
 
 export const ORDER_LIST_COLUMNS: TableColumn[] = [
     { key: 'orderNumber', title: 'Mã đơn', sortable: true, minWidth: '140px' },
-    { key: 'status', title: 'Trạng thái', width: '140px', align: 'center' },
     { key: 'storeCode', title: 'Mã cửa hàng', width: '120px', hideBelow: 'md' },
     { key: 'channel', title: 'Kênh', width: '110px', hideBelow: 'md' },
+    { key: 'status', title: 'Trạng thái', width: '140px', align: 'center' },
     { key: 'totalAmount', title: 'Tổng tiền', width: '130px', align: 'end' },
     { key: 'createdAt', title: 'Thời gian tạo', width: '170px', sortable: true },
     { key: 'actions', title: 'Hành động', width: '110px', align: 'end' },

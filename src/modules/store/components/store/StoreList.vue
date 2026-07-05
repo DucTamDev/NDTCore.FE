@@ -27,7 +27,7 @@
       />
 
       <template #actions>
-        <v-btn variant="text" prepend-icon="mdi-filter-off-outline" @click="emit(STORE_LIST_EMIT.RESET)">
+        <v-btn variant="outlined" prepend-icon="mdi-filter-off-outline" @click="emit(STORE_LIST_EMIT.RESET)">
           Xóa lọc
         </v-btn>
         <v-btn color="primary" prepend-icon="mdi-magnify" @click="emit(STORE_LIST_EMIT.SEARCH)">
