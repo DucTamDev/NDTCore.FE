@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
+import { useUserStore } from '@/modules/user/stores/user.store'
 import { useToastNotification } from '@/composables/useToastNotification'
 import { useRouter } from 'vue-router'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
@@ -10,6 +11,7 @@ import type {
 
 export function useAuth() {
     const authStore = useAuthStore()
+    const userStore = useUserStore()
     const toast = useToastNotification()
     const router = useRouter()
 
@@ -20,6 +22,7 @@ export function useAuth() {
 
     async function logout() {
         authStore.reset()
+        userStore.reset()
         await router.push({ name: APP_ROUTES.AUTH.CHILDREN.LOGIN.NAME })
     }
 

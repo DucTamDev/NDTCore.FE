@@ -91,7 +91,7 @@ export const menuConfig: MenuEntry[] = [
                 title: 'Cửa hàng',
                 icon: 'mdi-store',
                 to: 'admin:stores',
-                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
+                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
             },
         ],
     },
@@ -104,7 +104,13 @@ export const menuConfig: MenuEntry[] = [
                 title: 'Bán hàng',
                 icon: 'mdi-cart-outline',
                 to: 'admin:sales',
-                roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.CASHIER],
+                roles: [
+                    SYSTEM_ROLES.SUPER_ADMIN,
+                    SYSTEM_ROLES.ORG_ADMIN,
+                    SYSTEM_ROLES.CASHIER,
+                    SYSTEM_ROLES.FRANCHISEE_OWNER,
+                    SYSTEM_ROLES.ORDER_STAFF,
+                ],
             },
             {
                 title: 'Đơn hàng',

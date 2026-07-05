@@ -63,6 +63,7 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/components/common/ComingSoonView.vue'),
                 meta: {
                     title: 'Users',
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Users', disabled: true },
@@ -75,6 +76,12 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/modules/brand/views/BrandsView.vue'),
                 meta: {
                     title: 'Thương hiệu',
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.BRAND_ACCOUNTANT,
+                    ],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Thương hiệu', disabled: true },
@@ -87,19 +94,33 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/modules/brand/views/BrandDetailView.vue'),
                 meta: {
                     title: 'Chi tiết thương hiệu',
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.BRAND_MANAGER,
+                        SYSTEM_ROLES.BRAND_ACCOUNTANT,
+                    ],
                 },
             },
             {
                 path: APP_ROUTES.PRODUCT.PRODUCTS.PATH,
                 name: APP_ROUTES.PRODUCT.PRODUCTS.NAME,
                 component: () => import('@/modules/product/views/ProductsView.vue'),
-                meta: { title: 'Sản phẩm', requiresAuth: true },
+                meta: {
+                    title: 'Sản phẩm',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.PATH,
                 name: APP_ROUTES.PRODUCT.CATEGORY_GROUPS.NAME,
                 component: () => import('@/modules/product/views/CategoryGroupsView.vue'),
-                meta: { title: 'Nhóm danh mục', requiresAuth: true },
+                meta: {
+                    title: 'Nhóm danh mục',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.CATEGORIES.PATH,
@@ -108,6 +129,7 @@ export const routes: RouteRecordRaw[] = [
                 meta: {
                     title: 'Danh mục sản phẩm',
                     requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
@@ -122,6 +144,7 @@ export const routes: RouteRecordRaw[] = [
                 meta: {
                     title: 'Nhãn sản phẩm',
                     requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
@@ -133,25 +156,41 @@ export const routes: RouteRecordRaw[] = [
                 path: APP_ROUTES.PRODUCT.OPTION_GROUPS.PATH,
                 name: APP_ROUTES.PRODUCT.OPTION_GROUPS.NAME,
                 component: () => import('@/modules/product/views/OptionGroupsView.vue'),
-                meta: { title: 'Nhóm option', requiresAuth: true },
+                meta: {
+                    title: 'Nhóm option',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.OPTIONS.PATH,
                 name: APP_ROUTES.PRODUCT.OPTIONS.NAME,
                 component: () => import('@/modules/product/views/OptionsView.vue'),
-                meta: { title: 'Options', requiresAuth: true },
+                meta: {
+                    title: 'Options',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.PRODUCT_DETAIL.PATH,
                 name: APP_ROUTES.PRODUCT.PRODUCT_DETAIL.NAME,
                 component: () => import('@/modules/product/views/ProductDetailView.vue'),
-                meta: { title: 'Chi tiết sản phẩm', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết sản phẩm',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.CATEGORY_DETAIL.PATH,
                 name: APP_ROUTES.PRODUCT.CATEGORY_DETAIL.NAME,
                 component: () => import('@/modules/product/views/CategoryDetailView.vue'),
-                meta: { title: 'Chi tiết danh mục', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết danh mục',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.TAG_DETAIL.PATH,
@@ -160,6 +199,7 @@ export const routes: RouteRecordRaw[] = [
                 meta: {
                     title: 'Chi tiết nhãn',
                     requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
                         { title: 'Sản phẩm' },
@@ -172,49 +212,87 @@ export const routes: RouteRecordRaw[] = [
                 path: APP_ROUTES.PRODUCT.OPTION_GROUP_DETAIL.PATH,
                 name: APP_ROUTES.PRODUCT.OPTION_GROUP_DETAIL.NAME,
                 component: () => import('@/modules/product/views/OptionGroupDetailView.vue'),
-                meta: { title: 'Chi tiết nhóm option', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết nhóm option',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.PRODUCT.OPTION_DETAIL.PATH,
                 name: APP_ROUTES.PRODUCT.OPTION_DETAIL.NAME,
                 component: () => import('@/modules/product/views/OptionDetailView.vue'),
-                meta: { title: 'Chi tiết option', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết option',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEES.NAME,
                 component: () => import('@/modules/brand/views/FranchiseesView.vue'),
-                meta: { title: 'Nhà nhượng quyền', requiresAuth: true },
+                meta: {
+                    title: 'Nhà nhượng quyền',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEE_DETAIL.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.FRANCHISEE_DETAIL.NAME,
                 component: () => import('@/modules/brand/views/FranchiseeDetailView.vue'),
-                meta: { title: 'Chi tiết nhà nhượng quyền', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết nhà nhượng quyền',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.BRAND_MANAGER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.STORES.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME,
                 component: () => import('@/modules/store/views/StoresView.vue'),
-                meta: { title: 'Cửa hàng', requiresAuth: true },
+                meta: {
+                    title: 'Cửa hàng',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.STORE_DETAIL.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.STORE_DETAIL.NAME,
                 component: () => import('@/modules/store/views/StoreDetailView.vue'),
-                meta: { title: 'Chi tiết cửa hàng', requiresAuth: true },
+                meta: {
+                    title: 'Chi tiết cửa hàng',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.NAME,
                 component: () => import('@/modules/store/views/StoreMembersView.vue'),
-                meta: { title: 'Thành viên cửa hàng', requiresAuth: true },
+                meta: {
+                    title: 'Thành viên cửa hàng',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.SALES.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.SALES.NAME,
                 component: () => import('@/modules/pos/views/SalesView.vue'),
-                meta: { title: 'Bán hàng', requiresAuth: true },
+                meta: {
+                    title: 'Bán hàng',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.CASHIER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                        SYSTEM_ROLES.ORDER_STAFF,
+                    ],
+                },
             },
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.ORDERS.PATH,
@@ -292,11 +370,19 @@ export const routes: RouteRecordRaw[] = [
                 path: 'reports/shift',
                 name: 'admin:reports-shift',
                 component: () => import('@/components/common/ComingSoonView.vue'),
+                meta: {
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.CASHIER],
+                },
             },
             {
                 path: 'reports/top-products',
                 name: 'admin:reports-top-products',
                 component: () => import('@/components/common/ComingSoonView.vue'),
+                meta: {
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
+                },
             },
         ],
     },
@@ -309,7 +395,17 @@ export const routes: RouteRecordRaw[] = [
                 path: '',
                 name: APP_ROUTES.POS.POS.NAME,
                 component: () => import('@/modules/pos/views/PosView.vue'),
-                meta: { title: 'Bán hàng', requiresAuth: true },
+                meta: {
+                    title: 'Bán hàng',
+                    requiresAuth: true,
+                    roles: [
+                        SYSTEM_ROLES.SUPER_ADMIN,
+                        SYSTEM_ROLES.ORG_ADMIN,
+                        SYSTEM_ROLES.CASHIER,
+                        SYSTEM_ROLES.FRANCHISEE_OWNER,
+                        SYSTEM_ROLES.ORDER_STAFF,
+                    ],
+                },
             },
         ],
     },

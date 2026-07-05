@@ -16,13 +16,12 @@ export function checkSectionAccess(section: MenuSection, userRoles: string[]): b
     return section.items.some((item) => checkAccess(item, userRoles))
 }
 
-export function useMenuAccess() {
+export function getUserRoles(): string[] {
     const userStore = useUserStore()
+    return userStore.profile?.Roles?.map((r) => r.Name) ?? []
+}
 
-    function getUserRoles(): string[] {
-        return userStore.profile?.Roles?.map((r) => r.Name) ?? []
-    }
-
+export function useMenuAccess() {
     function hasAccess(item: MenuItem): boolean {
         return checkAccess(item, getUserRoles())
     }
