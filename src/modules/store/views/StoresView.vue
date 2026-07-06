@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { AppDialog } from '@/components/ui'
 import type { FilterOption } from '@/components/ui'
@@ -72,14 +72,10 @@ const { getPagedStores, createStore, deleteStore } = useStore()
 const { getPagedBrands } = useBrand()
 const { getPagedFranchisees } = useFranchisee()
 
-// ── Filter options ─────────────────────────────────────────────────────────
+// ── Form dropdown options (StoreForm — không phải filter) ───────────────────
 const brandOptions = ref<FilterOption[]>([])
-const allFranchiseeOptions = ref<FilterOption[]>([])
-const filterFranchiseeOptions = ref<FilterOption[]>([])
 const formFranchiseeOptions = ref<FilterOption[]>([])
-const filterFields = computed(() =>
-  buildStoreFilterFields(brandOptions.value, filterFranchiseeOptions.value),
-)
+const filterFields = computed(() => buildStoreFilterFields())
 
 // ── List page ───────────────────────────────────────────────────────────────
 const fetchStores = async (params: ListPageParams): Promise<{ items: StoreViewModel[]; total: number }> => {
@@ -88,8 +84,6 @@ const fetchStores = async (params: ListPageParams): Promise<{ items: StoreViewMo
     PageNumber: params.pageNumber,
     PageSize: params.pageSize,
     Keyword: (params.filters['keyword'] as string | null) ?? null,
-    BrandId: params.filters['brandId'] ? Number(params.filters['brandId']) : null,
-    FranchiseeId: params.filters['franchiseeId'] ? Number(params.filters['franchiseeId']) : null,
     IsActive: isActiveStr === 'true' ? true : isActiveStr === 'false' ? false : null,
     Province: (params.filters['province'] as string | null) ?? null,
     SortBy: params.sortBy?.key ?? null,
@@ -105,16 +99,6 @@ const listPage = useListPage<StoreViewModel>({
 })
 
 const viewItems = computed<StoreViewModel[]>(() => listPage.items.value ?? [])
-
-watch(
-  () => listPage.filters.activeFilters.value['brandId'],
-  async (brandId) => {
-    listPage.filters.setFilter('franchiseeId', null)
-    if (!brandId) { filterFranchiseeOptions.value = allFranchiseeOptions.value; return }
-    const result = await getPagedFranchisees({ PageNumber: 1, PageSize: 200, BrandId: Number(brandId) })
-    filterFranchiseeOptions.value = result.items.map((f) => ({ label: f.name, value: f.id }))
-  },
-)
 
 // ── Form dialog ─────────────────────────────────────────────────────────────
 const isFormDialogOpen = ref(false)
@@ -171,13 +155,8 @@ const handleRowAction = (key: string, item: StoreViewModel) => {
 }
 
 onMounted(async () => {
-  const [brandsResult, franchiseesResult] = await Promise.all([
-    getPagedBrands({ PageNumber: 1, PageSize: 200 }),
-    getPagedFranchisees({ PageNumber: 1, PageSize: 200 }),
-  ])
+  const brandsResult = await getPagedBrands({ PageNumber: 1, PageSize: 200 })
   brandOptions.value = brandsResult.items.map((b) => ({ label: b.name, value: b.id }))
-  allFranchiseeOptions.value = franchiseesResult.items.map((f) => ({ label: f.name, value: f.id }))
-  filterFranchiseeOptions.value = allFranchiseeOptions.value
   await listPage.refresh()
 })
 </script>

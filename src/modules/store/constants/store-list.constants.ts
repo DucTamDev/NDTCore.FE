@@ -1,6 +1,5 @@
 import type {
     FilterField,
-    FilterOption,
     TableColumn,
     RowAction,
     StatusConfig,
@@ -38,24 +37,9 @@ export const STORE_ROW_ACTION = {
     DELETE: 'delete',
 } as const
 
-export function buildStoreFilterFields(
-    brandOptions: FilterOption[],
-    franchiseeOptions: FilterOption[],
-): FilterField[] {
+export function buildStoreFilterFields(): FilterField[] {
     return [
         { key: 'keyword', label: 'Tìm kiếm', type: 'text', placeholder: 'Tên, mã cửa hàng...' },
-        {
-            key: 'brandId',
-            label: 'Thương hiệu',
-            type: 'select',
-            options: [{ label: 'Tất cả', value: null }, ...brandOptions],
-        },
-        {
-            key: 'franchiseeId',
-            label: 'Nhà nhượng quyền',
-            type: 'select',
-            options: [{ label: 'Tất cả', value: null }, ...franchiseeOptions],
-        },
         {
             key: 'isActive',
             label: 'Trạng thái',
