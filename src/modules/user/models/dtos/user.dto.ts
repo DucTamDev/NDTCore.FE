@@ -34,3 +34,21 @@ export interface PermissionDto {
     Id: string
     Name: string
 }
+
+export interface UserDto {
+    Id: string
+    Email: string
+    UserName: string
+    FirstName: string
+    LastName: string
+    FullName: string
+    PhoneNumber?: string | null
+    AvatarUrl?: string | null
+    EmailConfirmed: boolean
+    PhoneNumberConfirmed: boolean
+    IsActive: boolean
+    LastLoginAt?: string | null
+    CreatedAt?: string | null
+    UpdatedAt?: string | null
+    Roles: string[]
+}

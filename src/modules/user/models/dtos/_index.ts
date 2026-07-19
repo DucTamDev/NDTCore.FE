@@ -1,1 +1,7 @@
 export * from './user.dto'
+export * from './user-filter.dto'
+export * from './create-user.dto'
+export * from './update-user.dto'
+export * from './delete-user.dto'
+export * from './assign-roles.dto'
+export * from './admin-user-detail.dto'
