@@ -8,6 +8,11 @@ export const API_ENDPOINTS = {
         USERS_API: {
             GET_PAGED: '/admin/users',
             GET_PROFILE: 'admin/users/profile',
+            GET_BY_ID: (id: string) => `/admin/users/${id}`,
+            CREATE: '/admin/users',
+            UPDATE: (id: string) => `/admin/users/${id}`,
+            DELETE: (id: string) => `/admin/users/${id}`,
+            ASSIGN_ROLES: (id: string) => `/admin/users/${id}/roles`,
         },
     },
     BRAND: {
