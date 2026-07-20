@@ -60,13 +60,14 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: APP_ROUTES.ADMIN.CHILDREN.USERS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.USERS.NAME,
-                component: () => import('@/components/common/ComingSoonView.vue'),
+                component: () => import('@/modules/user/views/UsersView.vue'),
                 meta: {
-                    title: 'Users',
+                    title: 'Người dùng',
+                    requiresAuth: true,
                     roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
                     breadcrumbs: [
                         { title: 'Dashboard', to: APP_ROUTES.ADMIN.BASE.PATH },
-                        { title: 'Users', disabled: true },
+                        { title: 'Người dùng', disabled: true },
                     ],
                 },
             },
