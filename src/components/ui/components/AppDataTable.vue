@@ -77,6 +77,12 @@ const sortIcon = (key: string): string => {
   if (!props.sortBy || props.sortBy.key !== key) return 'mdi-unfold-more-horizontal'
   return props.sortBy.order === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'
 }
+
+const columnCellStyle = (col: TableColumn) => ({
+  width: col.width ? String(col.width) : undefined,
+  minWidth: col.minWidth,
+  textAlign: col.align ?? 'start',
+})
 </script>
 
 <template>
@@ -104,9 +110,7 @@ const sortIcon = (key: string): string => {
               v-for="col in visibleColumns"
               :key="col.key"
               :style="{
-                width: col.width ? String(col.width) : undefined,
-                minWidth: col.minWidth,
-                textAlign: col.align ?? 'start',
+                ...columnCellStyle(col),
                 cursor: col.sortable ? 'pointer' : undefined,
                 userSelect: col.sortable ? 'none' : undefined,
               }"
@@ -156,7 +160,7 @@ const sortIcon = (key: string): string => {
             <td
               v-for="col in visibleColumns"
               :key="col.key"
-              :style="{ textAlign: col.align ?? 'start' }"
+              :style="columnCellStyle(col)"
             >
               <slot :name="`item.${col.key}`" :item="item" :value="item[col.key as keyof T]">
                 {{ item[col.key as keyof T] }}
