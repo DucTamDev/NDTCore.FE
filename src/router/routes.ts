@@ -72,6 +72,16 @@ export const routes: RouteRecordRaw[] = [
                 },
             },
             {
+                path: APP_ROUTES.ADMIN.CHILDREN.USER_DETAIL.PATH,
+                name: APP_ROUTES.ADMIN.CHILDREN.USER_DETAIL.NAME,
+                component: () => import('@/modules/user/views/UserDetailView.vue'),
+                meta: {
+                    title: 'Chi tiết người dùng',
+                    requiresAuth: true,
+                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN],
+                },
+            },
+            {
                 path: APP_ROUTES.ADMIN.CHILDREN.BRANDS.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.BRANDS.NAME,
                 component: () => import('@/modules/brand/views/BrandsView.vue'),
