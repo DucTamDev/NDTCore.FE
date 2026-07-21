@@ -63,10 +63,6 @@ export const APP_ROUTES = {
                 NAME: 'admin:store-detail',
                 PATH: 'stores/:id',
             },
-            STORE_MEMBERS: {
-                NAME: 'admin:store-members',
-                PATH: 'store-members',
-            },
             ORDERS: {
                 NAME: 'admin:orders',
                 PATH: 'orders',

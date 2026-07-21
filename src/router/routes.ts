@@ -280,16 +280,6 @@ export const routes: RouteRecordRaw[] = [
                 },
             },
             {
-                path: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.PATH,
-                name: APP_ROUTES.ADMIN.CHILDREN.STORE_MEMBERS.NAME,
-                component: () => import('@/modules/store/views/StoreMembersView.vue'),
-                meta: {
-                    title: 'Thành viên cửa hàng',
-                    requiresAuth: true,
-                    roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
-                },
-            },
-            {
                 path: APP_ROUTES.ADMIN.CHILDREN.SALES.PATH,
                 name: APP_ROUTES.ADMIN.CHILDREN.SALES.NAME,
                 component: () => import('@/modules/pos/views/SalesView.vue'),
