@@ -1,5 +1,12 @@
-export interface StoreMemberViewModel {
+export interface StoreMemberViewModel extends Record<string, unknown> {
     storeId: number
-    userId: string
     tenantId: string
+    userId: string
+    userName: string
+    email: string
+    fullName: string
+    avatarUrl?: string | null
+    isActive: boolean
+    roles: string[]
+    assignedAt: string
 }

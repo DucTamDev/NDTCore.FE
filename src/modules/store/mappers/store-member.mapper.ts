@@ -5,8 +5,15 @@ export const storeMemberMapper = {
     toViewModel(dto: StoreMemberDto): StoreMemberViewModel {
         return {
             storeId: dto.StoreId,
-            userId: dto.UserId,
             tenantId: dto.TenantId,
+            userId: dto.UserId,
+            userName: dto.UserName,
+            email: dto.Email,
+            fullName: dto.FullName,
+            avatarUrl: dto.AvatarUrl ?? null,
+            isActive: dto.IsActive,
+            roles: dto.Roles,
+            assignedAt: dto.AssignedAt,
         }
     },
 
