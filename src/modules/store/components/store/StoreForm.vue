@@ -47,15 +47,6 @@
             @update:model-value="update('name', $event)"
           />
         </v-col>
-        <v-col v-if="!isEdit" cols="12" md="6">
-          <v-text-field
-            :model-value="localForm.code"
-            label="Mã cửa hàng *"
-            variant="solo-filled"
-            flat
-            @update:model-value="update('code', $event)"
-          />
-        </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             :model-value="localForm.slug"

@@ -4,7 +4,6 @@ export interface CreateStoreRequest {
     BrandId: number
     FranchiseeId?: number | null
     Name: string
-    Code: string
     Slug?: string | null
     LogoUrl?: string | null
     IsActive: boolean

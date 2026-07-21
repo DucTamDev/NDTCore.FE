@@ -73,7 +73,6 @@ export function toCreatePayload(form: StoreFormModel): CreateStoreRequest {
         BrandId: form.brandId!,
         FranchiseeId: form.franchiseeId ?? null,
         Name: form.name.trim(),
-        Code: form.code.trim(),
         Slug: form.slug?.trim() ?? null,
         LogoUrl: form.logoUrl?.trim() ?? null,
         IsActive: form.isActive,
