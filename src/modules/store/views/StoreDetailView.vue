@@ -46,6 +46,10 @@
             <v-icon start icon="mdi-information-outline" size="18" />
             Tổng quan
           </v-tab>
+          <v-tab value="members" class="text-none" rounded="lg">
+            <v-icon start icon="mdi-account-group-outline" size="18" />
+            Nhân viên
+          </v-tab>
         </v-tabs>
         <v-divider />
         <v-window v-model="activeTab">
@@ -64,6 +68,9 @@
               @discard="onDiscard"
               @back="onBack"
             />
+          </v-window-item>
+          <v-window-item value="members">
+            <StoreStaffTab :store-id="storeId" />
           </v-window-item>
         </v-window>
       </v-card>
@@ -103,6 +110,7 @@ import { useStore } from '@/modules/store/composables/useStore'
 import { toForm, toPayload, emptyForm, TRACKED_FIELDS } from '@/modules/store/adapters/store.adapter'
 import type { StoreFormModel } from '@/modules/store/models/form-models/store.model'
 import StoreOverviewTab from '@/modules/store/components/store/StoreOverviewTab.vue'
+import StoreStaffTab from '@/modules/store/components/store/StoreStaffTab.vue'
 import { useBrand } from '@/modules/brand/composables/useBrand'
 import { useFranchisee } from '@/modules/brand/composables/useFranchisee'
 
