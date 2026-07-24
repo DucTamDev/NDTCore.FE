@@ -3,6 +3,7 @@ export const HTTP_HEADER = {
     API_KEY: 'Api-Key',
 
     TENANT_ID: 'Tenant-Id',
+    CURRENT_DOMAIN: 'X-Current-Domain',
 
     REQUEST_ID: 'Request-Id',
     CORRELATION_ID: 'Correlation-Id',

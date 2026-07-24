@@ -202,6 +202,7 @@ export class BaseClient {
 
         headers.set(HTTP_HEADER.REQUEST_ID, crypto.randomUUID())
         headers.set(HTTP_HEADER.TIMEZONE, Intl.DateTimeFormat().resolvedOptions().timeZone)
+        headers.set(HTTP_HEADER.CURRENT_DOMAIN, window.location.hostname)
 
         const token = tokenStorageService.getAccessToken()
         if (token && !reqConfig.skipAuth) headers.set(HTTP_HEADER.AUTHORIZATION, `Bearer ${token}`)
