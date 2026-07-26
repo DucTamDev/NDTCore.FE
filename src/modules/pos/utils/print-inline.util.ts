@@ -34,17 +34,20 @@ function ensureBillStyleElement(): HTMLStyleElement {
     return style
 }
 
-function nextPaint(): Promise<void> {
+const RENDER_SETTLE_DELAY_MS = 200
+
+function waitForRenderSettle(): Promise<void> {
     return new Promise((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, RENDER_SETTLE_DELAY_MS)))
     })
 }
 
 /**
  * In HTML ngay trên trang hiện tại (không mở tab/window mới): CSS đưa vào một thẻ <style> riêng
  * trong <head> (không lồng trong phần tử ẩn), nội dung ghi vào container ẩn, chỉ hiện khi in.
- * Đợi 1 khung hình render trước khi gọi print() để tránh in ra trắng trên một số trình duyệt mobile
- * do CSS/DOM vừa cập nhật chưa kịp áp dụng.
+ * Đợi render ổn định trước khi gọi print(): xác nhận qua thiết bị Android thật rằng 2 khung hình
+ * animation frame không đủ — trình duyệt cần thêm thời gian thực (setTimeout) mới áp dụng xong
+ * CSS/DOM vừa cập nhật, nếu không bản in ra trắng.
  */
 export async function printHtmlInline(bill: BillHtml): Promise<void> {
     const root = ensurePrintRoot()
@@ -53,17 +56,7 @@ export async function printHtmlInline(bill: BillHtml): Promise<void> {
     styleEl.textContent = `@media print { ${bill.styleCss} }`
     root.innerHTML = bill.bodyHtml
 
-    await nextPaint()
-
-    // Chẩn đoán tạm thời lỗi in trắng trên Android — gỡ sau khi xác định nguyên nhân
-    alert(
-        `[DEBUG IN BILL]\n` +
-        `root.innerHTML.length = ${root.innerHTML.length}\n` +
-        `root computed display = ${getComputedStyle(root).display}\n` +
-        `styleEl.textContent.length = ${styleEl.textContent?.length}\n` +
-        `matchMedia('print') supported = ${typeof window.matchMedia === 'function'}\n` +
-        `--- preview 150 ký tự đầu bodyHtml ---\n${bill.bodyHtml.slice(0, 150)}`,
-    )
+    await waitForRenderSettle()
 
     window.print()
 }
