@@ -72,7 +72,12 @@ function renderItemBlock(item: GetOrderItemDto, index: number): string {
     `
 }
 
-export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): string {
+export interface BillHtml {
+    styleCss: string
+    bodyHtml: string
+}
+
+export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): BillHtml {
     const itemBlocks = order.Items.map((item, idx) => renderItemBlock(item, idx + 1)).join('')
     const totalQuantity = order.Items.reduce((sum, item) => sum + item.Quantity, 0)
 
@@ -103,34 +108,33 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
 
     const root = `#${POS_PRINT_ROOT_ID}`
 
-    return `
-<style>
-@media print {
-    @page { size: 58mm auto; margin: 0; }
-    ${root}, ${root} * { box-sizing: border-box; }
-    ${root} {
-        font-family: 'Courier New', monospace;
-        font-size: 11px;
-        line-height: 1.35;
-        color: #000;
-        width: 58mm;
-        padding: 4mm 2mm;
-    }
-    ${root} .bill-header { text-align: center; margin-bottom: 6px; }
-    ${root} .bill-store-name { font-size: 13px; font-weight: bold; letter-spacing: 0.3px; word-break: break-word; }
-    ${root} .bill-store-address, ${root} .bill-store-hotline { font-size: 10px; color: #000; word-break: break-word; }
-    ${root} .bill-divider { border-top: 1px dashed #000; margin: 5px 0; }
-    ${root} .bill-row { display: flex; justify-content: space-between; gap: 4px; font-size: 11px; margin: 2px 0; }
-    ${root} .bill-row span:first-child { flex: 1 1 auto; min-width: 0; word-break: break-word; }
-    ${root} .bill-row span:last-child { flex: 0 0 auto; text-align: right; white-space: nowrap; }
-    ${root} .bill-products-label { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 3px; letter-spacing: 0.5px; }
-    ${root} .bill-item { margin: 7px 0; }
-    ${root} .bill-item-amount { font-weight: bold; }
-    ${root} .bill-item-sub { font-size: 10px; color: #000; padding-left: 8px; margin: 1px 0; }
-    ${root} .bill-total { display: flex; justify-content: space-between; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 5px 0; font-size: 13px; font-weight: bold; margin: 5px 0; }
-    ${root} .bill-footer { text-align: center; font-style: italic; font-size: 10px; margin-top: 10px; margin-bottom: 4px; }
+    const styleCss = `
+@page { size: 58mm auto; margin: 0; }
+${root}, ${root} * { box-sizing: border-box; }
+${root} {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #000;
+    width: 58mm;
+    padding: 4mm 2mm;
 }
-</style>
+${root} .bill-header { text-align: center; margin-bottom: 6px; }
+${root} .bill-store-name { font-size: 13px; font-weight: bold; letter-spacing: 0.3px; word-break: break-word; }
+${root} .bill-store-address, ${root} .bill-store-hotline { font-size: 10px; color: #000; word-break: break-word; }
+${root} .bill-divider { border-top: 1px dashed #000; margin: 5px 0; }
+${root} .bill-row { display: flex; justify-content: space-between; gap: 4px; font-size: 11px; margin: 2px 0; }
+${root} .bill-row span:first-child { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+${root} .bill-row span:last-child { flex: 0 0 auto; text-align: right; white-space: nowrap; }
+${root} .bill-products-label { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 3px; letter-spacing: 0.5px; }
+${root} .bill-item { margin: 7px 0; }
+${root} .bill-item-amount { font-weight: bold; }
+${root} .bill-item-sub { font-size: 10px; color: #000; padding-left: 8px; margin: 1px 0; }
+${root} .bill-total { display: flex; justify-content: space-between; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 5px 0; font-size: 13px; font-weight: bold; margin: 5px 0; }
+${root} .bill-footer { text-align: center; font-style: italic; font-size: 10px; margin-top: 10px; margin-bottom: 4px; }
+`
+
+    const bodyHtml = `
 <div class="bill-header">
     <div class="bill-store-name">${store.name}</div>
     ${addressLine}
@@ -154,7 +158,7 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
 
 <div class="bill-summary">
     <div class="bill-row"><span>Tổng số lượng</span><span>${totalQuantity}</span></div>
-    <div class="bill-row"><span>Tạm tính</span><span>${formatCurrency(order.Subtotal)}</span></div>
+    <div class="bill-row"><span>Thành tiền</span><span>${formatCurrency(order.Subtotal)}</span></div>
     ${discountLine}
     ${deliveryFeeLine}
     <div class="bill-total"><span>TỔNG THANH TOÁN</span><span>${formatCurrency(order.TotalAmount)}</span></div>
@@ -168,5 +172,7 @@ export function buildBillHtml(order: GetOrderDetailDto, store: BillStoreInfo): s
 <div class="bill-divider"></div>
 
 <div class="bill-footer">Cảm ơn quý khách! Hẹn gặp lại lần sau</div>
-    `
+`
+
+    return { styleCss, bodyHtml }
 }

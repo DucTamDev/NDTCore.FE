@@ -84,7 +84,7 @@
                 <v-divider />
 
                 <v-card-text class="d-flex flex-column ga-1 align-end">
-                    <div>Tạm tính: {{ formatCurrency(order.subtotal) }}</div>
+                    <div>Thành tiền: {{ formatCurrency(order.subtotal) }}</div>
                     <div v-if="order.discountAmount > 0">Giảm giá: -{{ formatCurrency(order.discountAmount) }}</div>
                     <div v-if="order.deliveryFee > 0">Phí giao hàng: {{ formatCurrency(order.deliveryFee) }}</div>
                     <div class="text-h6 font-weight-bold">Tổng cộng: {{ formatCurrency(order.totalAmount) }}</div>

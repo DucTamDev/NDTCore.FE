@@ -23,7 +23,7 @@ export function usePrintBill() {
                 address: shiftStore.address,
                 hotline: shiftStore.hotline,
             })
-            printHtmlInline(html)
+            await printHtmlInline(html)
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'In bill thất bại.')
         } finally {
