@@ -27,32 +27,41 @@ export const useUserStore = defineStore('user', () => {
         return `${first}${last}`.toUpperCase()
     })
 
-    async function fetchProfile(): Promise<void> {
-        if (isLoaded.value) return
+    let fetchProfilePromise: Promise<void> | null = null
 
-        loading.value = true
-        error.value = null
+    function fetchProfile(): Promise<void> {
+        if (isLoaded.value) return Promise.resolve()
+        if (fetchProfilePromise) return fetchProfilePromise
 
-        try {
-            log.info('Fetching user profile')
+        fetchProfilePromise = (async () => {
+            loading.value = true
+            error.value = null
 
-            profile.value = await userService.getProfileAsync()
+            try {
+                log.info('Fetching user profile')
 
-            log.info('Profile loaded', profile.value)
-        } catch (err) {
-            error.value = (err as Error).message
-            log.warn('Fetch profile failed', { error: error.value })
+                profile.value = await userService.getProfileAsync()
 
-            throw err
-        } finally {
-            loading.value = false
-        }
+                log.info('Profile loaded', profile.value)
+            } catch (err) {
+                error.value = (err as Error).message
+                log.warn('Fetch profile failed', { error: error.value })
+
+                throw err
+            } finally {
+                loading.value = false
+                fetchProfilePromise = null
+            }
+        })()
+
+        return fetchProfilePromise
     }
 
     function reset(): void {
         profile.value = null
         loading.value = false
         error.value = null
+        fetchProfilePromise = null
         log.info('User reset')
     }
 
