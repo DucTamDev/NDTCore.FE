@@ -3,6 +3,7 @@ import { APP_NAME } from '@/core/constants/app.constants'
 import { APP_ROUTES } from '@/core/constants/app-routes.constants'
 import { routes } from './routes'
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
+import { useUserStore } from '@/modules/user/stores/user.store'
 import { getUserRoles } from '@/composables/useMenuAccess'
 
 export const router = createRouter({
@@ -23,8 +24,12 @@ export const router = createRouter({
     },
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
     const authStore = useAuthStore()
+
+    if (!authStore.isInitialized) {
+        await authStore.initialize()
+    }
 
     // Đã login → không cho vào trang không cần auth
     if (authStore.isLoggedIn && !to.meta.requiresAuth) {
@@ -38,6 +43,11 @@ router.beforeEach((to) => {
 
     // Có yêu cầu role cụ thể → kiểm tra role hiện tại của user (lấy từ userStore, không phải authStore)
     if (to.meta.roles?.length) {
+        const userStore = useUserStore()
+        if (!userStore.isLoaded) {
+            await userStore.fetchProfile()
+        }
+
         const userRoles = getUserRoles()
         const hasAccess = to.meta.roles.some((role) => userRoles.includes(role))
 
