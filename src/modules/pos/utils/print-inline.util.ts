@@ -36,10 +36,18 @@ function ensureBillStyleElement(): HTMLStyleElement {
 
 const RENDER_SETTLE_DELAY_MS = 200
 
-function waitForRenderSettle(): Promise<void> {
-    return new Promise((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, RENDER_SETTLE_DELAY_MS)))
-    })
+function nextAnimationFrame(): Promise<void> {
+    return new Promise((resolve) => requestAnimationFrame(() => resolve()))
+}
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function waitForRenderSettle(): Promise<void> {
+    await nextAnimationFrame()
+    await nextAnimationFrame()
+    await delay(RENDER_SETTLE_DELAY_MS)
 }
 
 /**
