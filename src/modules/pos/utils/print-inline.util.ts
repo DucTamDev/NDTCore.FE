@@ -34,28 +34,22 @@ function ensureBillStyleElement(): HTMLStyleElement {
     return style
 }
 
-const RENDER_SETTLE_DELAY_MS = 200
-
 function nextAnimationFrame(): Promise<void> {
     return new Promise((resolve) => requestAnimationFrame(() => resolve()))
 }
 
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-async function waitForRenderSettle(): Promise<void> {
+/**
+ * Đợi trình duyệt vẽ xong khung hình chứa template vừa ghi: qua 2 lần requestAnimationFrame
+ * để đảm bảo đã có ít nhất một lần paint sau khi layout được tính lại — không dùng setTimeout đoán thời gian.
+ */
+async function waitForTemplateRendered(): Promise<void> {
     await nextAnimationFrame()
     await nextAnimationFrame()
-    await delay(RENDER_SETTLE_DELAY_MS)
 }
 
 /**
  * In HTML ngay trên trang hiện tại (không mở tab/window mới): CSS đưa vào một thẻ <style> riêng
  * trong <head> (không lồng trong phần tử ẩn), nội dung ghi vào container ẩn, chỉ hiện khi in.
- * Đợi render ổn định trước khi gọi print(): xác nhận qua thiết bị Android thật rằng 2 khung hình
- * animation frame không đủ — trình duyệt cần thêm thời gian thực (setTimeout) mới áp dụng xong
- * CSS/DOM vừa cập nhật, nếu không bản in ra trắng.
  */
 export async function printHtmlInline(bill: BillHtml): Promise<void> {
     const root = ensurePrintRoot()
@@ -64,9 +58,9 @@ export async function printHtmlInline(bill: BillHtml): Promise<void> {
     styleEl.textContent = `@media print { ${bill.styleCss} }`
     root.innerHTML = bill.bodyHtml
 
-    void root.offsetHeight // ép trình duyệt tính layout đồng bộ cho template vừa ghi, trước khi đợi paint ổn định
+    void root.offsetHeight // ép trình duyệt tính layout đồng bộ cho template vừa ghi
 
-    await waitForRenderSettle()
+    await waitForTemplateRendered()
 
     window.print()
 }
