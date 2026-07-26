@@ -56,6 +56,8 @@ export async function printHtmlInline(bill: BillHtml): Promise<void> {
     styleEl.textContent = `@media print { ${bill.styleCss} }`
     root.innerHTML = bill.bodyHtml
 
+    void root.offsetHeight // ép trình duyệt tính layout đồng bộ cho template vừa ghi, trước khi đợi paint ổn định
+
     await waitForRenderSettle()
 
     window.print()
