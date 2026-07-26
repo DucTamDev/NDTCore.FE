@@ -55,11 +55,15 @@ export async function printHtmlInline(bill: BillHtml): Promise<void> {
 
     await nextPaint()
 
-    const cleanup = (): void => {
-        window.removeEventListener('afterprint', cleanup)
-        root.innerHTML = ''
-    }
-    window.addEventListener('afterprint', cleanup)
+    // Chẩn đoán tạm thời lỗi in trắng trên Android — gỡ sau khi xác định nguyên nhân
+    alert(
+        `[DEBUG IN BILL]\n` +
+        `root.innerHTML.length = ${root.innerHTML.length}\n` +
+        `root computed display = ${getComputedStyle(root).display}\n` +
+        `styleEl.textContent.length = ${styleEl.textContent?.length}\n` +
+        `matchMedia('print') supported = ${typeof window.matchMedia === 'function'}\n` +
+        `--- preview 150 ký tự đầu bodyHtml ---\n${bill.bodyHtml.slice(0, 150)}`,
+    )
 
     window.print()
 }
