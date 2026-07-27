@@ -62,6 +62,13 @@
                   :loading="isPrinting"
                   @click="printBill(order.Id)"
                 />
+                <v-btn
+                  icon="mdi-usb"
+                  variant="text"
+                  size="small"
+                  :loading="isPrintingUsb"
+                  @click="printBillUsb(order.Id)"
+                />
               </template>
 
               <v-list-item-title class="font-weight-semibold text-body-2">
@@ -96,11 +103,13 @@ import { ref, computed, watch } from 'vue'
 import { posService } from '../services/pos.service'
 import type { PosOrderHistoryItemDto } from '../models/dtos/pos-order.dto'
 import { usePrintBill } from '../composables/usePrintBill'
+import { usePrintBillUsb } from '../composables/usePrintBillUsb'
 
 const props = defineProps<{ modelValue: boolean; storeId: number }>()
 defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
 const { isPrinting, printBill } = usePrintBill()
+const { isPrinting: isPrintingUsb, printBillUsb } = usePrintBillUsb()
 
 const orders         = ref<PosOrderHistoryItemDto[]>([])
 const isLoading      = ref(false)
