@@ -34,17 +34,26 @@ function ensureBillStyleElement(): HTMLStyleElement {
     return style
 }
 
+const RENDER_SETTLE_DELAY_MS = 200
+
 function nextAnimationFrame(): Promise<void> {
     return new Promise((resolve) => requestAnimationFrame(() => resolve()))
 }
 
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 /**
- * Đợi trình duyệt vẽ xong khung hình chứa template vừa ghi: qua 2 lần requestAnimationFrame
- * để đảm bảo đã có ít nhất một lần paint sau khi layout được tính lại — không dùng setTimeout đoán thời gian.
+ * Đợi trình duyệt vẽ xong khung hình chứa template vừa ghi. Đã xác nhận trên thiết bị Android thật:
+ * chỉ 2 lần requestAnimationFrame KHÔNG đủ — bản in vẫn trắng — phải cộng thêm thời gian thực
+ * (setTimeout) thì Android mới áp dụng xong CSS/DOM mới trước khi in. Không xoá delay này nếu
+ * chưa test lại trên thiết bị Android thật.
  */
 async function waitForTemplateRendered(): Promise<void> {
     await nextAnimationFrame()
     await nextAnimationFrame()
+    await delay(RENDER_SETTLE_DELAY_MS)
 }
 
 /**
