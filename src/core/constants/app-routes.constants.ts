@@ -63,6 +63,10 @@ export const APP_ROUTES = {
                 NAME: 'admin:store-detail',
                 PATH: 'stores/:id',
             },
+            STORE_PRINT_TEMPLATES: {
+                NAME: 'admin:store-print-templates',
+                PATH: 'store/print-templates',
+            },
             ORDERS: {
                 NAME: 'admin:orders',
                 PATH: 'orders',
