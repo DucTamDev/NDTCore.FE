@@ -90,8 +90,19 @@ export const menuConfig: MenuEntry[] = [
             {
                 title: 'Cửa hàng',
                 icon: 'mdi-store',
-                to: 'admin:stores',
                 roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ORG_ADMIN, SYSTEM_ROLES.FRANCHISEE_OWNER],
+                children: [
+                    {
+                        title: 'Danh sách cửa hàng',
+                        icon: 'mdi-storefront-outline',
+                        to: APP_ROUTES.ADMIN.CHILDREN.STORES.NAME,
+                    },
+                    {
+                        title: 'Hoá đơn và tem',
+                        icon: 'mdi-printer-outline',
+                        to: APP_ROUTES.ADMIN.CHILDREN.STORE_PRINT_TEMPLATES.NAME,
+                    },
+                ],
             },
         ],
     },
