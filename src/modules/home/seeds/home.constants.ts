@@ -41,8 +41,8 @@ export const ALL_MENU: DrinkItem[] = [
     },
     {
         cat: 'milk-tea',
-        imgUrl: IMG.phuc_long,
-        name: 'Phúc Long',
+        imgUrl: IMG.tra_sua_truyen_thong,
+        name: 'Trà Sữa Truyền Thống',
         desc: 'Trà đen nguyên lá, sữa',
         price: '20K',
     },
