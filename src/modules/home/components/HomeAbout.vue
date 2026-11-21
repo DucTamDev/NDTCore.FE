@@ -15,7 +15,7 @@
           </p>
 
           <p class="text-body-1 text-medium-emphasis mb-6">
-            Với hơn 80 chi nhánh trải dài khắp Việt Nam cùng hàng ngàn khách hàng trung thành, Soli
+            Với hơn 30 chi nhánh trải dài khắp Việt Nam cùng hàng ngàn khách hàng trung thành, Soli
             đang từng bước khẳng định vị thế trong lòng những người yêu trà sữa.
           </p>
 
