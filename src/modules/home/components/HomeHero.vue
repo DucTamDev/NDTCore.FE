@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 const STATS = [
-  { num: '85+', label: 'Chi nhánh' },
+  { num: '30+', label: 'Chi nhánh' },
   { num: '80%', label: 'Tỉ lệ thành công' },
   { num: '500+', label: 'Mục tiêu 2030' },
 ]
